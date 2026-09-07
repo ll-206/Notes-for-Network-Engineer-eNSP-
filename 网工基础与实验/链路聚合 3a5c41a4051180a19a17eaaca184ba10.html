@@ -1,0 +1,2190 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>链路聚合</title><style>
+/* cspell:disable-file */
+/* webkit printing magic: print all background colors */
+html {
+	-webkit-print-color-adjust: exact;
+}
+* {
+	box-sizing: border-box;
+	-webkit-print-color-adjust: exact;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
+@media only screen {
+	body {
+		margin: 2em auto;
+		max-width: 900px;
+		color: rgb(55, 53, 47);
+	}
+}
+
+body {
+	line-height: 1.5;
+	white-space: pre-wrap;
+}
+
+a,
+a.visited {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.pdf-relative-link-path {
+	font-size: 80%;
+	color: #444;
+}
+
+h1,
+h2,
+h3 {
+	letter-spacing: -0.01em;
+	line-height: 1.2;
+	font-weight: 600;
+	margin-bottom: 0;
+}
+
+/* Override strong tags inside headings to maintain consistent weight */
+h1 strong,
+h2 strong,
+h3 strong {
+	font-weight: 600;
+}
+
+.page-title {
+	font-size: 2.5rem;
+	font-weight: 700;
+	margin-top: 0;
+	margin-bottom: 0.75em;
+}
+
+h1 {
+	font-size: 1.875rem;
+	margin-top: 1.875rem;
+}
+
+h2 {
+	font-size: 1.5rem;
+	margin-top: 1.5rem;
+}
+
+h3 {
+	font-size: 1.25rem;
+	margin-top: 1.25rem;
+}
+
+.source {
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	padding: 1.5em;
+	word-break: break-all;
+}
+
+.callout {
+	border-radius: 10px;
+	padding: 1rem;
+}
+
+/* For default-background callouts, render the border outline. */
+.callout.block-color-default_background {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+figure {
+	margin: 1.25em 0;
+	page-break-inside: avoid;
+}
+
+/*
+ * Toggles and callouts hold arbitrary content, so they can easily be taller
+ * than a page. They must stay breakable: avoiding breaks inside them makes
+ * Chromium push the whole block onto the next page, which leaves the previous
+ * page mostly empty before every long toggle.
+ */
+details,
+aside {
+	margin: 1.25em 0;
+}
+
+/* Keep a toggle's title on the same page as the start of its content. */
+summary {
+	page-break-after: avoid;
+	break-after: avoid;
+}
+
+/*
+ * Toggle headings render as <h1/h2/h3 style="display:inline-block"> inside
+ * <summary>. Without this reset, the heading's margin-top pushes it below the
+ * ::marker (▼), so the triangle and the title appear on separate lines.
+ */
+summary h1,
+summary h2,
+summary h3,
+summary h4 {
+	margin-top: 0;
+}
+
+figcaption {
+	opacity: 0.5;
+	font-size: 85%;
+	margin-top: 0.5em;
+}
+
+mark {
+	background-color: transparent;
+}
+
+.indented {
+	padding-left: 1.5em;
+}
+
+hr {
+	background: transparent;
+	display: block;
+	width: 100%;
+	height: 1px;
+	visibility: visible;
+	border: none;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+img {
+	max-width: 100%;
+}
+
+@media only print {
+	img {
+		max-height: 100vh;
+		object-fit: contain;
+	}
+
+	table.collection-content {
+		width: 100%;
+		table-layout: fixed;
+	}
+
+	table.collection-content th,
+	table.collection-content td {
+		overflow-wrap: anywhere;
+	}
+
+	table.collection-content td > .user,
+	table.collection-content td > time {
+		white-space: pre-wrap;
+	}
+}
+
+@page {
+	margin: 1in;
+}
+
+.collection-content-wrapper {
+	overflow-x: auto;
+}
+
+@media only print {
+	.collection-content-wrapper {
+		overflow-x: visible;
+	}
+}
+
+.collection-content {
+	font-size: 0.875rem;
+}
+
+.collection-content td {
+	white-space: pre-wrap;
+	word-break: break-word;
+}
+
+.column-list {
+	display: flex;
+	gap: 46px;
+}
+
+.column {
+	min-width: 0;
+	overflow: hidden;
+}
+
+.column > *:first-child {
+	margin-top: 0;
+}
+
+.table_of_contents-item {
+	display: block;
+	font-size: 0.875rem;
+	line-height: 1.3;
+	padding-inline: 0.125rem;
+	padding-block: 0.375rem;
+}
+
+.table_of_contents-indent-1 {
+	margin-left: 1.5rem;
+}
+
+.table_of_contents-indent-2 {
+	margin-left: 3rem;
+}
+
+.table_of_contents-indent-3 {
+	margin-left: 4.5rem;
+}
+
+.table_of_contents-link {
+	text-decoration: none;
+	opacity: 0.7;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.18);
+}
+
+table,
+th,
+td {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+table {
+	border-collapse: collapse;
+	border-left: none;
+	border-right: none;
+}
+
+th,
+td {
+	font-weight: normal;
+	padding: 0.25em 0.5em;
+	line-height: 1.5;
+	min-height: 1.5em;
+	text-align: left;
+}
+
+th {
+	color: rgba(55, 53, 47, 0.6);
+}
+
+ol,
+ul {
+	margin: 0;
+	margin-block-start: 0.6em;
+	margin-block-end: 0.6em;
+}
+
+li > ol:first-child,
+li > ul:first-child {
+	margin-block-start: 0.6em;
+}
+
+ul > li {
+	list-style: disc;
+}
+
+ul.to-do-list {
+	padding-inline-start: 0;
+}
+
+ul.to-do-list > li {
+	list-style: none;
+}
+
+.to-do-children-checked {
+	text-decoration: line-through;
+	opacity: 0.375;
+}
+
+ul.toggle > li {
+	list-style: none;
+}
+
+ul {
+	padding-inline-start: 1.7em;
+}
+
+ul > li {
+	padding-left: 0.1em;
+}
+
+ol {
+	padding-inline-start: 1.6em;
+}
+
+ol.numbered-list.numbered-list-digits-2 {
+	padding-inline-start: 2em;
+}
+
+ol.numbered-list.numbered-list-digits-3plus {
+	padding-inline-start: 2.4em;
+}
+
+ol > li {
+	padding-left: 0.2em;
+}
+
+.mono ol {
+	padding-inline-start: 2em;
+}
+
+.mono ol > li {
+	text-indent: -0.4em;
+}
+
+.toggle {
+	padding-inline-start: 0em;
+	list-style-type: none;
+}
+
+/* Indent toggle children */
+.toggle > li > details {
+	padding-left: 1.7em;
+}
+
+.toggle > li > details > summary {
+	margin-left: -1.1em;
+}
+
+.selected-value {
+	display: inline-block;
+	padding: 0 0.5em;
+	background: rgba(206, 205, 202, 0.5);
+	border-radius: 3px;
+	margin-right: 0.5em;
+	margin-top: 0.3em;
+	margin-bottom: 0.3em;
+	white-space: nowrap;
+}
+
+.collection-title {
+	display: inline-block;
+	margin-right: 1em;
+}
+
+.page-description {
+	margin-bottom: 2em;
+}
+
+.simple-table {
+	margin-top: 1em;
+	font-size: 0.875rem;
+	empty-cells: show;
+}
+.simple-table td {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table th {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table-header-color {
+	background: rgb(247, 246, 243);
+	color: black;
+}
+.simple-table-header {
+	font-weight: 500;
+}
+
+time {
+	opacity: 0.5;
+}
+
+.icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	max-width: 1.2em;
+	max-height: 1.2em;
+	text-decoration: none;
+	vertical-align: text-bottom;
+	margin-right: 0.5em;
+}
+
+/*
+ * Render emoji icons using a ::before pseudo-element to keep the glyph
+ * out of the DOM textContent traversal. This avoids double-rendering icons
+ * in callouts and page titles.
+ * NOTE(slim/html-export-pseudo-icons): I can't tagref this because it will
+ * flag as a duplicate tag after codegen.
+ */
+.icon[data-emoji]::before {
+	content: attr(data-emoji);
+}
+
+img.icon {
+	border-radius: 3px;
+}
+
+.callout img.notion-static-icon {
+	width: 1em;
+	height: 1em;
+}
+
+.callout p {
+	margin: 0;
+}
+
+.callout h1,
+.callout h2,
+.callout h3 {
+	margin: 0 0 0.6rem;
+}
+
+.user-icon {
+	width: 1.5em;
+	height: 1.5em;
+	border-radius: 100%;
+	margin-right: 0.5rem;
+}
+
+.user-icon-inner {
+	font-size: 0.8em;
+}
+
+.text-icon {
+	border: 1px solid #000;
+	text-align: center;
+}
+
+.page-cover-image {
+	display: block;
+	object-fit: cover;
+	width: 100%;
+	max-height: 30vh;
+}
+
+.page-header-icon {
+	font-size: 3rem;
+	margin-bottom: 1rem;
+}
+
+.page-header-icon-with-cover {
+	margin-top: -0.72em;
+	margin-left: 0.07em;
+}
+
+.page-header-icon img {
+	border-radius: 3px;
+}
+
+.link-to-page {
+	margin: 1em 0;
+	padding: 0;
+	border: none;
+	font-weight: 500;
+}
+
+p > .user {
+	opacity: 0.5;
+}
+
+td > .user,
+td > time {
+	white-space: nowrap;
+}
+
+input[type="checkbox"] {
+	margin-right: 0.4em;
+	vertical-align: middle;
+}
+
+p {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+.image {
+	border: none;
+	margin: 1.5em 0;
+	padding: 0;
+	border-radius: 0;
+	text-align: center;
+}
+
+.code,
+code {
+	background: rgba(135, 131, 120, 0.15);
+	border-radius: 3px;
+	padding: 0.2em 0.4em;
+	border-radius: 3px;
+	font-size: 85%;
+	tab-size: 2;
+}
+
+code {
+	color: #eb5757;
+}
+
+.code {
+	padding: 1.5em 1em;
+}
+
+.code-wrap {
+	white-space: pre-wrap;
+	word-break: break-all;
+}
+
+.code > code {
+	background: none;
+	padding: 0;
+	font-size: 100%;
+	color: inherit;
+}
+
+blockquote {
+	font-size: 1em;
+	margin: 1em 0;
+	padding-left: 1em;
+	border-left: 3px solid rgb(55, 53, 47);
+}
+
+blockquote.quote-large {
+	font-size: 1.25em;
+}
+
+.bookmark {
+	text-decoration: none;
+	max-height: 8em;
+	padding: 0;
+	display: flex;
+	width: 100%;
+	align-items: stretch;
+}
+
+.bookmark-title {
+	font-size: 0.85em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	height: 1.75em;
+	white-space: nowrap;
+}
+
+.bookmark-text {
+	display: flex;
+	flex-direction: column;
+}
+
+.bookmark-info {
+	flex: 4 1 180px;
+	padding: 12px 14px 14px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.bookmark-image {
+	width: 33%;
+	flex: 1 1 180px;
+	display: block;
+	position: relative;
+	object-fit: cover;
+	border-radius: 1px;
+}
+
+.bookmark-description {
+	color: rgba(55, 53, 47, 0.6);
+	font-size: 0.75em;
+	overflow: hidden;
+	max-height: 4.5em;
+	word-break: break-word;
+}
+
+.bookmark-href {
+	font-size: 0.75em;
+	margin-top: 0.25em;
+}
+
+.tab {
+	margin: 1.25em 0;
+	padding-inline: 1rem;
+	border: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+.sans { font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"; }
+.code { font-family: "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace; }
+.serif { font-family: Lyon-Text, Georgia, ui-serif, serif; }
+.mono { font-family: iawriter-mono, Nitti, Menlo, Courier, monospace; }
+.pdf .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK JP'; }
+.pdf:lang(zh-CN) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC'; }
+.pdf:lang(zh-TW) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK TC'; }
+.pdf:lang(ko-KR) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK KR'; }
+.pdf .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.pdf .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK JP'; }
+.pdf:lang(zh-CN) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK SC'; }
+.pdf:lang(zh-TW) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK TC'; }
+.pdf:lang(ko-KR) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK KR'; }
+.pdf .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.highlight-default {
+	color: rgba(44, 44, 43, 1);
+}
+.highlight-gray {
+	color: rgba(125, 122, 117, 1);
+	fill: rgba(125, 122, 117, 1);
+}
+.highlight-brown {
+	color: rgba(159, 118, 90, 1);
+	fill: rgba(159, 118, 90, 1);
+}
+.highlight-orange {
+	color: rgba(210, 123, 45, 1);
+	fill: rgba(210, 123, 45, 1);
+}
+.highlight-yellow {
+	color: rgba(203, 148, 52, 1);
+	fill: rgba(203, 148, 52, 1);
+}
+.highlight-teal {
+	color: rgba(80, 148, 110, 1);
+	fill: rgba(80, 148, 110, 1);
+}
+.highlight-blue {
+	color: rgba(56, 125, 201, 1);
+	fill: rgba(56, 125, 201, 1);
+}
+.highlight-purple {
+	color: rgba(154, 107, 180, 1);
+	fill: rgba(154, 107, 180, 1);
+}
+.highlight-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.highlight-red {
+	color: rgba(207, 81, 72, 1);
+	fill: rgba(207, 81, 72, 1);
+}
+.highlight-default_background {
+	color: rgba(44, 44, 43, 1);
+}
+.highlight-gray_background {
+	background: rgba(42, 28, 0, 0.07);
+}
+.highlight-brown_background {
+	background: rgba(139, 46, 0, 0.086);
+}
+.highlight-orange_background {
+	background: rgba(224, 101, 1, 0.129);
+}
+.highlight-yellow_background {
+	background: rgba(211, 168, 0, 0.137);
+}
+.highlight-teal_background {
+	background: rgba(0, 100, 45, 0.09);
+}
+.highlight-blue_background {
+	background: rgba(0, 124, 215, 0.094);
+}
+.highlight-purple_background {
+	background: rgba(102, 0, 178, 0.078);
+}
+.highlight-pink_background {
+	background: rgba(197, 0, 93, 0.086);
+}
+.highlight-red_background {
+	background: rgba(223, 22, 0, 0.094);
+}
+.block-color-default {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray {
+	color: rgba(125, 122, 117, 1);
+	fill: rgba(125, 122, 117, 1);
+}
+.block-color-brown {
+	color: rgba(159, 118, 90, 1);
+	fill: rgba(159, 118, 90, 1);
+}
+.block-color-orange {
+	color: rgba(210, 123, 45, 1);
+	fill: rgba(210, 123, 45, 1);
+}
+.block-color-yellow {
+	color: rgba(203, 148, 52, 1);
+	fill: rgba(203, 148, 52, 1);
+}
+.block-color-teal {
+	color: rgba(80, 148, 110, 1);
+	fill: rgba(80, 148, 110, 1);
+}
+.block-color-blue {
+	color: rgba(56, 125, 201, 1);
+	fill: rgba(56, 125, 201, 1);
+}
+.block-color-purple {
+	color: rgba(154, 107, 180, 1);
+	fill: rgba(154, 107, 180, 1);
+}
+.block-color-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.block-color-red {
+	color: rgba(207, 81, 72, 1);
+	fill: rgba(207, 81, 72, 1);
+}
+.block-color-default_background {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray_background {
+	background: rgba(240, 239, 237, 1);
+}
+.block-color-brown_background {
+	background: rgba(245, 237, 233, 1);
+}
+.block-color-orange_background {
+	background: rgba(251, 235, 222, 1);
+}
+.block-color-yellow_background {
+	background: rgba(249, 243, 220, 1);
+}
+.block-color-teal_background {
+	background: rgba(232, 241, 236, 1);
+}
+.block-color-blue_background {
+	background: rgba(229, 242, 252, 1);
+}
+.block-color-purple_background {
+	background: rgba(243, 235, 249, 1);
+}
+.block-color-pink_background {
+	background: rgba(250, 233, 241, 1);
+}
+.block-color-red_background {
+	background: rgba(252, 233, 231, 1);
+}
+.select-value-color-default { background-color: rgba(42, 28, 0, 0.07); }
+.select-value-color-gray { background-color: rgba(28, 19, 1, 0.11); }
+.select-value-color-brown { background-color: rgba(127, 51, 0, 0.156); }
+.select-value-color-orange { background-color: rgba(196, 88, 0, 0.203); }
+.select-value-color-yellow { background-color: rgba(209, 156, 0, 0.282); }
+.select-value-color-green { background-color: rgba(0, 96, 38, 0.156); }
+.select-value-color-blue { background-color: rgba(0, 118, 217, 0.203); }
+.select-value-color-purple { background-color: rgba(92, 0, 163, 0.141); }
+.select-value-color-pink { background-color: rgba(183, 0, 78, 0.152); }
+.select-value-color-red { background-color: rgba(206, 24, 0, 0.164); }
+
+.checkbox {
+	display: inline-flex;
+	vertical-align: text-bottom;
+	width: 16;
+	height: 16;
+	background-size: 16px;
+	margin-left: 2px;
+	margin-right: 5px;
+}
+
+.checkbox-on {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20width%3D%2216%22%20height%3D%2216%22%20fill%3D%22%2358A9D7%22%2F%3E%0A%3Cpath%20d%3D%22M6.71429%2012.2852L14%204.9995L12.7143%203.71436L6.71429%209.71378L3.28571%206.2831L2%207.57092L6.71429%2012.2852Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+
+.checkbox-off {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20x%3D%220.75%22%20y%3D%220.75%22%20width%3D%2214.5%22%20height%3D%2214.5%22%20fill%3D%22white%22%20stroke%3D%22%2336352F%22%20stroke-width%3D%221.5%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+	
+</style><style>@import url('https://cdn.jsdelivr.net/npm/katex@0.16.25/dist/katex-swap.min.css')</style></head><body><article id="3a5c41a4-0511-80a1-9a17-eaaca184ba10" class="page sans"><header><h1 class="page-title" dir="auto">链路聚合</h1><p class="page-description" dir="auto"></p></header><div class="page-body"><h1 id="3a5c41a4-0511-8022-803c-ecd7c4d23405" class="" dir="auto">⚽链路聚合</h1><aside class="block-color-gray_background callout" data-notion-callout="" data-notion-callout-icon="💡" data-notion-callout-background="gray_background" style="white-space:pre-wrap;display:flex" id="3a5c41a4-0511-80f3-8efa-e6205f1a31f5" dir="ltr"><div style="font-size:1.5em"><span class="icon" data-emoji="💡"></span></div><div style="width:100%"><p id="3a5c41a4-0511-80d9-a16b-e13ed3399684" class="" dir="auto">小知识：<br/><strong>带宽（Bandwidth）：</strong></p><p id="3a5c41a4-0511-80dd-8f6e-fe2927b21469" class="" dir="auto">带宽是链路在单位时间内<strong>可承载的数据传输能力上限</strong>，单位通常为 bit/s（bps、Mbps、Gbps）。</p><p id="3a5c41a4-0511-80c9-b72a-f42ddf92c73e" class="" dir="auto">要点：</p><ul id="3a5c41a4-0511-803e-9274-d887b23aa8b6" class="bulleted-list" dir="auto"><li style="list-style-type:disc">是<strong>容量上限</strong>，不是实际传输量</li></ul><ul id="3a5c41a4-0511-80e9-81a8-d9e65a62c5e7" class="bulleted-list" dir="auto"><li style="list-style-type:disc">由<strong>接口速率、链路介质、设备能力</strong>共同决定</li></ul><ul id="3a5c41a4-0511-8070-bec1-d73593ef30a8" class="bulleted-list" dir="auto"><li style="list-style-type:disc">类似“高速公路车道数”，车道越多，理论通过能力越大</li></ul><p id="3a5c41a4-0511-804b-af3d-f52d7554a8c7" class="" dir="auto"><strong>吞吐量（Throughput）</strong></p><p id="3a5c41a4-0511-8022-8cb8-dfe2de11630d" class="" dir="auto">吞吐量是<strong>实际传输成功的数据速率</strong>。</p><p id="3a5c41a4-0511-8054-ae9e-e7cdc33faf8e" class="" dir="auto">关系：</p><ul id="3a5c41a4-0511-80b7-804e-da0218c5cdc5" class="bulleted-list" dir="auto"><li style="list-style-type:disc">吞吐量 ≤ 带宽</li></ul><ul id="3a5c41a4-0511-8064-82d9-fed59562174f" class="bulleted-list" dir="auto"><li style="list-style-type:disc">受以下因素影响：<ul id="3a5c41a4-0511-80f8-97d8-c6b03769de13" class="bulleted-list" dir="auto"><li style="list-style-type:circle">拥塞</li></ul><ul id="3a5c41a4-0511-802d-81ec-eac44718c8c6" class="bulleted-list" dir="auto"><li style="list-style-type:circle">丢包重传</li></ul><ul id="3a5c41a4-0511-80d7-8c0a-e7c99ee53265" class="bulleted-list" dir="auto"><li style="list-style-type:circle">协议开销（TCP/IP 头、ACK）</li></ul><ul id="3a5c41a4-0511-8030-91d4-e35893c9c101" class="bulleted-list" dir="auto"><li style="list-style-type:circle">设备处理能力</li></ul></li></ul><p id="3a5c41a4-0511-8082-8665-ee1718cad63d" class="" dir="auto">例：</p><ul id="3a5c41a4-0511-80c5-b8d9-ef9a1fa2fca6" class="bulleted-list" dir="auto"><li style="list-style-type:disc">带宽 1Gbps</li></ul><ul id="3a5c41a4-0511-800f-ab32-d6e337578ba9" class="bulleted-list" dir="auto"><li style="list-style-type:disc">实际测速 600Mbps → 这是吞吐量</li></ul></div></aside><h2 id="3a5c41a4-0511-8072-af26-ecbaac7d579b" class="" dir="auto">😵网络可靠性</h2><h3 id="3a5c41a4-0511-80e4-88d5-e7ec0e1e90a5" class="" dir="auto">概述</h3><p id="3a5c41a4-0511-80ec-8a24-d506dabc4f1d" class="" dir="auto">1）网络可靠性</p><p id="3a5c41a4-0511-80f6-af00-f249c1acffb5" class="" dir="auto">设备、链路备份，网关备份。</p><p id="3a5c41a4-0511-80b4-b4d6-c708669d3dda" class="" dir="auto">可以从单板、链路、设备三个模块讲。</p><p id="3a5c41a4-0511-80fc-b706-e0aeca8e0e2d" class="" dir="auto">2）单板可靠性</p><figure id="3a5c41a4-0511-8022-b6e1-da7477542323" class="image" data-notion-image="%E9%93%BE%E8%B7%AF%E8%81%9A%E5%90%88/image.png" dir="ltr"><a href="%E9%93%BE%E8%B7%AF%E8%81%9A%E5%90%88/image.png"><img style="width:703.9750366210938px" src="%E9%93%BE%E8%B7%AF%E8%81%9A%E5%90%88/image.png"/></a></figure><p id="3a5c41a4-0511-80dc-9fc4-f9fa11b3124a" class="" dir="auto">单板可靠性 = 硬件稳定性 + 故障隔离能力 + 故障恢复能力</p><p id="3a5c41a4-0511-80db-a893-f657cfc75a90" class="" dir="auto">3）设备、链路可靠性</p><p id="3a5c41a4-0511-80eb-b484-c6b88df9d4eb" class="" dir="auto">即之前学的STP、VRRP</p><figure id="3a5c41a4-0511-80c0-9a7d-ead2494a252f" class="image" data-notion-image="%E9%93%BE%E8%B7%AF%E8%81%9A%E5%90%88/image%201.png" dir="ltr"><a href="%E9%93%BE%E8%B7%AF%E8%81%9A%E5%90%88/image%201.png"><img style="width:703.9750366210938px" src="%E9%93%BE%E8%B7%AF%E8%81%9A%E5%90%88/image%201.png"/></a></figure><figure id="3a5c41a4-0511-8088-8bf6-ffb88de90ac0" class="image" data-notion-image="%E9%93%BE%E8%B7%AF%E8%81%9A%E5%90%88/image%202.png" dir="ltr"><a href="%E9%93%BE%E8%B7%AF%E8%81%9A%E5%90%88/image%202.png"><img style="width:704px" src="%E9%93%BE%E8%B7%AF%E8%81%9A%E5%90%88/image%202.png"/></a></figure><p id="3a5c41a4-0511-80a9-be60-cd2bba58dc91" class="" dir="auto">为保证设备间链路可靠性,在设备间部署多条物理线路,为防止环路STP只保留一条链<br/>路转发流量,其余链路成为备份链路。</p><h2 id="3a5c41a4-0511-8046-9942-fb41747a6814" class="" dir="auto">😽背景</h2><p id="3a5c41a4-0511-808c-b320-ef1b30ef80c1" class="" dir="auto">1）早期网络结构：</p><ul id="3a5c41a4-0511-8063-9113-c6996ec4c121" class="bulleted-list" dir="auto"><li style="list-style-type:disc">接入 → 汇聚：一条物理链路</li></ul><ul id="3a5c41a4-0511-80c2-8169-f11c9fda99a9" class="bulleted-list" dir="auto"><li style="list-style-type:disc">链路速率固定（如 1Gbps）</li></ul><p id="3a5c41a4-0511-809c-9cf5-e40277d6c8cb" class="" dir="auto">当终端增多：</p><ul id="3a5c41a4-0511-8087-947c-f1e67afaedb0" class="bulleted-list" dir="auto"><li style="list-style-type:disc">流量汇聚到一条链路</li></ul><ul id="3a5c41a4-0511-80db-bbe0-c77b0a7a449a" class="bulleted-list" dir="auto"><li style="list-style-type:disc">出现拥塞、丢包、延迟上升</li></ul><p id="3a5c41a4-0511-8006-90c6-dd76ac7d4ba7" class="" dir="auto">👉 <strong>瓶颈集中在上行链路</strong></p><p id="3a5c41a4-0511-80a6-8c97-ef6d28b3403f" class="" dir="auto"><mark class="highlight-pink" data-notion-highlight="pink"><strong>升级设备、链路成本高</strong></mark></p><p id="3a5c41a4-0511-806e-98d4-cf2dfbbcd0b7" class="" dir="auto">2）链路可靠性</p><ul id="3a5c41a4-0511-802e-9f7c-d3149138802d" class="bulleted-list" dir="auto"><li style="list-style-type:disc">只有一条上行链路</li></ul><ul id="3a5c41a4-0511-80b0-87e4-f054d584478a" class="bulleted-list" dir="auto"><li style="list-style-type:disc">一旦断开 → 网络中断</li></ul><p id="3a5c41a4-0511-8025-abf1-ce700dbc672f" class="" dir="auto">👉 <strong>典型单点故障</strong></p><p id="3a5c41a4-0511-8087-b191-c7545c91d380" class="" dir="auto">前期解决方案：STP（双链路接入，一条阻塞一条通行）</p><p id="3a5c41a4-0511-8043-9619-e06473ef1976" class="" dir="auto">问题：</p><ul id="3a5c41a4-0511-8093-8420-f1d180b21f64" class="bulleted-list" dir="auto"><li style="list-style-type:disc">备用链路不工作（浪费带宽）</li></ul><ul id="3a5c41a4-0511-803c-b1b5-dd91b30dd3e6" class="bulleted-list" dir="auto"><li style="list-style-type:disc">收敛慢（秒级甚至更慢）</li></ul><hr id="3a5c41a4-0511-808a-a434-c55bb14c5f44" dir="auto"/><h2 id="3a5c41a4-0511-809a-92ed-c73f613719dc" class="" dir="auto">😆基本原理</h2><p id="3a5c41a4-0511-801a-850d-fd41cb7f1d0a" class="" dir="auto">以太网链路聚合Eth-Trunk：简称链路聚合,通过将多个物理接口捆绑成为一个逻辑接<br/>口,可以在不进行硬件升级的条件下,达到<mark class="highlight-teal" data-notion-highlight="teal"><strong>增加链路带宽的目的</strong></mark>。</p><figure id="3a5c41a4-0511-80e4-9baa-dc95982538da" class="image" data-notion-image="%E9%93%BE%E8%B7%AF%E8%81%9A%E5%90%88/ChatGPT_Image_2026%E5%B9%B44%E6%9C%8814%E6%97%A5_17_34_49.png" dir="ltr"><a href="%E9%93%BE%E8%B7%AF%E8%81%9A%E5%90%88/ChatGPT_Image_2026%E5%B9%B44%E6%9C%8814%E6%97%A5_17_34_49.png"><img style="width:576px" src="%E9%93%BE%E8%B7%AF%E8%81%9A%E5%90%88/ChatGPT_Image_2026%E5%B9%B44%E6%9C%8814%E6%97%A5_17_34_49.png"/></a></figure><h3 id="3a5c41a4-0511-8051-b3c8-ca727e38ab1f" class="" dir="auto">👱🏼‍♀️手动链路聚合拓扑</h3><figure id="3a5c41a4-0511-806c-984e-e31a153e25ca" class="image" data-notion-image="%E9%93%BE%E8%B7%AF%E8%81%9A%E5%90%88/image%203.png" dir="ltr"><a href="%E9%93%BE%E8%B7%AF%E8%81%9A%E5%90%88/image%203.png"><img style="width:703.9625244140625px" src="%E9%93%BE%E8%B7%AF%E8%81%9A%E5%90%88/image%203.png"/></a></figure><p id="3a5c41a4-0511-8063-9a59-e7a2f7f7a6b1" class="" dir="auto">SW1</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-jsx.min.js" integrity="sha512-m3JYEI6gx5fh9jF10FjGoMzVKcV2N6nchcDcqPCdI1L3R2WQV7br2XVNR8iTLb2daOMRl3zldbcfT40xU2ntVw==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><pre id="3a5c41a4-0511-80b0-abd4-d1bd72ea1f88" class="code code-wrap" data-notion-code-syntax="jsx"><code class="language-jsx" style="white-space:pre-wrap;word-break:break-all">system-view
+sysname SW1
+
+interface Eth-Trunk 1     //创立链路聚合组
+trunkport GigabitEthernet 0/0/3
+trunkport GigabitEthernet 0/0/2
+trunkport GigabitEthernet 0/0/4
+port link-type trunk
+port trunk allow-pass vlan all</code></pre><p id="3a5c41a4-0511-8072-9c30-fd75848d56ba" class="" dir="auto">SW2</p><pre id="3a5c41a4-0511-80f4-adf8-dd947bd514a4" class="code code-wrap" data-notion-code-syntax="jsx"><code class="language-jsx" style="white-space:pre-wrap;word-break:break-all">system-view
+sysname SW2
+
+interface Eth-Trunk 1
+quit
+
+interface GigabitEthernet 0/0/3
+eth-trunk 1
+quit
+
+interface GigabitEthernet 0/0/2
+eth-trunk 1
+quit
+
+interface GigabitEthernet 0/0/4
+eth-trunk 1
+quit</code></pre><p id="3a5c41a4-0511-80b3-bd41-ec4e7188dc24" class="" dir="auto">这两个交换机使用了两种方法配置</p><p id="3a5c41a4-0511-8043-aa9b-e6521fafd927" class="" dir="auto"><strong>Eth-Trunk 视图</strong></p><pre id="3a5c41a4-0511-80d0-9629-da2fe0f4805f" class="code code-wrap" data-notion-code-syntax="jsx"><code class="language-jsx" style="white-space:pre-wrap;word-break:break-all">interface Eth-Trunk 1
+trunkport GigabitEthernet 0/0/3
+trunkport GigabitEthernet 0/0/2
+trunkport GigabitEthernet 0/0/4</code></pre><p id="3a5c41a4-0511-8070-aaef-fe5a901ac8a8" class="" dir="auto"><strong>物理接口视图</strong></p><pre id="3a5c41a4-0511-8028-9688-ff1ec03ffe09" class="code code-wrap" data-notion-code-syntax="jsx"><code class="language-jsx" style="white-space:pre-wrap;word-break:break-all">interface GigabitEthernet 0/0/3
+eth-trunk 1
+
+interface GigabitEthernet 0/0/2
+eth-trunk 1
+
+interface GigabitEthernet 0/0/4
+eth-trunk 1</code></pre><p id="3a5c41a4-0511-80af-8126-f71b28fa7bec" class="" dir="auto">查看命令</p><p id="3a5c41a4-0511-800e-ac31-f7638ca335c1" class="" dir="auto"><mark class="highlight-teal" data-notion-highlight="teal"><code>display eth-trunk</code></mark></p><p id="3a5c41a4-0511-8029-b043-e5fe56d3e220" class="" dir="auto">输出：</p><pre id="3a5c41a4-0511-80cb-9fde-f3d64be4aecc" class="code code-wrap" data-notion-code-syntax="jsx"><code class="language-jsx" style="white-space:pre-wrap;word-break:break-all">[SW2]display eth-trunk
+Eth-Trunk1&#x27;s state information is:
+WorkingMode: NORMAL         Hash arithmetic: According to SIP-XOR-DIP         
+Least Active-linknumber: 1  Max Bandwidth-affected-linknumber: 8              
+Operate status: up          Number Of Up Port In Trunk: 3                     
+--------------------------------------------------------------------------------
+PortName                      Status      Weight 
+GigabitEthernet0/0/3          Up          1      
+GigabitEthernet0/0/2          Up          1      
+GigabitEthernet0/0/4          Up          1   </code></pre><p id="3a5c41a4-0511-801c-b580-d06f2b2d9ff6" class="" dir="auto"><code>WorkingMode: NORMAL</code></p><p id="3a5c41a4-0511-800b-bf78-d382bda31c7b" class="" dir="auto">👉 手动模式（静态聚合）</p><ul id="3a5c41a4-0511-8031-a1a8-cc223684fd7b" class="bulleted-list" dir="auto"><li style="list-style-type:disc">无协商（不是 LACP）</li></ul><ul id="3a5c41a4-0511-80de-b889-e67e9c392b02" class="bulleted-list" dir="auto"><li style="list-style-type:disc">两端必须手动一致</li></ul><p id="3a5c41a4-0511-8049-a4d1-d702b4283360" class="" dir="auto"><code>Least Active-linknumber: 1</code> 至少需要 1 条链路 UP，否则整个 Eth-Trunk Down</p><p id="3a5c41a4-0511-80b9-aae3-eb0d9ca8b556" class="" dir="auto">[SW2]display stp brief<br/>MSTID  Port                        Role  STP State     Protection<br/>0    GigabitEthernet0/0/1        DESI  FORWARDING      NONE<br/>0    Eth-Trunk1                  DESI  FORWARDING      NONE</p><p id="3a5c41a4-0511-8047-b3d4-ce40045f8c8a" class="" dir="auto">注意：</p><p id="3a5c41a4-0511-80e9-83fd-c5a5302d8e72" class="" dir="auto">当<code>Least Active-linknumber: 1</code> 该值大于现在这个聚合组的活动接口数量时，会显示：</p><p id="3a5c41a4-0511-808b-bdbc-f0c77863c7f5" class="" dir="auto"><code>Operate status: up </code> 因为这个Least Active-linknumber = 最少需要“几条Up链路”才能让聚合口工作。</p><aside class="block-color-gray_background callout" data-notion-callout="" data-notion-callout-icon="💡" data-notion-callout-background="gray_background" style="white-space:pre-wrap;display:flex" id="3a5c41a4-0511-806d-bc30-d5109dd5bef0" dir="ltr"><div style="font-size:1.5em"><span class="icon" data-emoji="💡"></span></div><div style="width:100%"><p id="3a5c41a4-0511-80b5-9007-e52873c4de0e" class="" dir="auto">由于<code>Operate status: up</code> 是根据各端的Least Active-linknumber 和活动链路数量决定的，和对端无关，如果一端down了一段也可以是Up，但是在这种情况下基本上不会传输数据</p><p id="3a5c41a4-0511-8059-9b0d-da81c255eab3" class="" dir="auto">1️⃣ 单向通信异常</p><ul id="3a5c41a4-0511-8043-bdf0-e608bfe573ac" class="bulleted-list" dir="auto"><li style="list-style-type:disc">SW2 认为链路可用 → 发流量</li></ul><ul id="3a5c41a4-0511-8020-a4a7-e7b134cf014a" class="bulleted-list" dir="auto"><li style="list-style-type:disc">SW1 认为链路不可用 → 不转发</li></ul><p id="3a5c41a4-0511-8015-b5f6-c0c7c0487af2" class="" dir="auto">👉 结果：<strong>黑洞 / 丢包</strong></p></div></aside><p id="3a5c41a4-0511-8057-84d3-ce4da90d84c6" class="" dir="auto">输入<code>display interface Eth-Trunk</code> </p><pre id="3a5c41a4-0511-80df-bc17-d51da06917fa" class="code code-wrap" data-notion-code-syntax="jsx"><code class="language-jsx" style="white-space:pre-wrap;word-break:break-all">[SW2]display interface Eth-Trunk
+Eth-Trunk1 current state : UP
+Line protocol current state : UP
+Description:
+Switch Port, PVID :    1, Hash arithmetic : According to SIP-XOR-DIP,Maximal BW:
+ 3G, Current BW: 3G, The Maximum Frame Length is 9216
+IP Sending Frames&#x27; Format is PKTFMT_ETHNT_2, Hardware address is 4c1f-cc0a-6d72
+Current system time: 2026-04-15 18:37:21-08:00
+    Input bandwidth utilization  :    0%
+    Output bandwidth utilization :    0%
+-----------------------------------------------------
+PortName                      Status      Weight
+-----------------------------------------------------
+GigabitEthernet0/0/4          UP          1
+GigabitEthernet0/0/3          UP          1
+GigabitEthernet0/0/1          UP          1
+-----------------------------------------------------
+The Number of Ports in Trunk : 3
+The Number of UP Ports in Trunk : 3</code></pre><p id="3a5c41a4-0511-8030-b313-eca4d9bbfb57" class="" dir="auto"><code>Eth-Trunk1 current state : UP<br/>Line protocol current state : UP</code></p><p id="3a5c41a4-0511-8051-b179-df6515013c27" class="" dir="auto">本设备认为：这个聚合口是可用的，可以参与转发</p><p id="3a5c41a4-0511-8048-866c-d25aa089c3ea" class="" dir="auto"><code>Maximal BW: 3G<br/>Current BW: 3G</code></p><p id="3a5c41a4-0511-809b-9d00-c434df06303a" class="" dir="auto">3条GE链路 × 1G = 3G（带宽）</p><p id="3a5c41a4-0511-803b-ab8d-fedc3c259f24" class="" dir="auto"><code>Hash arithmetic : According to SIP-XOR-DIP</code></p><p id="3a5c41a4-0511-80ef-a9c2-e6334d357d9b" class="" dir="auto">基于 源IP ⊕ 目的IP 做哈希</p><ul id="3a5c41a4-0511-806c-8a8e-f60d12ef6007" class="bulleted-list" dir="auto"><li style="list-style-type:disc">同一数据流固定走一条链路</li></ul><ul id="3a5c41a4-0511-8006-ae34-c660e938838d" class="bulleted-list" dir="auto"><li style="list-style-type:disc">不会乱序</li></ul><ul id="3a5c41a4-0511-8040-8f77-fc6b1683ea4e" class="bulleted-list" dir="auto"><li style="list-style-type:disc">多个流才能实现“分流”</li></ul><aside class="block-color-gray_background callout" data-notion-callout="" data-notion-callout-icon="💡" data-notion-callout-background="gray_background" style="white-space:pre-wrap;display:flex" id="3a5c41a4-0511-80d1-9108-c3d4ceb93562" dir="ltr"><div style="font-size:1.5em"><span class="icon" data-emoji="💡"></span></div><div style="width:100%"><p id="3a5c41a4-0511-8081-88b8-f2f9fb318880" class="" dir="auto">活动链路与非活动链路的比例称为：链路利用率（或负载分担比例）</p></div></aside><h2 id="3a5c41a4-0511-805f-9927-c5a52696d400" class="" dir="auto">🥰链路聚合的相关概念</h2><p id="3a5c41a4-0511-8046-966a-d40e43f1f8aa" class="" dir="auto"><strong>1、聚合组（Link Aggregation Group，LAG）</strong></p><p id="3a5c41a4-0511-805a-80cb-c9e163c0157c" class="" dir="auto">将若干条物理链路捆绑在一起后，形成的一条逻辑链路，每个聚合组唯一对应一个逻辑接口，这个逻辑接口称为：<mark class="highlight-pink" data-notion-highlight="pink"><strong><span style="border-bottom:0.05em solid">Eth-Trunk 接口</span></strong></mark></p><p id="3a5c41a4-0511-806e-bfb6-dd25a301d169" class="" dir="auto"><strong>2、成员接口 / 成员链路</strong></p><p id="3a5c41a4-0511-8065-9f0b-e1f88b44241f" class="" dir="auto">组成 Eth-Trunk 接口的各个物理接口，称为成员接口；</p><p id="3a5c41a4-0511-80c4-a1a7-eb1d5f53ebd6" class="" dir="auto">这些成员接口所对应的物理链路，称为成员链路。</p><p id="3a5c41a4-0511-80cd-9177-e42b35fc564f" class="" dir="auto"><strong>3、活动接口 / 活动链路</strong></p><p id="3a5c41a4-0511-8096-b55a-dab32dffc6a7" class="" dir="auto">活动接口也叫选中接口（Selected），指当前参与数据转发的成员接口；</p><p id="3a5c41a4-0511-802a-a215-e2b90c4e1d8a" class="" dir="auto">其对应的链路称为活动链路（Active link）。</p><p id="3a5c41a4-0511-802a-bda2-f6c49b5d43f0" class="" dir="auto">（聚合组中不是所有的成员链路都参与数据转发）</p><p id="3a5c41a4-0511-80bd-b592-d2ed22960985" class="" dir="auto"><strong>4、非活动接口 / 非活动链路</strong></p><p id="3a5c41a4-0511-803f-b23f-c4dd72605f3a" class="" dir="auto">非活动接口也叫非选中接口（Unselected），指当前不参与数据转发的成员接口；</p><p id="3a5c41a4-0511-8034-a25b-c11724e66c3e" class="" dir="auto">其对应的链路称为非活动链路（Inactive link）。</p><h2 id="3a5c41a4-0511-80cc-bf7e-db870428cf11" class="" dir="auto">🤑聚合模式</h2><h3 id="3a5c41a4-0511-80a3-83dc-f603ba0ff853" class="" dir="auto">手工模式（默认）</h3><p id="3a5c41a4-0511-80ca-bf73-c6e5bfcffc7c" class="" dir="auto">手工模式:Eth-Trunk的建立、成员接口的加入均由手动配置，双方系统之间不使用LACP进行协商。</p><p id="3a5c41a4-0511-806b-8a0b-de60969e115f" class="" dir="auto">正常情况下所有链路都是活动链路，该模式下所有活动链路都参与数据的转发，平均分担流量,如果某条活动链路故障,<br/>链路聚合组自动在剩余的活动链路中平均分担流量。</p><blockquote id="3a5c41a4-0511-8021-8cc6-dd03c357e798" class="" dir="auto">什么时候使用手工模式？</blockquote><p id="3a5c41a4-0511-80d0-81b9-fad1fa5e0956" class="" dir="auto"><mark class="highlight-pink" data-notion-highlight="pink"><strong><span style="border-bottom:0.05em solid">当聚合的两端设备中存在一个不支持LACP协议时，可以使用手工模式。</span></strong></mark></p><p id="3a5c41a4-0511-8038-b9d1-cb4634798a7c" class="" dir="auto"><mark class="highlight-pink" data-notion-highlight="pink"><strong><span style="border-bottom:0.05em solid">当聚合的两端设备的厂商不一样时，使用手工模式。</span></strong></mark></p><p id="3a5c41a4-0511-802e-980d-c2adf2709c94" class="" dir="auto">在<strong>手工模式</strong>下：</p><pre id="3a5c41a4-0511-80ca-9cd4-d4525cd7180a" class="code code-wrap"><code style="white-space:pre-wrap;word-break:break-all">成员链路 = 活动链路</code></pre><p id="3a5c41a4-0511-80c3-b0f6-dde9baaf7e59" class="" dir="auto">只要接口：</p><ul id="3a5c41a4-0511-8014-92d4-e1400caddf02" class="bulleted-list" dir="auto"><li style="list-style-type:disc">物理状态 Up</li></ul><ul id="3a5c41a4-0511-807e-823f-ebb1d6d93cbd" class="bulleted-list" dir="auto"><li style="list-style-type:disc">成功加入 Eth-Trunk</li></ul><p id="3a5c41a4-0511-80e6-8191-f8dec67970e8" class="" dir="auto">👉 就会参与转发（Active）</p><p id="3a5c41a4-0511-80e4-b1ad-fe61eec2279d" class="" dir="auto"><mark class="highlight-red" data-notion-highlight="red"><mark class="highlight-red_background" data-notion-highlight="red_background"><strong>手工模式下，设备间没有报文交互，因此只能通过管理员人工确认</strong></mark></mark></p><h4 id="3a5c41a4-0511-80b0-8435-e238104f0117" class="" dir="auto">缺陷</h4><p id="3a5c41a4-0511-8055-bca2-eb9f747bae1c" class="" dir="auto">1）聚合组之间的接口不对应（数据传输问题）</p><p id="3a5c41a4-0511-8005-8db4-c587103c262b" class="" dir="auto">2）聚合链路连接到第三个设备（信息泄露）</p><h3 id="3a5c41a4-0511-8004-8740-def7864e8185" class="" dir="auto">😝LACP模式</h3><p id="3a5c41a4-0511-806a-af20-d4c32410d00d" class="" dir="auto">在手工模式下，所有接口和链路都是活动状态，但是当流量不大时，原本仅需2条链路即可传输，手工模式下不能改变。</p><p id="3a5c41a4-0511-8065-aa92-c41c3617a458" class="" dir="auto">LACP协议可以通过算法来控制。</p><p id="3a5c41a4-0511-8058-82d7-eba47e1f40dd" class="" dir="auto">会从所有成员接口中：</p><ul id="3a5c41a4-0511-8095-bc46-d3e89a00ff5c" class="bulleted-list" dir="auto"><li style="list-style-type:disc">选出 <strong>Active链路（参与转发）</strong></li></ul><ul id="3a5c41a4-0511-80eb-9202-dc1af6b38d74" class="bulleted-list" dir="auto"><li style="list-style-type:disc">其余变为 <strong>Inactive（备用）</strong></li></ul><h4 id="3a5c41a4-0511-8031-9570-e4b8e0c008b1" class="" dir="auto">🫶🏼LACP选举主设备（主动端）和活动接口<mark class="highlight-red_background" data-notion-highlight="red_background">（优先级越小越好）</mark></h4><p id="3a5c41a4-0511-80bb-ac48-e0cf4d80271e" class="" dir="auto">首先，先选举主设备（主动端），当使用LACP时只会通过选举一端的设备来决定哪个接口active，否则两端设备一起决定活动链路的话会产生冲突。</p><blockquote id="3a5c41a4-0511-8078-ac5d-d6f491153c85" class="" dir="auto">主设备（主动端）→先看系统优先级，系统优先级越小，就越容易被选举出来→若系统优先级相同，则对比MAC地址，同样也是越小越容易被选举。</blockquote><p id="3a5c41a4-0511-8081-a74b-ff53d25d1869" class="" dir="auto">接着选举出来的主动端会来选举活动接口（成员接口数目大于最大活动接口数）</p><blockquote id="3a5c41a4-0511-8075-b492-f55ab9bdf95e" class="" dir="auto">活动接口→先看接口优先级，同样也是越小越好→当接口优先级相同，则对比接口编号。</blockquote><p id="3a5c41a4-0511-8031-80cf-ee63f322117a" class="" dir="auto">活动接口对应链路也成为活动链路，其余的则做备用（非活动链路、非活动接口）。</p><aside class="block-color-gray_background callout" data-notion-callout="" data-notion-callout-icon="💡" data-notion-callout-background="gray_background" style="white-space:pre-wrap;display:flex" id="3a5c41a4-0511-803f-b7dc-f9023edd2959" dir="ltr"><div style="font-size:1.5em"><span class="icon" data-emoji="💡"></span></div><div style="width:100%"><p id="3a5c41a4-0511-8060-9ad5-c26577e60273" class="" dir="auto">交换机只会从活动接口中发送、接收报文。</p><p id="3a5c41a4-0511-80f3-995a-f9d3a8b8cc0c" class="" dir="auto">当活动链路因故障退出后，备用链路会顶替其转发业务；原链路恢复正常后，会重新参与 LACP 选举，若其优先级更高，则可能重新成为活动链路。该过程需要经过状态恢复与协议收敛，因此不会瞬间切换，可在一定程度上避免链路频繁震荡。</p></div></aside><h2 id="3a5c41a4-0511-808c-983a-ce5a3bad0e69" class="" dir="auto">😪负载分担</h2><h3 id="3a5c41a4-0511-80f5-a69b-f5b2c41221af" class="" dir="auto">🧔🏼‍♂️基于包的负载分担</h3><figure id="3a5c41a4-0511-807f-bb0a-dfd15a1019d3" class="image" data-notion-image="%E9%93%BE%E8%B7%AF%E8%81%9A%E5%90%88/image%204.png" dir="ltr"><a href="%E9%93%BE%E8%B7%AF%E8%81%9A%E5%90%88/image%204.png"><img style="width:336px" src="%E9%93%BE%E8%B7%AF%E8%81%9A%E5%90%88/image%204.png"/></a></figure><h4 id="3a5c41a4-0511-80dd-a9c5-e302fabd3296" class="" dir="auto">优点</h4><p id="3a5c41a4-0511-80e0-acf7-ef1f95bbe916" class="" dir="auto">将数据分成一个个包，根据哈希算法负载分担到各个链路上。</p><p id="3a5c41a4-0511-808a-bf61-ef44b8dd3494" class="" dir="auto">同一个流的数据包可以走不同的链路，使链路减少闲置，利用率增大。</p><h4 id="3a5c41a4-0511-800c-bfe8-efe08c806474" class="" dir="auto">缺点</h4><p id="3a5c41a4-0511-80bc-a637-fc4a76951502" class="" dir="auto">乱序</p><p id="3a5c41a4-0511-8080-a03b-fb5336d1b8b6" class="" dir="auto">不同链路的延迟不同，数据包到达设备的时间不同，导致乱序。</p><p id="3a5c41a4-0511-8024-a198-d762b1a49b33" class="" dir="auto">乱序导致误判丢包，数据重传。</p><aside class="block-color-gray_background callout" data-notion-callout="" data-notion-callout-icon="💡" data-notion-callout-background="gray_background" style="white-space:pre-wrap;display:flex" id="3a5c41a4-0511-808e-9f58-fd5537f441fb" dir="ltr"><div style="font-size:1.5em"><span class="icon" data-emoji="💡"></span></div><div style="width:100%"><p id="3a5c41a4-0511-80d8-a784-d8f0aaf4f06e" class="" dir="auto">数据流（flow）是指一组具有相同特征的数据包集合，这些数据包属于同一次通信</p><p id="3a5c41a4-0511-80da-9048-df5765911fdf" class="" dir="auto">五元组</p><p id="3a5c41a4-0511-8067-93c2-cfc6c27d731d" class="" dir="auto">源IP（SIP）<br/>目的IP（DIP）<br/>源端口（Sport）<br/>目的端口（Dport）<br/>协议（TCP/UDP）</p></div></aside><h3 id="3a5c41a4-0511-8082-bb1e-e53a4baea11c" class="" dir="auto">💟基于流的负载分担</h3><figure id="3a5c41a4-0511-801a-820f-eb81376c8067" class="image" data-notion-image="%E9%93%BE%E8%B7%AF%E8%81%9A%E5%90%88/image%205.png" dir="ltr"><a href="%E9%93%BE%E8%B7%AF%E8%81%9A%E5%90%88/image%205.png"><img style="width:336px" src="%E9%93%BE%E8%B7%AF%E8%81%9A%E5%90%88/image%205.png"/></a></figure><p id="3a5c41a4-0511-80d4-aedf-c6b99dc2b521" class="" dir="auto">计算机数据流会选择一条链路作为其流的传输，属于同一条流的数据包都从该链路转发。</p><h4 id="3a5c41a4-0511-8052-8ade-cfe7e952ff04" class="" dir="auto">优点</h4><p id="3a5c41a4-0511-8090-a592-e9d780c988af" class="" dir="auto">同一流 → 固定一条链路 → 延迟一致 → 顺序稳定</p><p id="3a5c41a4-0511-8095-898b-dfeef52e662f" class="" dir="auto">👉 TCP性能稳定，不会误判丢包</p><h4 id="3a5c41a4-0511-8058-b60a-eefa7ed6ad48" class="" dir="auto">缺点</h4><p id="3a5c41a4-0511-80dc-a32d-ca94f0122b81" class="" dir="auto">负载不均衡，有些链路会空闲。</p><h2 id="3a5c41a4-0511-8085-a795-ff47292778ca" class="" dir="auto">💯实验一：基本链路聚合拓扑</h2><figure id="3a5c41a4-0511-80a5-b765-e3e06d7d2cce" class="image" data-notion-image="%E9%93%BE%E8%B7%AF%E8%81%9A%E5%90%88/image%206.png" dir="ltr"><a href="%E9%93%BE%E8%B7%AF%E8%81%9A%E5%90%88/image%206.png"><img style="width:703.9874877929688px" src="%E9%93%BE%E8%B7%AF%E8%81%9A%E5%90%88/image%206.png"/></a></figure><p id="3a5c41a4-0511-80d2-8102-da409f6db180" class="" dir="auto">SW1和SW2之间是手工模式</p><p id="3a5c41a4-0511-80cd-bd31-fb67be2a072f" class="" dir="auto">配置命令：</p><p id="3a5c41a4-0511-80c3-9f0b-e9b167a98e52" class="" dir="auto">SW1</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-kotlin.min.js" integrity="sha512-nLUQ1JXk2Kj5a8FlfriL+WmiGbAq3W/dQirx3IlVfkpU7byrzLD19pJnYsG8vPTDvsRMpQDVSezvzkKUNcqUSw==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><pre id="3a5c41a4-0511-8019-83d4-e4523bb3890b" class="code code-wrap" data-notion-code-syntax="kotlin"><code class="language-kotlin" style="white-space:pre-wrap;word-break:break-all">&lt;Huawei&gt;undo terminal monitor
+
+[Huawei]system-view
+[Huawei]sysname SW1
+
+[SW1]interface Eth-Trunk 1
+[SW1-Eth-Trunk1]trunkport GigabitEthernet 0/0/4
+[SW1-Eth-Trunk1]trunkport GigabitEthernet 0/0/2
+[SW1-Eth-Trunk1]trunkport GigabitEthernet 0/0/3  //手动设置聚合组
+[SW1-Eth-Trunk1]least active-linknumber 1
+[SW1-Eth-Trunk1]port link-type trunk
+[SW1-Eth-Trunk1]port trunk allow-pass vlan all</code></pre><p id="3a5c41a4-0511-8074-b9ff-d53691cbe0b3" class="" dir="auto">SW2</p><pre id="3a5c41a4-0511-8071-99b2-ed96e5f92cd1" class="code code-wrap" data-notion-code-syntax="kotlin"><code class="language-kotlin" style="white-space:pre-wrap;word-break:break-all">&lt;Huawei&gt;undo terminal monitor
+
+&lt;Huawei&gt;system-view
+[Huawei]sysname SW2
+
+[SW2]interface Eth-Trunk 1
+[SW2-Eth-Trunk1]trunkport GigabitEthernet 0/0/4
+[SW2-Eth-Trunk1]trunkport GigabitEthernet 0/0/1
+[SW2-Eth-Trunk1]trunkport GigabitEthernet 0/0/3
+[SW2-Eth-Trunk1]least active-linknumber 1
+[SW2-Eth-Trunk1]port link-type trunk
+[SW2-Eth-Trunk1]port trunk allow-pass vlan all</code></pre><p id="3a5c41a4-0511-806b-8d67-c456c50d10c6" class="" dir="auto">手工模式如上，当然也可以设置<code>least active-linknumber 1</code> ，但是我在后面的LACP模式演示</p><p id="3a5c41a4-0511-8088-be52-cd32cf2f490e" class="" dir="auto">接着在SW2和SW3之间配置LACP模式</p><p id="3a5c41a4-0511-8064-967e-e02b3920b82d" class="" dir="auto">要求：SW2为主动端，修改其系统优先级，并且限制最大活动链路数量是2；然后修改接口优先级，尝试抢占功能。</p><p id="3a5c41a4-0511-80ae-a014-f6cac3e14b40" class="" dir="auto">SW2</p><pre id="3a5c41a4-0511-80e0-a810-eb4ebf2e9ba7" class="code code-wrap" data-notion-code-syntax="kotlin"><code class="language-kotlin" style="white-space:pre-wrap;word-break:break-all">[SW2]interface Eth-Trunk 2
+[SW2-Eth-Trunk2]mode lacp-static
+[SW2-Eth-Trunk2]trunkport GigabitEthernet 0/0/6
+[SW2-Eth-Trunk2]trunkport GigabitEthernet 0/0/5
+[SW2-Eth-Trunk2]trunkport GigabitEthernet 0/0/7
+[SW2-Eth-Trunk2]port link-type trunk
+[SW2-Eth-Trunk2]port trunk allow-pass vlan all
+[SW2-Eth-Trunk2]least active-linknumber 1
+[SW2-Eth-Trunk2]max active-linknumber 2
+
+[SW2]interface GigabitEthernet 0/0/7
+[SW2-GigabitEthernet0/0/7]lacp priority 1000    //测试抢占功能，修改活动链路
+
+[SW2]interface Eth-Trunk 2
+[SW2-Eth-Trunk2]lacp priority 1000    //系统优先级，做主动端
+[SW2-Eth-Trunk2]lacp preempt enable</code></pre><p id="3a5c41a4-0511-805d-b039-f5ba9986ad76" class="" dir="auto">SW3</p><pre id="3a5c41a4-0511-8061-a1f2-c50431b84b76" class="code code-wrap" data-notion-code-syntax="kotlin"><code class="language-kotlin" style="white-space:pre-wrap;word-break:break-all">&lt;Huawei&gt;undo terminal monitor
+
+&lt;Huawei&gt;system-view
+[Huawei]sysname SW3
+
+[SW3]interface Eth-Trunk 2
+[SW3-Eth-Trunk2]mode lacp-static
+[SW3-Eth-Trunk2]trunkport GigabitEthernet 0/0/6
+[SW3-Eth-Trunk2]trunkport GigabitEthernet 0/0/5
+[SW3-Eth-Trunk2]trunkport GigabitEthernet 0/0/7
+
+[SW3-Eth-Trunk2]port link-type trunk
+[SW3-Eth-Trunk2]port trunk allow-pass vlan all
+
+[SW3-Eth-Trunk2]lacp preempt enable</code></pre><p id="3a5c41a4-0511-8092-84ce-c073701d90a1" class="" dir="auto">没修改0/0/7的端口优先级时</p><pre id="3a5c41a4-0511-803f-9466-e1aec9dcd611" class="code code-wrap" data-notion-code-syntax="kotlin"><code class="language-kotlin" style="white-space:pre-wrap;word-break:break-all">[SW2]display eth-trunk 
+Eth-Trunk1&#x27;s state information is:
+WorkingMode: NORMAL         Hash arithmetic: According to SIP-XOR-DIP         
+Least Active-linknumber: 1  Max Bandwidth-affected-linknumber: 8              
+Operate status: up          Number Of Up Port In Trunk: 3                     
+--------------------------------------------------------------------------------
+PortName                      Status      Weight 
+GigabitEthernet0/0/4          Up          1      
+GigabitEthernet0/0/1          Up          1      
+GigabitEthernet0/0/3          Up          1      
+  
+Eth-Trunk2&#x27;s state information is:
+Local:
+LAG ID: 2                   WorkingMode: STATIC                               
+Preempt Delay: Disabled     Hash arithmetic: According to SIP-XOR-DIP         
+System Priority: 1000       System ID: 4c1f-cc0a-6d72                         
+Least Active-linknumber: 1  Max Active-linknumber: 2                          
+Operate status: up          Number Of Up Port In Trunk: 2                     
+--------------------------------------------------------------------------------
+ActorPortName          Status   PortType PortPri PortNo PortKey PortState Weight
+GigabitEthernet0/0/6   Selected 1GE      32768   7      561     10111100  1     
+GigabitEthernet0/0/5   Selected 1GE      32768   6      561     10111100  1     
+GigabitEthernet0/0/7   Unselect 1GE      32768   8      561     10100000  1     
+
+Partner:
+--------------------------------------------------------------------------------
+ActorPortName          SysPri   SystemID        PortPri PortNo PortKey PortState
+GigabitEthernet0/0/6   32768    4c1f-ccba-197c  32768   7      561     10111100
+GigabitEthernet0/0/5   32768    4c1f-ccba-197c  32768   6      561     10111100
+GigabitEthernet0/0/7   32768    4c1f-ccba-197c  32768   8      561     10110000
+</code></pre><p id="3a5c41a4-0511-80df-b0c7-c59dd370f8c6" class="" dir="auto">可知：<br/>ActorPortName          Status   PortType PortPri PortNo PortKey PortState Weight<br/>GigabitEthernet0/0/6   Selected 1GE      32768   7      561     10111100                 1     <br/>GigabitEthernet0/0/5   Selected 1GE      32768   6      561     10111100                 1     <br/>GigabitEthernet0/0/7   Unselect 1GE      32768   8      561     10100000               1    </p><p id="3a5c41a4-0511-805a-a98f-f02d3ed2fbd2" class="" dir="auto">由于<code>PortPri</code>都是默认的32768，所以要对比接口编号<code>PortNo</code> （端口号和接口编号成正比）</p><p id="3a5c41a4-0511-8079-bf5b-d1dff760eb26" class="" dir="auto">修改优先级之后，并且允许抢占输出：</p><pre id="3a5c41a4-0511-806f-9b9c-c52fcf30ff1c" class="code code-wrap" data-notion-code-syntax="kotlin"><code class="language-kotlin" style="white-space:pre-wrap;word-break:break-all">[SW2-Eth-Trunk2]lacp preempt enable 
+[SW2-Eth-Trunk2]quit
+[SW2]display eth-trunk 
+Eth-Trunk1&#x27;s state information is:
+WorkingMode: NORMAL         Hash arithmetic: According to SIP-XOR-DIP         
+Least Active-linknumber: 1  Max Bandwidth-affected-linknumber: 8              
+Operate status: up          Number Of Up Port In Trunk: 3                     
+--------------------------------------------------------------------------------
+PortName                      Status      Weight 
+GigabitEthernet0/0/4          Up          1      
+GigabitEthernet0/0/1          Up          1      
+GigabitEthernet0/0/3          Up          1      
+  
+Eth-Trunk2&#x27;s state information is:
+Local:
+LAG ID: 2                   WorkingMode: STATIC                               
+Preempt Delay Time: 30      Hash arithmetic: According to SIP-XOR-DIP         
+System Priority: 1000       System ID: 4c1f-cc0a-6d72                         
+Least Active-linknumber: 1  Max Active-linknumber: 2                          
+Operate status: up          Number Of Up Port In Trunk: 2                     
+--------------------------------------------------------------------------------
+ActorPortName          Status   PortType PortPri PortNo PortKey PortState Weight
+GigabitEthernet0/0/6   Unselect 1GE      32768   7      561     10100000  1     
+GigabitEthernet0/0/5   Selected 1GE      32768   6      561     10111100  1     
+GigabitEthernet0/0/7   Selected 1GE      1000    8      561     10111100  1     
+
+Partner:
+--------------------------------------------------------------------------------
+ActorPortName          SysPri   SystemID        PortPri PortNo PortKey PortState
+GigabitEthernet0/0/6   32768    4c1f-ccba-197c  32768   7      561     10110000
+GigabitEthernet0/0/5   32768    4c1f-ccba-197c  32768   6      561     10111100
+GigabitEthernet0/0/7   32768    4c1f-ccba-197c  32768   8      561     10111100
+</code></pre><p id="3a5c41a4-0511-804d-bae1-e378b629507d" class="" dir="auto">开启抢占功能：<code>lacp preempt enable </code> （ETH-trunk视图）</p><p id="3a5c41a4-0511-8087-ac4b-f4e9e4d03fe3" class="" dir="auto">设置最大活动链路数：<code>max active-linknumber 2</code></p><table id="3a5c41a4-0511-80fe-88e9-ebacdb45f1be" class="simple-table" dir="ltr"><thead class="simple-table-header"><tr id="3a5c41a4-0511-800d-8d66-e0acb1e95089" dir="ltr"><th id="~@Pm" class="simple-table-header-color simple-table-header">配置项</th><th id="yCZg" class="simple-table-header-color simple-table-header">是否必须两端</th></tr></thead><tbody><tr id="3a5c41a4-0511-8026-b2f1-c143bae06874" dir="ltr"><td id="~@Pm" class="">mode lacp-static</td><td id="yCZg" class="">✔ 必须</td></tr><tr id="3a5c41a4-0511-8060-b508-c6492620448d" dir="ltr"><td id="~@Pm" class="">接口加入聚合</td><td id="yCZg" class="">✔ 必须</td></tr><tr id="3a5c41a4-0511-80ac-b123-e91b1366a66d" dir="ltr"><td id="~@Pm" class="">VLAN/速率等参数</td><td id="yCZg" class="">✔ 必须</td></tr><tr id="3a5c41a4-0511-8027-b7dd-c684bc45647b" dir="ltr"><td id="~@Pm" class="">lacp priority（系统）</td><td id="yCZg" class="">✘ 单端可</td></tr><tr id="3a5c41a4-0511-801c-bf52-c786dec9846a" dir="ltr"><td id="~@Pm" class="">lacp priority（接口）</td><td id="yCZg" class="">✘ 单端可</td></tr><tr id="3a5c41a4-0511-80af-823f-c0ff1bb68347" dir="ltr"><td id="~@Pm" class="">max active-linknumber</td><td id="yCZg" class="">✘ 单端可</td></tr></tbody></table><h2 id="3a5c41a4-0511-80e6-bee1-f0f9dd02e808" class="" dir="auto">😷链路聚合之综合拓扑</h2><figure id="3a5c41a4-0511-802e-b94b-eae11a1609de" class="image" data-notion-image="%E9%93%BE%E8%B7%AF%E8%81%9A%E5%90%88/image%207.png" dir="ltr"><a href="%E9%93%BE%E8%B7%AF%E8%81%9A%E5%90%88/image%207.png"><img style="width:703.9874877929688px" src="%E9%93%BE%E8%B7%AF%E8%81%9A%E5%90%88/image%207.png"/></a></figure><p id="3a5c41a4-0511-80be-ba21-e0b75f0db8ca" class="" dir="auto"><strong>思路：</strong></p><p id="3a5c41a4-0511-808e-a3cd-e9e6ec49174a" class="" dir="auto">1）配置终端基本信息</p><p id="3a5c41a4-0511-8040-8043-d326e0733d90" class="" dir="auto">2）配置SW3、SW4、SW5、SW6交换机，和终端连接用access。</p><p id="3a5c41a4-0511-80a4-85fe-c4394ad61269" class="" dir="auto">然后再交换机之间配置手动模式的链路聚合，以及trunk的配置。</p><p id="3a5c41a4-0511-8041-8ce6-e5520be81a3f" class="" dir="auto">3）配置SW1和SW2，配置和下面四个交换机的对应的聚合命令以及trunk命令</p><p id="3a5c41a4-0511-80cb-acab-d608ec859442" class="" dir="auto">4）配置SW1和SW2之间的LACP聚合。</p><p id="3a5c41a4-0511-8040-869b-e5ec2746ec4f" class="" dir="auto"><strong>配置命令：</strong></p><p id="3a5c41a4-0511-80b9-a433-fccd382a6341" class="" dir="auto">SW3</p><pre id="3a5c41a4-0511-8041-929d-ec56f0a3af5c" class="code code-wrap" data-notion-code-syntax="kotlin"><code class="language-kotlin" style="white-space:pre-wrap;word-break:break-all">system-view
+sysname SW3
+
+vlan 10
+quit
+
+interface GigabitEthernet 0/0/3
+ port link-type access
+ port default vlan 10
+quit
+
+interface Eth-Trunk 1
+ mode manual load-balance
+ trunkport GigabitEthernet 0/0/1
+ trunkport GigabitEthernet 0/0/2
+ port link-type trunk
+ port trunk allow-pass vlan 10
+quit</code></pre><p id="3a5c41a4-0511-8099-a7dc-f6e4968fe1e1" class="" dir="auto">SW4</p><pre id="3a5c41a4-0511-8028-b136-d676733399ab" class="code code-wrap" data-notion-code-syntax="kotlin"><code class="language-kotlin" style="white-space:pre-wrap;word-break:break-all">system-view
+sysname SW4
+
+vlan 20
+quit
+
+interface Eth-Trunk 2
+ mode manual load-balance
+ trunkport GigabitEthernet 0/0/3
+ trunkport GigabitEthernet 0/0/4
+ port link-type trunk
+ port trunk allow-pass vlan 20
+quit
+
+interface GigabitEthernet 0/0/1
+ port link-type access
+ port default vlan 20
+quit
+</code></pre><p id="3a5c41a4-0511-8046-8774-c18a19a445ee" class="" dir="auto">SW1</p><pre id="3a5c41a4-0511-8063-8329-f6b221a2aa20" class="code code-wrap" data-notion-code-syntax="kotlin"><code class="language-kotlin" style="white-space:pre-wrap;word-break:break-all">system-view
+sysname SW1
+
+vlan batch 10 20
+
+interface Eth-Trunk 1
+ mode manual load-balance
+ trunkport GigabitEthernet 0/0/1
+ trunkport GigabitEthernet 0/0/2
+ port link-type trunk
+ port trunk allow-pass vlan 10
+quit
+
+interface Eth-Trunk 2
+ mode manual load-balance
+ trunkport GigabitEthernet 0/0/3
+ trunkport GigabitEthernet 0/0/4
+ port link-type trunk
+ port trunk allow-pass vlan 10 
+ least active-linknumber 1
+quit
+
+interface Eth-Trunk 3
+ mode lacp-static
+ trunkport GigabitEthernet 0/0/6
+ trunkport GigabitEthernet 0/0/7
+ trunkport GigabitEthernet 0/0/8
+ port link-type trunk
+ port trunk allow-pass vlan 10 20
+ least active-linknumber 1
+ max active-linknumber 2    //允许存在活动链路的最大数量
+ lacp preempt enable        //允许抢占
+quit
+
+lacp priority 1000           //系统优先级，指定为主动端</code></pre><p id="3a5c41a4-0511-8032-bef2-e50deff2a5ef" class="" dir="auto">SW5</p><pre id="3a5c41a4-0511-80af-aaa4-de6cf6b42558" class="code code-wrap" data-notion-code-syntax="kotlin"><code class="language-kotlin" style="white-space:pre-wrap;word-break:break-all">system-view
+sysname SW5
+
+vlan 20
+quit
+
+interface GigabitEthernet 0/0/1
+ port link-type access
+ port default vlan 20
+quit
+
+interface Eth-Trunk 2
+ trunkport GigabitEthernet 0/0/4
+ trunkport GigabitEthernet 0/0/5
+ port link-type trunk
+ port trunk allow-pass vlan 20
+quit</code></pre><p id="3a5c41a4-0511-807e-b618-f6c866b54ae5" class="" dir="auto">SW6</p><pre id="3a5c41a4-0511-803b-a0ba-ec55de070d15" class="code code-wrap" data-notion-code-syntax="kotlin"><code class="language-kotlin" style="white-space:pre-wrap;word-break:break-all">system-view
+sysname SW6
+
+vlan 10
+quit
+
+interface GigabitEthernet 0/0/1
+ port link-type access
+ port default vlan 10
+quit
+
+interface Eth-Trunk 1
+ mode manual load-balance
+ trunkport GigabitEthernet 0/0/2
+ trunkport GigabitEthernet 0/0/3
+ port link-type trunk
+ port trunk allow-pass vlan 10
+quit</code></pre><p id="3a5c41a4-0511-80f5-8803-e90173336985" class="" dir="auto">SW2</p><pre id="3a5c41a4-0511-8000-9a74-c0ee55f62091" class="code code-wrap" data-notion-code-syntax="kotlin"><code class="language-kotlin" style="white-space:pre-wrap;word-break:break-all">system-view
+sysname SW2
+
+vlan batch 10 20
+
+interface Eth-Trunk 3
+ mode lacp-static
+ trunkport GigabitEthernet 0/0/6
+ trunkport GigabitEthernet 0/0/7
+ trunkport GigabitEthernet 0/0/8
+ port link-type trunk
+ port trunk allow-pass vlan 10 20
+quit
+
+interface Eth-Trunk 2
+ trunkport GigabitEthernet 0/0/5
+ trunkport GigabitEthernet 0/0/4
+ port link-type trunk
+ port trunk allow-pass vlan 20
+quit
+
+interface Eth-Trunk 1
+ mode manual load-balance
+ trunkport GigabitEthernet 0/0/3
+ trunkport GigabitEthernet 0/0/2
+ port link-type trunk
+ port trunk allow-pass vlan 10
+quit</code></pre><h4 id="3a5c41a4-0511-8088-8bdc-f701dee13457" class="" dir="auto"><strong>总结：</strong></h4><p id="3a5c41a4-0511-80d6-8547-feb6342cd6bc" class="" dir="auto"><strong>出现的错误：</strong><br/>配好后发现ping不通，利用抓包判断了是SW2没有配置trunk的allow vlan20。</p><p id="3a5c41a4-0511-8063-b81b-db22bb1cdb63" class="" dir="auto"><strong>知识总结：</strong></p><ul id="3a5c41a4-0511-80fa-a810-c44499f6edd8" class="bulleted-list" dir="auto"><li style="list-style-type:disc"><strong>手工模式（manual）</strong><ul id="3a5c41a4-0511-80c1-84c2-c7663cde863c" class="bulleted-list" dir="auto"><li style="list-style-type:circle">不依赖协议</li></ul><ul id="3a5c41a4-0511-803b-a36b-c60b3ca4e453" class="bulleted-list" dir="auto"><li style="list-style-type:circle">所有成员链路默认参与转发</li></ul><ul id="3a5c41a4-0511-80de-8d1d-f07bd2443890" class="bulleted-list" dir="auto"><li style="list-style-type:circle">无协商能力，配置必须完全一致</li></ul></li></ul><ul id="3a5c41a4-0511-8092-afde-dfeb6836eb77" class="bulleted-list" dir="auto"><li style="list-style-type:disc"><strong>LACP模式（lacp-static）</strong><ul id="3a5c41a4-0511-80d9-a395-dffcb9883f4e" class="bulleted-list" dir="auto"><li style="list-style-type:circle">通过LACP协议自动协商</li></ul><ul id="3a5c41a4-0511-805b-be90-dd9991895591" class="bulleted-list" dir="auto"><li style="list-style-type:circle">支持链路优先级、最大活动链路数控制</li></ul><ul id="3a5c41a4-0511-8068-9659-e7b6a1b111ae" class="bulleted-list" dir="auto"><li style="list-style-type:circle">支持故障切换与抢占</li></ul></li></ul><h2 id="3a5c41a4-0511-8048-8cf6-d077d1e22bb5" class="" dir="auto">周末实验</h2><figure id="3a5c41a4-0511-8005-b99a-e076794f8f80" class="image" data-notion-image="%E9%93%BE%E8%B7%AF%E8%81%9A%E5%90%88/image%208.png" dir="ltr"><a href="%E9%93%BE%E8%B7%AF%E8%81%9A%E5%90%88/image%208.png"><img style="width:703.9874877929688px" src="%E9%93%BE%E8%B7%AF%E8%81%9A%E5%90%88/image%208.png"/></a></figure><p id="3a5c41a4-0511-8076-91a3-ead030262f87" class="" dir="auto">配置思路：<br/>总公司：SW4、SW5、SW6、SW7，连接终端用access接口，连接聚合交换机用链路聚合接口trunk，其中两个聚合交换机之间用lacp模式，其他用手工模式。聚合交换机SW2和SW3连接DHCP服务器用trunk，并且只允许vlan66。</p><p id="3a5c41a4-0511-80ac-96ad-c1deab0a7381" class="" dir="auto">NAT设备用acl2000</p><p id="3a5c41a4-0511-80a4-b123-dd1cbca4eaa0" class="" dir="auto">网关为SW2和SW3，因为DHCP报文需要和网关交流，所以在DHCP服务器、SW2、SW3需要配置</p><p id="3a5c41a4-0511-80a0-9a6e-f7db542131f3" class="" dir="auto">instance 1 valn 10 20     insrance 2 vlan 30 40   instance 3 vlan 66（否则DHCP服务器和SW2、SW3之间的链路，vlan66的报文会属于实例0，且之间是阻断的。）</p><p id="3a5c41a4-0511-8002-a8e0-f9f61c8dad19" class="" dir="auto">分公司：接入层交换机连接终端和聚合交换机都用aceess。</p><p id="3a5c41a4-0511-8019-a770-eedcf8123b5b" class="" dir="auto">SW4</p><pre id="3a5c41a4-0511-80e3-912c-d8c22035b8d7" class="code code-wrap" data-notion-code-syntax="kotlin"><code class="language-kotlin" style="white-space:pre-wrap;word-break:break-all">[Huawei] undo terminal monitor
+[Huawei] system-view
+Enter system view, return user view with Ctrl+Z.
+
+[SW4] sysname SW4
+
+# VLAN 配置视图
+[SW4] vlan 10
+[SW4-vlan10] quit  # 退出 VLAN 配置视图，返回全局视图
+
+# 配置接口 GigabitEthernet 0/0/1
+[SW4] interface GigabitEthernet 0/0/1
+[SW4-GigabitEthernet0/0/1] port link-type access  # 设置接口为 Access 模式
+[SW4-GigabitEthernet0/0/1] port default vlan 10  # 设置默认 VLAN 为 VLAN 10
+[SW4-GigabitEthernet0/0/1] quit  # 退出接口配置视图，返回全局视图
+
+# 配置 Eth-Trunk 1
+[SW4] interface Eth-Trunk 1
+[SW4-Eth-Trunk1] mode manual load-balance  # 设置手工负载均衡模式
+[SW4-Eth-Trunk1] trunkport GigabitEthernet 0/0/2  # 添加端口到 Eth-Trunk
+[SW4-Eth-Trunk1] trunkport GigabitEthernet 0/0/3  # 添加端口到 Eth-Trunk
+[SW4-Eth-Trunk1] port link-type trunk  # 设置为 trunk 模式
+[SW4-Eth-Trunk1] port trunk allow-pass vlan 10  # 允许通过 VLAN 10
+[SW4-Eth-Trunk1] quit  # 退出 Eth-Trunk 配置视图，返回全局视图
+
+# 配置 Eth-Trunk 4
+[SW4] interface Eth-Trunk 4
+[SW4-Eth-Trunk4] mode manual load-balance  # 设置手工负载均衡模式
+[SW4-Eth-Trunk4] trunkport GigabitEthernet 0/0/4  # 添加端口到 Eth-Trunk
+[SW4-Eth-Trunk4] trunkport GigabitEthernet 0/0/5  # 添加端口到 Eth-Trunk
+[SW4-Eth-Trunk4] port link-type trunk  # 设置为 trunk 模式
+[SW4-Eth-Trunk4] port trunk allow-pass vlan 10  # 允许通过 VLAN 10
+[SW4-Eth-Trunk4] quit  # 退出 Eth-Trunk 配置视图，返回全局视图
+
+# 配置接口 GigabitEthernet 0/0/1 启用 STP 边缘端口
+[SW4] interface GigabitEthernet 0/0/1
+[SW4-GigabitEthernet0/0/1] stp edged-port enable  # 启用 STP 边缘端口
+[SW4-GigabitEthernet0/0/1] quit  # 退出接口视图，返回全局视图
+
+# 启用全局 STP
+[SW4] stp enable  # 启用 STP
+
+# 配置 MSTP 区域和实例
+[SW4] stp region-configuration
+[SW4-mst-region] region-name xf  # 设置 MSTP 区域名称
+[SW4-mst-region] instance 1 vlan 10 20  # 将 VLAN 10 和 20 映射到实例 1
+[SW4-mst-region] instance 2 vlan 30 40  # 将 VLAN 30 和 40 映射到实例 2
+[SW4-mst-region] active region-configuration  # 激活区域配置
+[SW4-mst-region] quit  # 退出 MSTP 区域配置视图，返回全局视图
+
+# 配置 DHCP Snooping
+[SW4] dhcp enable  # 启用 DHCP 服务
+[SW4] dhcp snooping enable  # 启用 DHCP Snooping
+[SW4] dhcp snooping enable vlan 10  # 启用 VLAN 10 上的 DHCP Snooping
+
+# 启用 STP BPDU 保护
+[SW4] stp bpdu-protection   # 启用 BPDU system-view
+</code></pre><p id="3a5c41a4-0511-80d7-bf50-ed24312b8a07" class="" dir="auto">SW5</p><pre id="3a5c41a4-0511-807d-bf11-dccd19ecbdc8" class="code code-wrap" data-notion-code-syntax="kotlin"><code class="language-kotlin" style="white-space:pre-wrap;word-break:break-all">[Huawei] undo terminal monitor
+[Huawei] system-view
+Enter system view, return user view with Ctrl+Z.
+
+[SW5] sysname SW5
+
+# 配置 VLAN 视图
+[SW5] vlan 20
+[SW5-vlan20] quit  # 退出 VLAN 配置视图，返回全局视图
+
+# 配置接口 GigabitEthernet 0/0/1
+[SW5] interface GigabitEthernet 0/0/1
+[SW5-GigabitEthernet0/0/1] port link-type access  # 设置接口为 Access 模式
+[SW5-GigabitEthernet0/0/1] port default vlan 20  # 设置默认 VLAN 为 VLAN 20
+[SW5-GigabitEthernet0/0/1] quit  # 退出接口配置视图，返回全局视图
+
+# 配置 Eth-Trunk 2
+[SW5] interface Eth-Trunk 2
+[SW5-Eth-Trunk2] mode manual load-balance  # 设置手工负载均衡模式
+[SW5-Eth-Trunk2] trunkport GigabitEthernet 0/0/2  # 添加端口到 Eth-Trunk
+[SW5-Eth-Trunk2] trunkport GigabitEthernet 0/0/3  # 添加端口到 Eth-Trunk
+[SW5-Eth-Trunk2] port link-type trunk  # 设置为 trunk 模式
+[SW5-Eth-Trunk2] port trunk allow-pass vlan 20  # 允许通过 VLAN 20
+[SW5-Eth-Trunk2] quit  # 退出 Eth-Trunk 配置视图，返回全局视图
+
+# 配置 Eth-Trunk 3
+[SW5] interface Eth-Trunk 3
+[SW5-Eth-Trunk3] mode manual load-balance  # 设置手工负载均衡模式
+[SW5-Eth-Trunk3] trunkport GigabitEthernet 0/0/4  # 添加端口到 Eth-Trunk
+[SW5-Eth-Trunk3] trunkport GigabitEthernet 0/0/5  # 添加端口到 Eth-Trunk
+[SW5-Eth-Trunk3] port link-type trunk  # 设置为 trunk 模式
+[SW5-Eth-Trunk3] port trunk allow-pass vlan 20  # 允许通过 VLAN 20
+[SW5-Eth-Trunk3] quit  # 退出 Eth-Trunk 配置视图，返回全局视图
+
+# 配置接口 GigabitEthernet 0/0/1 启用 STP 边缘端口
+[SW5] interface GigabitEthernet 0/0/1
+[SW5-GigabitEthernet0/0/1] stp edged-port enable  # 启用 STP 边缘端口
+[SW5-GigabitEthernet0/0/1] quit  # 退出接口视图，返回全局视图
+
+# 启用全局 STP
+[SW5] stp enable  # 启用 STP
+
+# 配置 MSTP 区域和实例
+[SW5] stp region-configuration
+[SW5-mst-region] region-name xf  # 设置 MSTP 区域名称
+[SW5-mst-region] instance 1 vlan 10 20  # 将 VLAN 10 和 20 映射到实例 1
+[SW5-mst-region] instance 2 vlan 30 40  # 将 VLAN 30 和 40 映射到实例 2
+[SW5-mst-region] active region-configuration  # 激活区域配置
+[SW5-mst-region] quit  # 退出 MSTP 区域配置视图，返回全局视图
+
+# 配置 DHCP Snooping
+[SW5] dhcp enable  # 启用 DHCP 服务
+[SW5] dhcp snooping enable  # 启用 DHCP Snooping
+[SW5] dhcp snooping enable vlan 20  # 启用 VLAN 20 上的 DHCP Snooping
+
+# 启用 STP BPDU 保护
+[SW5] stp bpdu-protection  # 启用 BPDU 保护</code></pre><p id="3a5c41a4-0511-80e5-9578-de828cd9dad5" class="" dir="auto">SW6</p><pre id="3a5c41a4-0511-806a-bf8d-e85200d3ab5b" class="code code-wrap" data-notion-code-syntax="kotlin"><code class="language-kotlin" style="white-space:pre-wrap;word-break:break-all">[Huawei] undo terminal monitor
+[Huawei] system-view
+Enter system view, return user view with Ctrl+Z.
+
+[SW6] sysname SW6
+
+# 配置 VLAN 视图
+[SW6] vlan 30
+[SW6-vlan30] quit  # 退出 VLAN 配置视图，返回全局视图
+
+# 配置接口 GigabitEthernet 0/0/1
+[SW6] interface GigabitEthernet 0/0/1
+[SW6-GigabitEthernet0/0/1] port link-type access  # 设置接口为 Access 模式
+[SW6-GigabitEthernet0/0/1] port default vlan 30  # 设置默认 VLAN 为 VLAN 30
+[SW6-GigabitEthernet0/0/1] stp edged-port enable  # 启用 STP 边缘端口
+[SW6-GigabitEthernet0/0/1] quit  # 退出接口配置视图，返回全局视图
+
+# 配置 Eth-Trunk 3
+[SW6] interface Eth-Trunk 3
+[SW6-Eth-Trunk3] mode manual load-balance  # 设置手工负载均衡模式
+[SW6-Eth-Trunk3] trunkport GigabitEthernet 0/0/2  # 添加端口到 Eth-Trunk
+[SW6-Eth-Trunk3] trunkport GigabitEthernet 0/0/3  # 添加端口到 Eth-Trunk
+[SW6-Eth-Trunk3] port link-type trunk  # 设置为 trunk 模式
+[SW6-Eth-Trunk3] port trunk allow-pass vlan 30  # 允许通过 VLAN 30
+[SW6-Eth-Trunk3] quit  # 退出 Eth-Trunk 配置视图，返回全局视图
+
+# 配置 Eth-Trunk 2
+[SW6] interface Eth-Trunk 2
+[SW6-Eth-Trunk2] mode manual load-balance  # 设置手工负载均衡模式
+[SW6-Eth-Trunk2] trunkport GigabitEthernet 0/0/4  # 添加端口到 Eth-Trunk
+[SW6-Eth-Trunk2] trunkport GigabitEthernet 0/0/5  # 添加端口到 Eth-Trunk
+[SW6-Eth-Trunk2] port link-type trunk  # 设置为 trunk 模式
+[SW6-Eth-Trunk2] port trunk allow-pass vlan 30  # 允许通过 VLAN 30
+[SW6-Eth-Trunk2] quit  # 退出 Eth-Trunk 配置视图，返回全局视图
+
+# 配置 STP 区域
+[SW6] stp region-configuration
+[SW6-mst-region] region-name xf  # 设置 MSTP 区域名称
+[SW6-mst-region] instance 1 vlan 10 20  # 将 VLAN 10 和 20 映射到实例 1
+[SW6-mst-region] instance 2 vlan 30 40  # 将 VLAN 30 和 40 映射到实例 2
+[SW6-mst-region] active region-configuration  # 激活区域配置
+[SW6-mst-region] quit  # 退出 MSTP 区域配置视图，返回全局视图
+
+# 启用全局 STP
+[SW6] stp enable  # 启用 STP
+
+# 配置 DHCP Snooping
+[SW6] dhcp enable  # 启用 DHCP 服务
+[SW6] dhcp snooping enable  # 启用 DHCP Snooping
+[SW6] dhcp snooping enable vlan 30  # 启用 VLAN 30 上的 DHCP Snooping
+
+# 启用 STP BPDU 保护
+[SW6] stp bpdu-protection   # 启用 BPDU 保护</code></pre><p id="3a5c41a4-0511-805a-b9f9-e9edbf0d1f6c" class="" dir="auto">SW7</p><pre id="3a5c41a4-0511-80b0-84b0-e67f3cdcf46e" class="code code-wrap" data-notion-code-syntax="kotlin"><code class="language-kotlin" style="white-space:pre-wrap;word-break:break-all">[Huawei] undo terminal monitor
+[Huawei] system-view
+Enter system view, return user view with Ctrl+Z.
+
+[SW7] sysname SW7
+
+# 配置 VLAN 视图
+[SW7] vlan 40
+[SW7-vlan40] quit  # 退出 VLAN 配置视图，返回全局视图
+
+# 配置接口 GigabitEthernet 0/0/1
+[SW7] interface GigabitEthernet 0/0/1
+[SW7-GigabitEthernet0/0/1] port link-type access  # 设置接口为 Access 模式
+[SW7-GigabitEthernet0/0/1] port default vlan 40  # 设置默认 VLAN 为 VLAN 40
+[SW7-GigabitEthernet0/0/1] stp edged-port enable  # 启用 STP 边缘端口
+[SW7-GigabitEthernet0/0/1] quit  # 退出接口配置视图，返回全局视图
+
+# 配置 Eth-Trunk 1
+[SW7] interface Eth-Trunk 1
+[SW7-Eth-Trunk1] mode manual load-balance  # 设置手工负载均衡模式
+[SW7-Eth-Trunk1] trunkport GigabitEthernet 0/0/4  # 添加端口到 Eth-Trunk
+[SW7-Eth-Trunk1] trunkport GigabitEthernet 0/0/5  # 添加端口到 Eth-Trunk
+[SW7-Eth-Trunk1] port link-type trunk  # 设置为 trunk 模式
+[SW7-Eth-Trunk1] port trunk allow-pass vlan 40  # 允许通过 VLAN 40
+[SW7-Eth-Trunk1] quit  # 退出 Eth-Trunk 配置视图，返回全局视图
+
+# 配置 Eth-Trunk 4
+[SW7] interface Eth-Trunk 4
+[SW7-Eth-Trunk4] mode manual load-balance  # 设置手工负载均衡模式
+[SW7-Eth-Trunk4] trunkport GigabitEthernet 0/0/2  # 添加端口到 Eth-Trunk
+[SW7-Eth-Trunk4] trunkport GigabitEthernet 0/0/3  # 添加端口到 Eth-Trunk
+[SW7-Eth-Trunk4] port link-type trunk  # 设置为 trunk 模式
+[SW7-Eth-Trunk4] port trunk allow-pass vlan 40  # 允许通过 VLAN 40
+[SW7-Eth-Trunk4] quit  # 退出 Eth-Trunk 配置视图，返回全局视图
+
+# 配置 STP 区域
+[SW7] stp region-configuration
+[SW7-mst-region] region-name xf  # 设置 MSTP 区域名称
+[SW7-mst-region] instance 1 vlan 10 20  # 将 VLAN 10 和 20 映射到实例 1
+[SW7-mst-region] instance 2 vlan 30 40  # 将 VLAN 30 和 40 映射到实例 2
+[SW7-mst-region] active region-configuration  # 激活区域配置
+[SW7-mst-region] quit  # 退出 MSTP 区域配置视图，返回全局视图
+
+# 启用全局 STP
+[SW7] stp enable  # 启用 STP
+
+# 配置 DHCP Snooping
+[SW7] dhcp enable  # 启用 DHCP 服务
+[SW7] dhcp snooping enable  # 启用 DHCP Snooping
+[SW7] dhcp snooping enable vlan 40  # 启用 VLAN 40 上的 DHCP Snooping
+
+# 启用 STP BPDU 保护
+[SW7] stp bpdu-protection # 启用 BPDU 保护</code></pre><p id="3a5c41a4-0511-8020-9e72-d4456645abb9" class="" dir="auto">SW2</p><pre id="3a5c41a4-0511-80f4-a5fe-f08838b179fa" class="code code-wrap" data-notion-code-syntax="kotlin"><code class="language-kotlin" style="white-space:pre-wrap;word-break:break-all">&lt;SW2&gt;system-view
+[SW2]sysname SW2
+[SW2]vlan batch 10 20 30 40 66
+[SW2]stp enable
+[SW2]dhcp enable
+[SW2]lacp priority 1000
+[SW2]interface GigabitEthernet 0/0/9
+[SW2-GigabitEthernet0/0/9]port link-type trunk
+[SW2-GigabitEthernet0/0/9]port trunk allow-pass vlan 66
+[SW2-GigabitEthernet0/0/9]dhcp snooping trusted
+[SW2-GigabitEthernet0/0/9]quit
+[SW2]interface Eth-Trunk 1
+[SW2-Eth-Trunk1]mode manual load-balance
+[SW2-Eth-Trunk1]trunkport GigabitEthernet 0/0/1
+[SW2-Eth-Trunk1]trunkport GigabitEthernet 0/0/2
+[SW2-Eth-Trunk1]port link-type trunk
+[SW2-Eth-Trunk1]port trunk allow-pass vlan 10
+[SW2-Eth-Trunk1]quit
+[SW2]interface Eth-Trunk 2
+[SW2-Eth-Trunk2]mode manual load-balance
+[SW2-Eth-Trunk2]trunkport GigabitEthernet 0/0/3
+[SW2-Eth-Trunk2]trunkport GigabitEthernet 0/0/4
+[SW2-Eth-Trunk2]port link-type trunk
+[SW2-Eth-Trunk2]port trunk allow-pass vlan 20
+[SW2-Eth-Trunk2]quit
+[SW2]interface Eth-Trunk 3
+[SW2-Eth-Trunk3]mode manual load-balance
+[SW2-Eth-Trunk3]trunkport GigabitEthernet 0/0/5
+[SW2-Eth-Trunk3]trunkport GigabitEthernet 0/0/6
+[SW2-Eth-Trunk3]port link-type trunk
+[SW2-Eth-Trunk3]port trunk allow-pass vlan 30
+[SW2-Eth-Trunk3]quit
+[SW2]interface Eth-Trunk 4
+[SW2-Eth-Trunk4]mode manual load-balance
+[SW2-Eth-Trunk4]trunkport GigabitEthernet 0/0/7
+[SW2-Eth-Trunk4]trunkport GigabitEthernet 0/0/8
+[SW2-Eth-Trunk4]port link-type trunk
+[SW2-Eth-Trunk4]port trunk allow-pass vlan 40
+[SW2-Eth-Trunk4]quit
+[SW2]interface Eth-Trunk 5
+[SW2-Eth-Trunk5]mode lacp-static
+[SW2-Eth-Trunk5]trunkport GigabitEthernet 0/0/10
+[SW2-Eth-Trunk5]trunkport GigabitEthernet 0/0/11
+[SW2-Eth-Trunk5]port link-type trunk
+[SW2-Eth-Trunk5]port trunk allow-pass vlan all
+[SW2-Eth-Trunk5]quit
+[SW2]stp region-configuration
+[SW2-mst-region]region-name xf
+[SW2-mst-region]instance 1 vlan 10 20
+[SW2-mst-region]instance 2 vlan 30 40
+[SW2-mst-region]active region-configuration
+[SW2-mst-region]quit
+[SW2]stp instance 1 root primary
+[SW2]stp instance 2 root secondary
+[SW2]interface Vlanif 66
+[SW2-Vlanif66]ip address 192.168.66.253 24
+[SW2-Vlanif66]quit
+[SW2]interface Vlanif 10
+[SW2-Vlanif10]ip address 192.168.10.253 24
+[SW2-Vlanif10]vrrp vrid 1 virtual-ip 192.168.10.254
+[SW2-Vlanif10]vrrp vrid 1 priority 200
+[SW2-Vlanif10]dhcp select relay
+[SW2-Vlanif10]dhcp relay server-ip 192.168.66.1
+[SW2-Vlanif10]quit
+[SW2]interface Vlanif 20
+[SW2-Vlanif20]ip address 192.168.20.253 24
+[SW2-Vlanif20]vrrp vrid 2 virtual-ip 192.168.20.254
+[SW2-Vlanif20]vrrp vrid 2 priority 200
+[SW2-Vlanif20]dhcp select relay
+[SW2-Vlanif20]dhcp relay server-ip 192.168.66.1
+[SW2-Vlanif20]quit
+[SW2]interface Vlanif 30
+[SW2-Vlanif30]ip address 192.168.30.253 24
+[SW2-Vlanif30]vrrp vrid 3 virtual-ip 192.168.30.254
+[SW2-Vlanif30]dhcp select relay
+[SW2-Vlanif30]dhcp relay server-ip 192.168.66.1
+[SW2-Vlanif30]quit
+[SW2]interface Vlanif 40
+[SW2-Vlanif40]ip address 192.168.40.253 24
+[SW2-Vlanif40]vrrp vrid 4 virtual-ip 192.168.40.254
+[SW2-Vlanif40]dhcp select relay
+[SW2-Vlanif40]dhcp relay server-ip 192.168.66.1
+[SW2-Vlanif40]quit
+[SW2]ip route-static 0.0.0.0 0 192.168.66.1
+[SW2]stp region-configuration
+[SW2-mst-region]region-name xf
+[SW2-mst-region]instance 3 vlan 66
+[SW2-mst-region]active region-configuration
+[SW2-mst-region]quit
+[SW2]dhcp snooping enable
+[SW2]dhcp snooping enable vlan 10 20 30 40 66
+</code></pre><p id="3a5c41a4-0511-80bc-bf2d-f57183f2f95e" class="" dir="auto">SW3</p><pre id="3a5c41a4-0511-80d7-a127-f70d0566e393" class="code code-wrap" data-notion-code-syntax="kotlin"><code class="language-kotlin" style="white-space:pre-wrap;word-break:break-all">&lt;SW3&gt;system-view
+[SW3]sysname SW3
+[SW3]vlan batch 10 20 30 40 66
+[SW3]interface GigabitEthernet 0/0/9
+[SW3-GigabitEthernet0/0/9]port link-type trunk
+[SW3-GigabitEthernet0/0/9]port trunk allow-pass vlan 66
+[SW3-GigabitEthernet0/0/9]quit
+[SW3]dhcp enable
+[SW3]stp enable
+[SW3]interface Eth-Trunk 1
+[SW3-Eth-Trunk1]mode manual load-balance
+[SW3-Eth-Trunk1]trunkport GigabitEthernet 0/0/1
+[SW3-Eth-Trunk1]trunkport GigabitEthernet 0/0/2
+[SW3-Eth-Trunk1]port link-type trunk
+[SW3-Eth-Trunk1]port trunk allow-pass vlan 40
+[SW3-Eth-Trunk1]quit
+[SW3]interface Eth-Trunk 2
+[SW3-Eth-Trunk2]mode manual load-balance
+[SW3-Eth-Trunk2]trunkport GigabitEthernet 0/0/3
+[SW3-Eth-Trunk2]trunkport GigabitEthernet 0/0/4
+[SW3-Eth-Trunk2]port link-type trunk
+[SW3-Eth-Trunk2]port trunk allow-pass vlan 30
+[SW3-Eth-Trunk2]quit
+[SW3]interface Eth-Trunk 3
+[SW3-Eth-Trunk3]mode manual load-balance
+[SW3-Eth-Trunk3]trunkport GigabitEthernet 0/0/5
+[SW3-Eth-Trunk3]trunkport GigabitEthernet 0/0/6
+[SW3-Eth-Trunk3]port link-type trunk
+[SW3-Eth-Trunk3]port trunk allow-pass vlan 20
+[SW3-Eth-Trunk3]quit
+[SW3]interface Eth-Trunk 4
+[SW3-Eth-Trunk4]mode manual load-balance
+[SW3-Eth-Trunk4]trunkport GigabitEthernet 0/0/7
+[SW3-Eth-Trunk4]trunkport GigabitEthernet 0/0/8
+[SW3-Eth-Trunk4]port link-type trunk
+[SW3-Eth-Trunk4]port trunk allow-pass vlan 10
+[SW3-Eth-Trunk4]quit
+[SW3]interface Eth-Trunk 5
+[SW3-Eth-Trunk5]mode lacp-static
+[SW3-Eth-Trunk5]trunkport GigabitEthernet 0/0/10
+[SW3-Eth-Trunk5]trunkport GigabitEthernet 0/0/11
+[SW3-Eth-Trunk5]port link-type trunk
+[SW3-Eth-Trunk5]port trunk allow-pass vlan all
+[SW3-Eth-Trunk5]lacp preempt enable
+[SW3-Eth-Trunk5]quit
+[SW3]stp region-configuration
+[SW3-mst-region]region-name xf
+[SW3-mst-region]instance 1 vlan 10 20
+[SW3-mst-region]instance 2 vlan 30 40
+[SW3-mst-region]active region-configuration
+[SW3-mst-region]quit
+[SW3]stp instance 1 root secondary
+[SW3]stp instance 2 root primary
+[SW3]interface Vlanif 66
+[SW3-Vlanif66]ip address 192.168.66.252 24
+[SW3-Vlanif66]quit
+[SW3]interface Vlanif 10
+[SW3-Vlanif10]ip address 192.168.10.252 24
+[SW3-Vlanif10]vrrp vrid 1 virtual-ip 192.168.10.254
+[SW3-Vlanif10]dhcp select relay
+[SW3-Vlanif10]dhcp relay server-ip 192.168.66.1
+[SW3-Vlanif10]quit
+[SW3]interface Vlanif 20
+[SW3-Vlanif20]ip address 192.168.20.252 24
+[SW3-Vlanif20]vrrp vrid 2 virtual-ip 192.168.20.254
+[SW3-Vlanif20]dhcp select relay
+[SW3-Vlanif20]dhcp relay server-ip 192.168.66.1
+[SW3-Vlanif20]quit
+[SW3]interface Vlanif 30
+[SW3-Vlanif30]ip address 192.168.30.252 24
+[SW3-Vlanif30]vrrp vrid 3 virtual-ip 192.168.30.254
+[SW3-Vlanif30]vrrp vrid 3 priority 200
+[SW3-Vlanif30]dhcp select relay
+[SW3-Vlanif30]dhcp relay server-ip 192.168.66.1
+[SW3-Vlanif30]quit
+[SW3]interface Vlanif 40
+[SW3-Vlanif40]ip address 192.168.40.252 24
+[SW3-Vlanif40]vrrp vrid 4 virtual-ip 192.168.40.254
+[SW3-Vlanif40]vrrp vrid 4 priority 200
+[SW3-Vlanif40]dhcp select relay
+[SW3-Vlanif40]dhcp relay server-ip 192.168.66.1
+[SW3-Vlanif40]quit
+[SW3]ip route-static 0.0.0.0 0 192.168.66.1
+[SW3]stp region-configuration
+[SW3-mst-region]region-name xf
+[SW3-mst-region]instance 3 vlan 66
+[SW3-mst-region]active region-configuration
+[SW3-mst-region]quit
+[SW3]dhcp snooping enable
+[SW3]dhcp snooping enable vlan 10 20 30 40 66
+[SW3]interface GigabitEthernet 0/0/9
+[SW3-GigabitEthernet0/0/9]dhcp snooping trusted
+[SW3-GigabitEthernet0/0/9]quit</code></pre><p id="3a5c41a4-0511-8005-9250-c16ad97306b7" class="" dir="auto">SW1/DHCP</p><pre id="3a5c41a4-0511-8032-8dcc-f2c289ee1295" class="code code-wrap" data-notion-code-syntax="kotlin"><code class="language-kotlin" style="white-space:pre-wrap;word-break:break-all">&lt;DHCP1&gt;system-view
+[DHCP1]sysname DHCP1
+[DHCP1]vlan batch 10 20 30 40 66
+[DHCP1]dhcp enable
+[DHCP1]stp enable
+[DHCP1]port-group group-member GigabitEthernet 0/0/1 GigabitEthernet 0/0/2
+[DHCP1-port-group]port link-type trunk
+[DHCP1-port-group]port trunk allow-pass vlan 66
+[DHCP1-port-group]quit
+[DHCP1]stp region-configuration
+[DHCP1-mst-region]region-name xf
+[DHCP1-mst-region]instance 1 vlan 10 20
+[DHCP1-mst-region]instance 2 vlan 30 40
+[DHCP1-mst-region]active region-configuration
+[DHCP1-mst-region]quit
+[DHCP1]interface Vlanif 66
+[DHCP1-Vlanif66]ip address 192.168.66.1 24
+[DHCP1-Vlanif66]dhcp select global
+[DHCP1-Vlanif66]quit
+[DHCP1]ip pool vlan10
+[DHCP1-ip-pool-vlan10]gateway-list 192.168.10.254
+[DHCP1-ip-pool-vlan10]network 192.168.10.0 mask 24
+[DHCP1-ip-pool-vlan10]dns-list 8.8.8.8
+[DHCP1-ip-pool-vlan10]lease day 2
+[DHCP1-ip-pool-vlan10]excluded-ip-address 192.168.10.252 192.168.10.253
+[DHCP1-ip-pool-vlan10]quit
+[DHCP1]ip pool vlan20
+[DHCP1-ip-pool-vlan20]gateway-list 192.168.20.254
+[DHCP1-ip-pool-vlan20]network 192.168.20.0 mask 24
+[DHCP1-ip-pool-vlan20]dns-list 8.8.8.8
+[DHCP1-ip-pool-vlan20]lease day 2
+[DHCP1-ip-pool-vlan20]excluded-ip-address 192.168.20.252 192.168.20.253
+[DHCP1-ip-pool-vlan20]quit
+[DHCP1]ip pool vlan30
+[DHCP1-ip-pool-vlan30]gateway-list 192.168.30.254
+[DHCP1-ip-pool-vlan30]network 192.168.30.0 mask 24
+[DHCP1-ip-pool-vlan30]dns-list 8.8.8.8
+[DHCP1-ip-pool-vlan30]lease day 2
+[DHCP1-ip-pool-vlan30]excluded-ip-address 192.168.30.252 192.168.30.253
+[DHCP1-ip-pool-vlan30]quit
+[DHCP1]ip pool vlan40
+[DHCP1-ip-pool-vlan40]gateway-list 192.168.40.254
+[DHCP1-ip-pool-vlan40]network 192.168.40.0 mask 24
+[DHCP1-ip-pool-vlan40]dns-list 8.8.8.8
+[DHCP1-ip-pool-vlan40]lease day 2
+[DHCP1-ip-pool-vlan40]excluded-ip-address 192.168.40.252 192.168.40.253
+[DHCP1-ip-pool-vlan40]quit
+[DHCP1]ip route-static 192.168.10.0 24 192.168.66.253
+[DHCP1]ip route-static 192.168.10.0 24 192.168.66.252 preference 80
+[DHCP1]ip route-static 192.168.20.0 24 192.168.66.253
+[DHCP1]ip route-static 192.168.20.0 24 192.168.66.252 preference 80
+[DHCP1]ip route-static 192.168.30.0 24 192.168.66.253 preference 80
+[DHCP1]ip route-static 192.168.30.0 24 192.168.66.252
+[DHCP1]ip route-static 192.168.40.0 24 192.168.66.253 preference 80
+[DHCP1]ip route-static 192.168.40.0 24 192.168.66.252
+[DHCP1]stp region-configuration
+[DHCP1-mst-region]region-name xf
+[DHCP1-mst-region]instance 3 vlan 66
+[DHCP1-mst-region]active region-configuration
+[DHCP1-mst-region]quit
+[DHCP1]ip route-static 0.0.0.0 0 192.168.66.254
+[DHCP1]interface GigabitEthernet 0/0/3
+[DHCP1-GigabitEthernet0/0/3]port link-type access
+[DHCP1-GigabitEthernet0/0/3]port default vlan 66
+[DHCP1-GigabitEthernet0/0/3]quit</code></pre><p id="3a5c41a4-0511-807e-b67d-d8d36950f74d" class="" dir="auto">NAT</p><pre id="3a5c41a4-0511-8047-9b42-ed6f569b9874" class="code code-wrap" data-notion-code-syntax="kotlin"><code class="language-kotlin" style="white-space:pre-wrap;word-break:break-all">&lt;NAT&gt;system-view
+[NAT]sysname NAT
+[NAT]interface GigabitEthernet 0/0/0
+[NAT-GigabitEthernet0/0/0]ip address 192.168.66.254 24
+[NAT-GigabitEthernet0/0/0]quit
+[NAT]interface GigabitEthernet 0/0/1
+[NAT-GigabitEthernet0/0/1]ip address 100.1.1.1 29
+[NAT-GigabitEthernet0/0/1]quit
+[NAT]ip route-static 0.0.0.0 0 100.1.1.2
+[NAT]acl number 2000
+[NAT-acl-basic-2000]rule permit source 192.168.10.0 0.0.0.255
+[NAT-acl-basic-2000]rule permit source 192.168.20.0 0.0.0.255
+[NAT-acl-basic-2000]rule permit source 192.168.30.0 0.0.0.255
+[NAT-acl-basic-2000]rule permit source 192.168.40.0 0.0.0.255
+[NAT-acl-basic-2000]quit
+[NAT]interface GigabitEthernet 0/0/1
+[NAT-GigabitEthernet0/0/1]nat outbound 2000
+[NAT-GigabitEthernet0/0/1]quit
+[NAT]ip route-static 192.168.10.0 24 192.168.66.1
+[NAT]ip route-static 192.168.20.0 24 192.168.66.1
+[NAT]ip route-static 192.168.30.0 24 192.168.66.1
+[NAT]ip route-static 192.168.40.0 24 192.168.66.1</code></pre><p id="3a5c41a4-0511-803c-824b-fca7841a2429" class="" dir="auto">ISP</p><pre id="3a5c41a4-0511-8018-a062-dca51043c194" class="code code-wrap" data-notion-code-syntax="kotlin"><code class="language-kotlin" style="white-space:pre-wrap;word-break:break-all">&lt;ISP&gt;system-view
+[ISP]sysname ISP
+[ISP]interface GigabitEthernet 0/0/0
+[ISP-GigabitEthernet0/0/0]ip address 100.1.1.2 29
+[ISP-GigabitEthernet0/0/0]quit
+[ISP]interface GigabitEthernet 0/0/1
+[ISP-GigabitEthernet0/0/1]ip address 100.2.2.1 29
+[ISP-GigabitEthernet0/0/1]quit
+[ISP]ip route-static 192.168.50.0 24 100.2.2.2
+[ISP]ip route-static 192.168.60.0 24 100.2.2.2
+[ISP]ip route-static 192.168.70.0 24 100.2.2.2</code></pre><p id="3a5c41a4-0511-80dc-813a-caee56259b05" class="" dir="auto">DHCP2</p><pre id="3a5c41a4-0511-804a-b54f-f670d3287a61" class="code code-wrap" data-notion-code-syntax="kotlin"><code class="language-kotlin" style="white-space:pre-wrap;word-break:break-all">&lt;DHCP2&gt;system-view
+[DHCP2]sysname DHCP2
+[DHCP2]dhcp enable
+[DHCP2]ip pool vlan50
+[DHCP2-ip-pool-vlan50]gateway-list 192.168.50.254
+[DHCP2-ip-pool-vlan50]network 192.168.50.0 mask 24
+[DHCP2-ip-pool-vlan50]dns-list 7.7.7.7
+[DHCP2-ip-pool-vlan50]lease day 2
+[DHCP2-ip-pool-vlan50]quit
+[DHCP2]ip pool vlan60
+[DHCP2-ip-pool-vlan60]gateway-list 192.168.60.254
+[DHCP2-ip-pool-vlan60]network 192.168.60.0 mask 24
+[DHCP2-ip-pool-vlan60]dns-list 7.7.7.7
+[DHCP2-ip-pool-vlan60]lease day 2
+[DHCP2-ip-pool-vlan60]quit
+[DHCP2]ip pool vlan70
+[DHCP2-ip-pool-vlan70]gateway-list 192.168.70.254
+[DHCP2-ip-pool-vlan70]network 192.168.70.0 mask 24
+[DHCP2-ip-pool-vlan70]dns-list 7.7.7.7
+[DHCP2-ip-pool-vlan70]lease day 2
+[DHCP2-ip-pool-vlan70]quit
+[DHCP2]interface GigabitEthernet 0/0/1.1
+[DHCP2-GigabitEthernet0/0/1.1]ip address 192.168.50.254 24
+[DHCP2-GigabitEthernet0/0/1.1]dhcp select global
+[DHCP2-GigabitEthernet0/0/1.1]dot1q termination vid 50
+[DHCP2-GigabitEthernet0/0/1.1]arp broadcast enable
+[DHCP2-GigabitEthernet0/0/1.1]quit
+[DHCP2]interface GigabitEthernet 0/0/1.2
+[DHCP2-GigabitEthernet0/0/1.2]ip address 192.168.60.254 24
+[DHCP2-GigabitEthernet0/0/1.2]dhcp select global
+[DHCP2-GigabitEthernet0/0/1.2]dot1q termination vid 60
+[DHCP2-GigabitEthernet0/0/1.2]arp broadcast enable
+[DHCP2-GigabitEthernet0/0/1.2]quit
+[DHCP2]interface GigabitEthernet 0/0/1.3
+[DHCP2-GigabitEthernet0/0/1.3]ip address 192.168.70.254 24
+[DHCP2-GigabitEthernet0/0/1.3]dhcp select global
+[DHCP2-GigabitEthernet0/0/1.3]dot1q termination vid 70
+[DHCP2-GigabitEthernet0/0/1.3]arp broadcast enable
+[DHCP2-GigabitEthernet0/0/1.3]quit
+[DHCP2]ip route-static 0.0.0.0 0 100.2.2.1
+[DHCP2]interface GigabitEthernet 0/0/0
+[DHCP2-GigabitEthernet0/0/0]ip address 100.2.2.2 29
+[DHCP2-GigabitEthernet0/0/0]quit</code></pre><p id="3a5c41a4-0511-8084-891b-d15217196b28" class="" dir="auto">SW8</p><pre id="3a5c41a4-0511-807b-8719-e0f1f62121fe" class="code code-wrap" data-notion-code-syntax="kotlin"><code class="language-kotlin" style="white-space:pre-wrap;word-break:break-all">&lt;SW8&gt;system-view
+[SW8]sysname SW8
+[SW8]vlan batch 50 60 70
+[SW8]interface GigabitEthernet 0/0/1
+[SW8-GigabitEthernet0/0/1]port link-type trunk
+[SW8-GigabitEthernet0/0/1]port trunk allow-pass vlan all
+[SW8-GigabitEthernet0/0/1]quit
+[SW8]interface GigabitEthernet 0/0/2
+[SW8-GigabitEthernet0/0/2]port link-type access
+[SW8-GigabitEthernet0/0/2]port default vlan 50
+[SW8-GigabitEthernet0/0/2]quit
+[SW8]interface GigabitEthernet 0/0/3
+[SW8-GigabitEthernet0/0/3]port link-type access
+[SW8-GigabitEthernet0/0/3]port default vlan 60
+[SW8-GigabitEthernet0/0/3]quit
+[SW8]interface GigabitEthernet 0/0/4
+[SW8-GigabitEthernet0/0/4]port link-type access
+[SW8-GigabitEthernet0/0/4]port default vlan 70
+[SW8-GigabitEthernet0/0/4]quit</code></pre><p id="3a5c41a4-0511-80a3-b4d2-f46a53fa19c4" class="" dir="auto">SW9</p><pre id="3a5c41a4-0511-8059-879b-cf10e893e66d" class="code code-wrap" data-notion-code-syntax="kotlin"><code class="language-kotlin" style="white-space:pre-wrap;word-break:break-all">&lt;SW9&gt;system-view
+[SW9]sysname SW9
+[SW9]vlan 50
+[SW9-vlan50]quit
+[SW9]dhcp enable
+[SW9]interface GigabitEthernet 0/0/1
+[SW9-GigabitEthernet0/0/1]port link-type access
+[SW9-GigabitEthernet0/0/1]port default vlan 50
+[SW9-GigabitEthernet0/0/1]stp edged-port enable
+[SW9-GigabitEthernet0/0/1]quit
+[SW9]interface GigabitEthernet 0/0/2
+[SW9-GigabitEthernet0/0/2]undo port trunk allow-pass vlan 50
+[SW9-GigabitEthernet0/0/2]port link-type access
+[SW9-GigabitEthernet0/0/2]port default vlan 50
+[SW9-GigabitEthernet0/0/2]quit
+[SW9]stp bpdu-protection</code></pre><p id="3a5c41a4-0511-800b-88e5-e42bb571b370" class="" dir="auto">SW10</p><pre id="3a5c41a4-0511-8014-aba4-e56250c2dc1c" class="code code-wrap" data-notion-code-syntax="kotlin"><code class="language-kotlin" style="white-space:pre-wrap;word-break:break-all">&lt;SW10&gt;system-view
+[SW10]sysname SW10
+[SW10]vlan 60
+[SW10-vlan60]quit
+[SW10]interface GigabitEthernet 0/0/1
+[SW10-GigabitEthernet0/0/1]port link-type access
+[SW10-GigabitEthernet0/0/1]port default vlan 60
+[SW10-GigabitEthernet0/0/1]stp edged-port enable
+[SW10-GigabitEthernet0/0/1]quit
+[SW10]interface GigabitEthernet 0/0/2
+[SW10-GigabitEthernet0/0/2]undo port trunk allow-pass vlan 60
+[SW10-GigabitEthernet0/0/2]port link-type access
+[SW10-GigabitEthernet0/0/2]port default vlan 60
+[SW10-GigabitEthernet0/0/2]quit
+[SW10]stp bpdu-protection</code></pre><p id="3a5c41a4-0511-80f6-819f-c8ab174deb12" class="" dir="auto">SW11</p><pre id="3a5c41a4-0511-805d-8842-dadd8dcc63ff" class="code code-wrap" data-notion-code-syntax="kotlin"><code class="language-kotlin" style="white-space:pre-wrap;word-break:break-all">&lt;SW11&gt;system-view
+[SW11]sysname SW11
+[SW11]vlan 70
+[SW11-vlan70]quit
+[SW11]interface GigabitEthernet 0/0/2
+[SW11-GigabitEthernet0/0/2]port link-type access
+[SW11-GigabitEthernet0/0/2]port default vlan 70
+[SW11-GigabitEthernet0/0/2]stp edged-port enable
+[SW11-GigabitEthernet0/0/2]quit
+[SW11]interface GigabitEthernet 0/0/1
+[SW11-GigabitEthernet0/0/1]undo port trunk allow-pass vlan 70
+[SW11-GigabitEthernet0/0/1]port link-type access
+[SW11-GigabitEthernet0/0/1]port default vlan 70
+[SW11-GigabitEthernet0/0/1]quit
+[SW11]stp bpdu-protection</code></pre><p id="3a5c41a4-0511-80d7-99bd-e84ff3195a9a" class="" dir="auto">出现的问题：<br/>1）配置总公司的时候没有将每个设备都配置stp，导致最后终端接收不了参数。</p><p id="3a5c41a4-0511-80a6-8530-e18e8a4e1831" class="" dir="auto">2）忘记配置<code>dot1q termination vid xx</code> ，分公司的终端无法接受参数</p><p id="3a5c41a4-0511-803b-aaed-e4927d6b3d50" class="" dir="auto">3）分公司的接入层交换机和聚合交换机之间用了trunk，导致参数无法到达终端。</p><h3 id="3a5c41a4-0511-80e8-b586-fb49d7868eb7" class="" dir="auto">聚合链路实验三</h3><figure id="3a5c41a4-0511-8067-9ad2-e53e390282d3" class="image" data-notion-image="%E9%93%BE%E8%B7%AF%E8%81%9A%E5%90%88/image%209.png" dir="ltr"><a href="%E9%93%BE%E8%B7%AF%E8%81%9A%E5%90%88/image%209.png"><img style="width:703.9750366210938px" src="%E9%93%BE%E8%B7%AF%E8%81%9A%E5%90%88/image%209.png"/></a></figure><p id="3a5c41a4-0511-80b2-8d96-fee38fccd7ba" class="" dir="auto">配置思路：<br/>instance 1 vlan 10 20 50</p><p id="3a5c41a4-0511-80f1-8841-db73dc1f0117" class="" dir="auto">instance 2 vlan 30</p><p id="3a5c41a4-0511-80c6-ac87-c587ce16878e" class="" dir="auto">其中SW11的实例1优先级为200，SW10的实例2的优先级为200。</p><p id="3a5c41a4-0511-805b-ad09-dc2ffcbe2b2c" class="" dir="auto">在交换机SW11和SW10分别配置vlan15和vlan16，以及去往外网的默认路由。</p><p id="3a5c41a4-0511-8015-b975-ec6f6130c704" class="" dir="auto">AR5为DHCP服务器，配置vlan50的地址，还有去往SW11的默认路</p><aside class="block-color-gray_background callout" data-notion-callout="" data-notion-callout-icon="💡" data-notion-callout-background="gray_background" style="white-space:pre-wrap;display:flex" id="3a5c41a4-0511-8020-b31b-d252605b473c" dir="ltr"><div style="font-size:1.5em"><span class="icon" data-emoji="💡"></span></div><div style="width:100%"><p id="3a5c41a4-0511-8084-b4ef-ea756c85333c" class="" dir="auto">在实际中，trunk链路放行不能用allow  all，要精准放行</p></div></aside><p id="3a5c41a4-0511-805c-bea9-fc346825afd5" class="" dir="auto"><strong>配置命令：</strong></p><p id="3a5c41a4-0511-8031-999f-ee1f66263199" class="" dir="auto">SW7</p><pre id="3a5c41a4-0511-80ca-892f-fb557c983444" class="code code-wrap" data-notion-code-syntax="kotlin"><code class="language-kotlin" style="white-space:pre-wrap;word-break:break-all">&lt;Huawei&gt;undo terminal monitor 
+&lt;Huawei&gt;system-view 
+[Huawei]sysname SW7
+[SW7]vlan 10
+[SW7-vlan10]quit 
+[SW7]stp region-configuration 
+[SW7-mst-region]region-name xf	
+[SW7-mst-region]instance 1 vlan 10 20 50	
+[SW7-mst-region]instance 2 vlan 30
+[SW7-mst-region]active region-configuration 
+[SW7-mst-region]quit 
+[SW7]interface GigabitEthernet 0/0/1	
+[SW7-GigabitEthernet0/0/1]port link-type  access 
+[SW7-GigabitEthernet0/0/1]port default vlan 10
+[SW7-GigabitEthernet0/0/1]quit 
+[SW7]interface Eth-Trunk 1
+[SW7-Eth-Trunk1]mode manual load-balance 	
+[SW7-Eth-Trunk1]trunkport GigabitEthernet 0/0/2
+[SW7-Eth-Trunk1]trunkport GigabitEthernet 0/0/3	
+[SW7-Eth-Trunk1]port link-type trunk 
+[SW7-Eth-Trunk1]port trunk allow-pass vlan 10
+[SW7-Eth-Trunk1]quit 
+[SW7]interface Eth-Trunk 6
+[SW7-Eth-Trunk6]mode manual load-balance 
+[SW7-Eth-Trunk6]trunkport GigabitEthernet 0/0/4
+[SW7-Eth-Trunk6]trunkport GigabitEthernet 0/0/5	
+[SW7-Eth-Trunk6]port link-type trunk 
+[SW7-Eth-Trunk6]port trunk allow-pass  vlan 10
+[SW7-Eth-Trunk6]quit</code></pre><p id="3a5c41a4-0511-808b-896b-e2991729052a" class="" dir="auto">SW8</p><pre id="3a5c41a4-0511-802b-a61f-e418e22c7365" class="code code-wrap" data-notion-code-syntax="kotlin"><code class="language-kotlin" style="white-space:pre-wrap;word-break:break-all">&lt;Huawei&gt;undo terminal monitor 
+&lt;Huawei&gt;system-view 
+[Huawei]sysname SW8
+[SW8]vlan 20	
+[SW8-vlan20]quit 
+[SW8]stp region-configuration 
+[SW8-mst-region]region-name xf
+[SW8-mst-region]instance 1 vlan 10 20 50
+[SW8-mst-region]instance 2 vlan 30
+[SW8-mst-region]active region-configuration 
+[SW8-mst-region]quit 
+[SW8]interface Eth-Trunk 2	
+[SW8-Eth-Trunk2]mode manual load-balance 
+[SW8-Eth-Trunk2]trunkport GigabitEthernet 0/0/2
+[SW8-Eth-Trunk2]trunkport GigabitEthernet 0/0/3	
+[SW8-Eth-Trunk2]port link-type trunk 
+[SW8-Eth-Trunk2]port trunk allow-pass vlan 20
+[SW8-Eth-Trunk2]quit 
+[SW8]interface Eth-Trunk 5
+[SW8-Eth-Trunk5]mode manual load-balance 
+[SW8-Eth-Trunk5]trunkport GigabitEthernet 0/0/4
+[SW8-Eth-Trunk5]trunkport GigabitEthernet 0/0/5
+[SW8-Eth-Trunk5]port link-type trunk   	
+[SW8-Eth-Trunk5]port trunk allow-pass vlan 20
+[SW8-Eth-Trunk5]quit
+[SW8]interface GigabitEthernet 0/0/1
+[SW8-GigabitEthernet0/0/1]port link-type access 
+[SW8-GigabitEthernet0/0/1]port default vlan 20	
+[SW8-GigabitEthernet0/0/1]qui</code></pre><p id="3a5c41a4-0511-8095-a2b2-f0a82dafaf53" class="" dir="auto">SW9</p><pre id="3a5c41a4-0511-80d7-8df1-e047aeaf758d" class="code code-wrap" data-notion-code-syntax="kotlin"><code class="language-kotlin" style="white-space:pre-wrap;word-break:break-all">&lt;Huawei&gt;undo terminal monitor 
+&lt;Huawei&gt;system-view 
+[Huawei]sysname SW9
+[SW9]vlan 30
+[SW9-vlan30]quit 
+[SW9]stp region-configuration 
+[SW9-mst-region]region-name xf
+[SW9-mst-region]instance 1 vlan 10 20 50	
+[SW9-mst-region]instance 2 vlan 30
+[SW9-mst-region]active region-configuration 
+[SW9-mst-region]quit
+[SW9]interface GigabitEthernet 0/0/1	
+[SW9-GigabitEthernet0/0/1]port link-type access 	
+[SW9-GigabitEthernet0/0/1]port default vlan 30	
+[SW9-GigabitEthernet0/0/1]quit 
+[SW9]interface Eth-Trunk 4	
+[SW9-Eth-Trunk4]mode manual load-balance 
+[SW9-Eth-Trunk4]trunkport GigabitEthernet 0/0/2
+[SW9-Eth-Trunk4]trunkport GigabitEthernet 0/0/3	
+[SW9-Eth-Trunk4]port link-type trunk 
+[SW9-Eth-Trunk4]port trunk allow-pass vlan 30
+[SW9-Eth-Trunk4]quit 
+[SW9]interface Eth-Trunk 3
+[SW9-Eth-Trunk3]mode manual load-balance 	
+[SW9-Eth-Trunk3]trunkport GigabitEthernet 0/0/4
+[SW9-Eth-Trunk3]trunkport GigabitEthernet 0/0/5
+[SW9-Eth-Trunk3]port link-type trunk 
+[SW9-Eth-Trunk3]port trunk allow-pass vlan 30	
+[SW9-Eth-Trunk3]quit</code></pre><p id="3a5c41a4-0511-80ac-9f91-da77098086ad" class="" dir="auto">DHCP</p><pre id="3a5c41a4-0511-8060-8bf6-cc84300b6127" class="code code-wrap" data-notion-code-syntax="kotlin"><code class="language-kotlin" style="white-space:pre-wrap;word-break:break-all">&lt;Huawei&gt;undo terminal monitor 
+&lt;Huawei&gt;system-view 
+[Huawei]sysname DHCP
+[DHCP]dhcp enable 
+[DHCP]interface GigabitEthernet 0/0/0
+[DHCP-GigabitEthernet0/0/0]ip address 192.168.50.1 24	
+[DHCP-GigabitEthernet0/0/0]dhcp  select global 
+[DHCP-GigabitEthernet0/0/0]quit 	
+[DHCP]ip pool vlan10	
+[DHCP-ip-pool-vlan10]gateway-list 192.168.10.254
+[DHCP-ip-pool-vlan10]network 192.168.10.0 mask 24
+[DHCP-ip-pool-vlan10]dns-list 8.8.8.8	
+[DHCP-ip-pool-vlan10]lease day 2
+[DHCP-ip-pool-vlan10]excluded-ip-address 192.168.10.252 192.168.10.253
+[DHCP-ip-pool-vlan10]quit 
+[DHCP]ip pool vlan20
+[DHCP-ip-pool-vlan20]gateway-list 192.168.20.254
+[DHCP-ip-pool-vlan20]network 192.168.20.0 mask 24	
+[DHCP-ip-pool-vlan20]dns-list 8.8.8.8	
+[DHCP-ip-pool-vlan20]lease day 2	
+[DHCP-ip-pool-vlan20]excluded-ip-address 192.168.20.252 192.168.20.253
+[DHCP-ip-pool-vlan20]quit 
+[DHCP]ip pool vlan30
+[DHCP-ip-pool-vlan30]gateway-list 192.168.30.254
+[DHCP-ip-pool-vlan30]network 192.168.30.0 mask 24
+[DHCP-ip-pool-vlan30]dns-list 8.8.8.8	
+[DHCP-ip-pool-vlan30]lease day 2
+[DHCP-ip-pool-vlan30]excluded-ip-address 192.168.30.252 192.168.30.253
+[DHCP-ip-pool-vlan30]quit 
+[DHCP]ip route-static 0.0.0.0 0 192.168.50.25</code></pre><p id="3a5c41a4-0511-8088-a951-e60c94102aef" class="" dir="auto">SW11</p><pre id="3a5c41a4-0511-80e9-afcf-d47666c2bfc8" class="code code-wrap" data-notion-code-syntax="kotlin"><code class="language-kotlin" style="white-space:pre-wrap;word-break:break-all">&lt;Huawei&gt;undo terminal monitor 
+&lt;Huawei&gt;system-view 	
+[Huawei]sysname SW11	
+[SW11]vlan batch 10 20 30 50 15
+[SW11]dhcp enable
+[SW11]stp region-configuration 
+[SW11-mst-region]region-name xf
+[SW11-mst-region]instance 1 vlan 10 20 50
+[SW11-mst-region]instance 2 vlan 30
+[SW11-mst-region]active region-configuration 
+[SW11-mst-region]quit 	
+[SW11]stp instance 1 root primary 
+[SW11]stp instance 2 root secondary 
+[SW11]interface GigabitEthernet 0/0/11		
+[SW11-GigabitEthernet0/0/11]port link-type access 	
+[SW11-GigabitEthernet0/0/11]port default vlan 15
+[SW11-GigabitEthernet0/0/11]quit 
+[SW11]interface Eth-Trunk 1	
+[SW11-Eth-Trunk1]mode manual load-balance 
+[SW11-Eth-Trunk1]trunkport GigabitEthernet 0/0/1
+[SW11-Eth-Trunk1]trunkport GigabitEthernet 0/0/2
+[SW11-Eth-Trunk1]port link-type trunk 
+[SW11-Eth-Trunk1]port trunk allow-pass vlan 1	
+[SW11-Eth-Trunk1]quit 	
+[SW11]interface Eth-Trunk 2	
+[SW11-Eth-Trunk2]mode manual load-balance 	
+[SW11-Eth-Trunk2]trunkport GigabitEthernet 0/0/3	
+[SW11-Eth-Trunk2]trunkport GigabitEthernet 0/0/4	
+[SW11-Eth-Trunk2]port link-type trunk 	
+[SW11-Eth-Trunk2]port trunk allow-pass vlan 20
+[SW11-Eth-Trunk2]quit 	
+[SW11]interface Eth-Trunk 3	
+[SW11-Eth-Trunk3]mode manual load-balance 
+[SW11-Eth-Trunk3]trunkport GigabitEthernet 0/0/5		
+[SW11-Eth-Trunk3]trunkport GigabitEthernet 0/0/6	
+[SW11-Eth-Trunk3]port link-type trunk 	
+[SW11-Eth-Trunk3]port trunk allow-pass vlan 30	
+[SW11-Eth-Trunk3]quit 	
+[SW11]interface Eth-Trunk 7	
+[SW11-Eth-Trunk7]mode lacp-static 	
+[SW11-Eth-Trunk7]trunkport GigabitEthernet 0/0/8	
+[SW11-Eth-Trunk7]trunkport GigabitEthernet 0/0/7	
+[SW11-Eth-Trunk7]trunkport GigabitEthernet 0/0/9	
+[SW11-Eth-Trunk7]port link-type trunk 	
+[SW11-Eth-Trunk7]port trunk allow-pass vlan all 	
+[SW11-Eth-Trunk7]lacp preempt enable 	
+[SW11-Eth-Trunk7]quit 	
+[SW11]lacp priority 1000
+[SW11]interface Vlanif 10	
+[SW11-Vlanif10]ip address 192.168.10.252 24
+[SW11-Vlanif10]vrrp vrid 1 virtual-ip 192.168.10.254
+[SW11-Vlanif10]vrrp vrid 1 priority 200	
+[SW11-Vlanif10]dhcp select relay 
+[SW11-Vlanif10]dhcp relay server-ip 192.168.50.1
+[SW11-Vlanif10]quit  
+[SW11]interface Vlanif 50	
+[SW11-Vlanif50]ip address 192.168.50.252 24
+[SW11-Vlanif50]quit 	
+[SW11]interface Vlanif 20
+[SW11-Vlanif20]ip address 192.168.20.252 24	
+[SW11-Vlanif20]vrrp vrid 2 virtual-ip 192.168.20.254
+[SW11-Vlanif20]vrrp vrid 2 priority 200	
+[SW11-Vlanif20]dhcp select relay 
+[SW11-Vlanif20]dhcp relay  server-ip 192.168.50.1
+[SW11-Vlanif20]quit 	
+[SW11]interface Vlanif 30
+[SW11-Vlanif30]ip address 192.168.30.252 24	
+[SW11-Vlanif30]vrrp vrid 3 virtual-ip 192.168.30.254	
+[SW11-Vlanif30]dhcp select relay 	
+[SW11-Vlanif30]dhcp relay server-ip 192.168.50.1	
+[SW11-Vlanif30]quit 
+[SW11]interface Vlanif 15
+[SW11-Vlanif15]ip address 192.168.15.252 24
+[SW11-Vlanif15]quit 
+[SW11]interface GigabitEthernet 0/0/10	
+[SW11-GigabitEthernet0/0/10]port link-type access 	
+[SW11-GigabitEthernet0/0/10]port default vlan 50
+[SW11-GigabitEthernet0/0/10]quit         
+[SW11]ip route-static 0.0.0.0 0 192.168.15.1
+</code></pre><p id="3a5c41a4-0511-80e2-9a41-f721a227ca2e" class="" dir="auto">SW10</p><pre id="3a5c41a4-0511-800b-b014-fa1fb968a4ee" class="code code-wrap" data-notion-code-syntax="kotlin"><code class="language-kotlin" style="white-space:pre-wrap;word-break:break-all">	
+&lt;Huawei&gt;undo terminal monitor 
+&lt;Huawei&gt;system-view 
+[Huawei]sysname SW10	
+[SW10]vlan batch 10 20 30 50 16
+[SW10]interface GigabitEthernet 0/0/10
+[SW10-GigabitEthernet0/0/10]port link-type access 	
+[SW10-GigabitEthernet0/0/10]port default vlan 16	
+[SW10-GigabitEthernet0/0/10]quit 
+[SW10]dhcp enable 
+[SW10]stp region-configuration 
+[SW10-mst-region]region-name xf	
+[SW10-mst-region]instance 1 vlan 10 20 50
+[SW10-mst-region]instance 2 vlan 30
+[SW10-mst-region]active region-configuration 
+[SW10-mst-region]quit 	
+[SW10]stp instance 1 root secondary 	
+[SW10]stp instance 2 root primary 	
+[SW10]interface Eth-Trunk 7
+[SW10-Eth-Trunk7]mode lacp-static 
+[SW10-Eth-Trunk7]trunkport GigabitEthernet 0/0/7
+[SW10-Eth-Trunk7]trunkport GigabitEthernet 0/0/8	
+[SW10-Eth-Trunk7]trunkport GigabitEthernet 0/0/9
+[SW10-Eth-Trunk7]port link-type trunk  	
+[SW10-Eth-Trunk7]port trunk allow-pass  vlan all 
+[SW10-Eth-Trunk7]quit 	
+[SW10]interface Eth-Trunk 4	
+[SW10-Eth-Trunk4]mode manual load-balance 
+[SW10-Eth-Trunk4]trunkport GigabitEthernet 0/0/1
+[SW10-Eth-Trunk4]trunkport GigabitEthernet 0/0/2
+[SW10-Eth-Trunk4]port link-type trunk 	
+[SW10-Eth-Trunk4]port trunk allow-pass vlan 30	
+[SW10-Eth-Trunk4]quit 	
+[SW10]interface Eth-Trunk 5	
+[SW10-Eth-Trunk5]mode manual load-balance 	
+[SW10-Eth-Trunk5]trunkport GigabitEthernet 0/0/3	
+[SW10-Eth-Trunk5]trunkport GigabitEthernet 0/0/4	
+[SW10-Eth-Trunk5]port link-type trunk 	
+[SW10-Eth-Trunk5]port trunk allow-pass vlan 20
+[SW10-Eth-Trunk5]quit 
+[SW10]interface Eth-Trunk 6
+[SW10-Eth-Trunk6]mode manual load-balance 
+[SW10-Eth-Trunk6]trunkport GigabitEthernet 0/0/5	
+[SW10-Eth-Trunk6]trunkport GigabitEthernet 0/0/6
+[SW10-Eth-Trunk6]port link-type trunk 
+[SW10-Eth-Trunk6]port trunk allow-pass vlan 10
+[SW10-Eth-Trunk6]quit 
+[SW10]interface Vlanif 50
+[SW10-Vlanif50]ip address 192.168.50.253 24
+[SW10-Vlanif50]quit 
+[SW10]interface Vlanif 10	
+[SW10-Vlanif10]ip address 192.168.10.253 24
+[SW10-Vlanif10]vrrp vrid 1 virtual-ip 192.168.10.254
+[SW10-Vlanif10]dhcp select relay 	
+[SW10-Vlanif10]dhcp relay  server-ip 192.168.50.1
+[SW10-Vlanif10]quit 
+[SW10]interface Vlanif 20
+[SW10-Vlanif20]ip address 192.168.20.253 24
+[SW10-Vlanif20]vrrp vrid 2 virtual-ip 192.168.20.254
+[SW10-Vlanif20]dhcp select relay 	
+[SW10-Vlanif20]dhcp relay server-ip 192.168.50.1
+[SW10-Vlanif20]quit	
+[SW10]interface Vlanif 30
+[SW10-Vlanif30]ip address 192.168.30.253 24	
+[SW10-Vlanif30]vrrp vrid 3 virtual-ip 192.168.30.254
+[SW10-Vlanif30]vrrp vrid 3 priority 200
+[SW10-Vlanif30]dhcp select relay 	
+[SW10-Vlanif30]dhcp relay  server-ip 192.168.50.1
+[SW10-Vlanif30]quit 	
+[SW10]interface Vlanif 16
+[SW10-Vlanif16]ip address 192.168.16.253 24
+[SW10-Vlanif16]quit
+[SW10]ip route-static 0.0.0.0 0 192.168.16.1
+</code></pre><p id="3a5c41a4-0511-80bd-b2db-e22741309a34" class="" dir="auto">NAT</p><pre id="3a5c41a4-0511-80ec-bf11-feaecbb1f309" class="code code-wrap" data-notion-code-syntax="kotlin"><code class="language-kotlin" style="white-space:pre-wrap;word-break:break-all">
+&lt;Huawei&gt;undo terminal monitor 
+&lt;Huawei&gt;system-view 
+[Huawei]sysname NAT
+[NAT]interface GigabitEthernet 0/0/0
+[NAT-GigabitEthernet0/0/0]ip address 192.168.15.1 24
+[NAT-GigabitEthernet0/0/0]quit	
+[NAT]interface GigabitEthernet 0/0/1
+[NAT-GigabitEthernet0/0/1]ip address 192.168.16.1 24
+[NAT-GigabitEthernet0/0/1]quit 
+[NAT]interface GigabitEthernet 0/0/2
+[NAT-GigabitEthernet0/0/2]ip address 100.1.1.1 29
+[NAT-GigabitEthernet0/0/2]quit 
+[NAT]ip route-static 192.168.10.0 24 192.168.15.252
+[NAT]ip route-static 192.168.10.0 24 192.168.16.253 preference 80
+[NAT]ip route-static 192.168.20.0 24 192.168.15.252
+[NAT]ip route-static 192.168.20.0 24 192.168.16.253 preference 80
+[NAT]ip route-static 192.168.30.0 24 192.168.15.252 preference 80
+[NAT]ip route-static 192.168.30.0 24 192.168.16.253
+[NAT]ip route-static 0.0.0.0 0 100.1.1.2
+[NAT]acl nu	
+[NAT]acl number 2000	
+[NAT-acl-basic-2000]rule permit source 192.168.10.0 0.0.0.255
+[NAT-acl-basic-2000]rule permit source 192.168.20.0 0.0.0.255
+[NAT-acl-basic-2000]rule permit source 192.168.30.0 0.0.0.255
+[NAT-acl-basic-2000]quit 
+[NAT]interface GigabitEthernet 0/0/2
+[NAT-GigabitEthernet0/0/2]nat outbound 2000	
+[NAT-GigabitEthernet0/0/2]quit 
+</code></pre><p id="3a5c41a4-0511-8044-ac58-f0e0b5417d45" class="" dir="auto">ISP</p><pre id="3a5c41a4-0511-805d-8a25-e7f62a842e09" class="code code-wrap" data-notion-code-syntax="kotlin"><code class="language-kotlin" style="white-space:pre-wrap;word-break:break-all">	
+&lt;Huawei&gt;undo terminal monitor 
+&lt;Huawei&gt;system-view 
+[Huawei]sysname ISP
+[ISP]interface GigabitEthernet 0/0/0
+[ISP-GigabitEthernet0/0/0]ip address 100.1.1.2 29	
+[ISP-GigabitEthernet0/0/0]quit 
+[ISP]interface GigabitEthernet 0/0/1
+[ISP-GigabitEthernet0/0/1]ip address 200.1.1.254 24
+[ISP-GigabitEthernet0/0/1]quit 
+[ISP]ip route-static 0.0.0.0 0 100.1.1.1
+</code></pre><p id="3a5c41a4-0511-808b-854a-deb827f45d7d" class="" dir="auto">错误与修改：<br/>1）没有配置DHCP服务器去往网关SW11的路由，导致终端无法接收到正常的DHCP报文，无法得到数据；增加一条去往SW11的<code>192.168.50.252</code>的默认路由</p><p id="3a5c41a4-0511-807a-9878-c9cb56926b2d" class="" dir="auto">2）在MSTP实例没有将vlan50加入实例中，导致其报文在实例0，链路不通；在实例1中增加vlan50</p><h3 id="3a5c41a4-0511-80d6-8a41-fe56fafa8370" class="" dir="auto">😠链路聚合的M:N模式</h3><p id="3a5c41a4-0511-808b-86d6-d32a62839079" class="" dir="auto"><strong>M:N 模式</strong>表示链路聚合组中：</p><aside class="block-color-gray_background callout" data-notion-callout="" data-notion-callout-icon="💡" data-notion-callout-background="gray_background" style="white-space:pre-wrap;display:flex" id="3a5c41a4-0511-8022-8953-cf90cbe0a426" dir="ltr"><div style="font-size:1.5em"><span class="icon" data-emoji="💡"></span></div><div style="width:100%"><p id="3a5c41a4-0511-8085-8792-f08d09e53d8e" class="" dir="auto">M:N=活动链路数:备份链路数</p></div></aside><p id="3a5c41a4-0511-8008-902e-e6899df28ce0" class="" dir="auto">也就是说，在一个 Eth-Trunk 聚合组中，不一定所有成员链路都参与转发，可以只让部分链路转发，剩余链路作为备用链路。</p><h3 id="3a5c41a4-0511-809f-a8db-cdc263dd3b48" class="" dir="auto">聚合链路中“分包”和“哈希转发”的关系</h3><h4 id="3a5c41a4-0511-8071-ad54-c3df07816b5c" class="" dir="auto">1. 数据确实会被拆成很多包</h4><p id="3a5c41a4-0511-8004-8b48-f7324433f9c1" class="" dir="auto">例如发送一个文件：</p><pre id="3a5c41a4-0511-805a-81d1-d3a2bd8bf960" class="code code-wrap"><code style="white-space:pre-wrap;word-break:break-all">完整文件
+   ↓
+包1、包2、包3、包4、包5……</code></pre><p id="3a5c41a4-0511-80ee-bccc-d8cc367445ad" class="" dir="auto">接收端会根据 TCP 序号把这些包重新排序、重组。</p><p id="3a5c41a4-0511-80ed-9282-c3d438afcec6" class="" dir="auto">但是：</p><blockquote id="3a5c41a4-0511-809c-892e-f09a14e5fc8b" class="" dir="auto">Eth-Trunk 不负责拼接数据，它只负责选择出接口转发。</blockquote><hr id="3a5c41a4-0511-80ac-9efb-f478aefee929" dir="auto"/><h4 id="3a5c41a4-0511-805d-ae09-c65c8ac7b4a2" class="" dir="auto">2. 聚合链路不是“按包轮流发送”</h4><p id="3a5c41a4-0511-8076-adf2-dc7c6bc0be64" class="" dir="auto">错误理解：</p><pre id="3a5c41a4-0511-8009-b7b0-f938acf193ba" class="code code-wrap"><code style="white-space:pre-wrap;word-break:break-all">包1 → GE0/0/1
+包2 → GE0/0/2
+包3 → GE0/0/3
+包4 → GE0/0/1</code></pre><p id="3a5c41a4-0511-802c-8ff1-f74b5397d66e" class="" dir="auto">这种方式虽然看起来平均，但容易导致乱序。</p><p id="3a5c41a4-0511-809b-8cb6-f54bba58c502" class="" dir="auto">原因是不同链路的延迟、排队情况可能不同：</p><pre id="3a5c41a4-0511-8031-8725-db002031a76e" class="code code-wrap"><code style="white-space:pre-wrap;word-break:break-all">发送顺序：包1 → 包2 → 包3
+
+到达顺序：包2 → 包3 → 包1</code></pre><p id="3a5c41a4-0511-80f7-9b78-df53d0e8e6fd" class="" dir="auto">这样 TCP 需要重新排序，严重时还可能触发重传，影响传输效率。</p><hr id="3a5c41a4-0511-80ec-9890-d92ab2bc9c1d" dir="auto"/><h4 id="3a5c41a4-0511-8077-a74d-c1940787b3b9" class="" dir="auto">3. 聚合链路通常是“按流分担”</h4><p id="3a5c41a4-0511-80ff-96a3-ff8fcb8df8d0" class="" dir="auto">正确理解：</p><pre id="3a5c41a4-0511-8078-85c6-edacb0c958ae" class="code code-wrap"><code style="white-space:pre-wrap;word-break:break-all">同一条数据流的包，通常走同一条成员链路。</code></pre><p id="3a5c41a4-0511-807b-9ca0-c7a2abd3effc" class="" dir="auto">例如 PC1 访问服务器：</p><pre id="3a5c41a4-0511-8033-a1f5-fb1152e5ab8c" class="code code-wrap"><code style="white-space:pre-wrap;word-break:break-all">PC1 → Server 这条流</code></pre><p id="3a5c41a4-0511-804c-a53f-d6deabc7adbc" class="" dir="auto">它被哈希到 GE0/0/2 后：</p><pre id="3a5c41a4-0511-8032-91fb-ffc24ad8be49" class="code code-wrap"><code style="white-space:pre-wrap;word-break:break-all">包1 → GE0/0/2
+包2 → GE0/0/2
+包3 → GE0/0/2
+包4 → GE0/0/2</code></pre><p id="3a5c41a4-0511-8014-a241-d8cf4e26b9d3" class="" dir="auto">这样可以尽量保证同一条流内部的包按顺序到达。</p><hr id="3a5c41a4-0511-8068-a318-f5ca307a1759" dir="auto"/><h4 id="3a5c41a4-0511-806c-97d6-e8447f12e70b" class="" dir="auto">4. 图示</h4><pre id="3a5c41a4-0511-8062-95c5-f4c46e03315e" class="code code-wrap"><code style="white-space:pre-wrap;word-break:break-all">                 Eth-Trunk1
+PC1 ────────┬──────────────────── Server
+            │
+            ├── GE0/0/1
+            ├── GE0/0/2  ← PC1 到 Server 这条流固定走这里
+            └── GE0/0/3</code></pre><p id="3a5c41a4-0511-80cf-aeca-fe953f9db1b5" class="" dir="auto">同一条流：</p><pre id="3a5c41a4-0511-80ec-bf9a-f3db3f2e01a9" class="code code-wrap"><code style="white-space:pre-wrap;word-break:break-all">PC1 → Server
+包1、包2、包3、包4
+        ↓
+全部走 GE0/0/2</code></pre><p id="3a5c41a4-0511-8035-bbea-e46ab290d4a5" class="" dir="auto">多条流：</p><pre id="3a5c41a4-0511-80df-aaf2-ca408e4c1440" class="code code-wrap"><code style="white-space:pre-wrap;word-break:break-all">PC1 → Server     → GE0/0/1
+PC2 → Server     → GE0/0/2
+PC3 → Server     → GE0/0/3</code></pre><hr id="3a5c41a4-0511-8093-8101-dff0c6dc9e31" dir="auto"/><h4 id="3a5c41a4-0511-80b6-957c-fee371a48767" class="" dir="auto">5. 哈希算法根据什么判断</h4><p id="3a5c41a4-0511-8043-9a5d-e8c418cc0029" class="" dir="auto">设备会根据报文中的字段计算哈希值，例如：</p><table id="3a5c41a4-0511-806c-93fa-d0ab7e37a595" class="simple-table" dir="ltr"><thead class="simple-table-header"><tr id="3a5c41a4-0511-80ab-b659-ef949cd60359" dir="ltr"><th id="hi|i" class="simple-table-header-color simple-table-header">字段</th><th id="CV{e" class="simple-table-header-color simple-table-header">含义</th></tr></thead><tbody><tr id="3a5c41a4-0511-80e8-9271-fd096f254085" dir="ltr"><td id="hi|i" class="">源 IP</td><td id="CV{e" class="">谁发出的</td></tr><tr id="3a5c41a4-0511-801e-b616-e9dcaae05dd6" dir="ltr"><td id="hi|i" class="">目的 IP</td><td id="CV{e" class="">发给谁</td></tr><tr id="3a5c41a4-0511-80f5-b68b-df57b79a8e27" dir="ltr"><td id="hi|i" class="">源 MAC</td><td id="CV{e" class="">源设备 MAC</td></tr><tr id="3a5c41a4-0511-80ce-96b7-d7aca2a354f7" dir="ltr"><td id="hi|i" class="">目的 MAC</td><td id="CV{e" class="">目的设备 MAC</td></tr><tr id="3a5c41a4-0511-80f7-b267-fc310e1ee04b" dir="ltr"><td id="hi|i" class="">源端口</td><td id="CV{e" class="">TCP/UDP 源端口</td></tr><tr id="3a5c41a4-0511-804c-9fa7-e437068dc3b5" dir="ltr"><td id="hi|i" class="">目的端口</td><td id="CV{e" class="">TCP/UDP 目的端口</td></tr><tr id="3a5c41a4-0511-8049-9ee9-f2f6e4296463" dir="ltr"><td id="hi|i" class="">VLAN ID</td><td id="CV{e" class="">所属 VLAN</td></tr></tbody></table><p id="3a5c41a4-0511-80a7-9465-cefdb5a55f34" class="" dir="auto">在华为设备中常见方式：</p><p id="3a5c41a4-0511-80f3-9545-ce8d70f11d24" class="" dir="auto">SIP⊕DIP</p><p id="3a5c41a4-0511-80dc-b0a0-f6d9b473924e" class="" dir="auto">即：</p><pre id="3a5c41a4-0511-809c-9e94-f68dfbcf9158" class="code code-wrap"><code style="white-space:pre-wrap;word-break:break-all">源 IP XOR 目的 IP</code></pre><p id="3a5c41a4-0511-808d-b667-d468587f1df9" class="" dir="auto">设备通过计算结果决定走哪一条成员链路。</p><hr id="3a5c41a4-0511-806d-b4fe-ff7e4c2c5991" dir="auto"/><h4 id="3a5c41a4-0511-800f-a3a0-f0ca85611334" class="" dir="auto">6. 核心理解</h4><pre id="3a5c41a4-0511-803a-823a-f36c3614429f" class="code code-wrap"><code style="white-space:pre-wrap;word-break:break-all">链路聚合不是按“包”平均分配，
+而是按“流”进行哈希分担。</code></pre></div></article><span class="sans" style="font-size:14px;padding-top:2em"></span><script>
+(function () {
+  "use strict";
+  var PAGE = document.querySelector(".page-body");
+  if (!PAGE) return;
+  var HEADINGS = [], i, h;
+  var ALL = PAGE.querySelectorAll("h1, h2, h3, h4, h5, h6");
+  for (i = 0; i < ALL.length; i++) {
+    h = ALL[i];
+    if (h.closest && h.closest("aside, blockquote, details, summary, figure, th, td")) continue;
+    if (!h.id) continue;
+    HEADINGS.push(h);
+  }
+  var PAGE_LINKS = [];
+  if (HEADINGS.length < 2) {
+    var pl = PAGE.querySelectorAll(".link-to-page a");
+    for (i = 0; i < pl.length; i++) {
+      var hr = pl[i].getAttribute("href");
+      if (hr) PAGE_LINKS.push(pl[i]);
+    }
+    if (PAGE_LINKS.length < 2) return;
+  }
+  var CSS = "" +
+  "html{scroll-behavior:smooth}" +
+  ".page-body h1,.page-body h2,.page-body h3,.page-body h4,.page-body h5,.page-body h6{scroll-margin-top:14px}" +
+  ".nt-fab{position:fixed;right:18px;bottom:18px;z-index:2147483001;display:flex;align-items:center;gap:7px;padding:0 20px;height:52px;border:none;border-radius:999px;cursor:pointer;color:#fff;background:rgba(37,37,37,.93);font:600 14px/1 -apple-system,'PingFang SC','Microsoft YaHei','Segoe UI',sans-serif;letter-spacing:.5px;box-shadow:0 6px 22px rgba(0,0,0,.18);transition:transform .15s ease,opacity .2s ease}" +
+  ".nt-fab:hover{transform:translateY(-2px)}" +
+  ".nt-fab svg{width:18px;height:18px;flex:none}" +
+  ".nt-fab.nt-fab-hide{opacity:0;pointer-events:none}" +
+  ".nt-panel{position:fixed;top:0;right:0;bottom:0;z-index:2147483000;display:flex;flex-direction:column;width:min(340px,88vw);background:rgba(255,255,255,.97);border-left:1px solid rgba(55,53,47,.08);box-shadow:-10px 0 30px rgba(0,0,0,.09);transform:translateX(102%);visibility:hidden;transition:transform .25s ease,visibility .25s ease;font-family:-apple-system,'PingFang SC','Microsoft YaHei','Segoe UI',sans-serif}" +
+  ".nt-panel.nt-open{transform:none;visibility:visible}" +
+  ".nt-head{display:flex;align-items:center;gap:8px;padding:16px 18px 12px;border-bottom:1px solid rgba(55,53,47,.06);flex:none}" +
+  ".nt-head .nt-title{font-weight:700;font-size:15px;color:#1f1e1c}" +
+  ".nt-head .nt-count{font-size:12px;color:rgba(55,53,47,.55);background:rgba(55,53,47,.06);padding:2px 8px;border-radius:99px;white-space:nowrap}" +
+  ".nt-close{margin-left:auto;width:30px;height:30px;border:none;border-radius:8px;cursor:pointer;font-size:15px;color:rgba(55,53,47,.7);background:transparent;line-height:1}" +
+  ".nt-close:hover{background:rgba(55,53,47,.08)}" +
+  ".nt-nav{overflow-y:auto;padding:10px 12px 16px;flex:1;-webkit-overflow-scrolling:touch}" +
+  ".nt-link{display:block;text-decoration:none;color:rgba(55,53,47,.8);font-size:13.5px;line-height:1.55;padding:6px 10px;border-radius:8px;border-left:2px solid transparent;transition:background .12s,color .12s;overflow-wrap:anywhere}" +
+  ".nt-link:hover{background:rgba(55,53,47,.06);color:#111}" +
+  ".nt-link.nt-active{background:rgba(35,131,226,.10);color:#0b66c3;border-left-color:#2383e2;font-weight:600}" +
+  ".nt-l1{font-weight:600;color:#161513;margin-top:5px}" +
+  ".nt-l2{padding-left:22px}.nt-l3{padding-left:34px}.nt-l4{padding-left:46px}.nt-l5{padding-left:58px}.nt-l6{padding-left:70px}" +
+  "@media print{.nt-fab,.nt-panel{display:none!important}}" +
+  "@media (max-width:480px){.nt-panel{width:88vw}}";
+  var ST = document.createElement("style");
+  ST.textContent = CSS;
+  document.head.appendChild(ST);
+  var ROOT = document.createElement("div");
+  ROOT.className = "nt-root";
+  var FAB = document.createElement("button");
+  FAB.type = "button";
+  FAB.className = "nt-fab";
+  FAB.setAttribute("aria-label", "打开本页目录");
+  FAB.innerHTML = "<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M4 6h16M4 12h16M4 18h10'/></svg>目录";
+  ROOT.appendChild(FAB);
+  var PANEL = document.createElement("aside");
+  PANEL.className = "nt-panel";
+  PANEL.setAttribute("aria-label", "本页目录");
+  var HEAD = document.createElement("div");
+  HEAD.className = "nt-head";
+  var T = document.createElement("span");
+  T.className = "nt-title";
+  T.textContent = "本页目录";
+  var CNT = document.createElement("span");
+  CNT.className = "nt-count";
+  CNT.textContent = (HEADINGS.length >= 2 ? HEADINGS.length + " 节" : PAGE_LINKS.length + " 页");
+  var CLOSE = document.createElement("button");
+  CLOSE.type = "button";
+  CLOSE.className = "nt-close";
+  CLOSE.setAttribute("aria-label", "关闭目录");
+  CLOSE.textContent = "✕";
+  HEAD.appendChild(T);
+  HEAD.appendChild(CNT);
+  HEAD.appendChild(CLOSE);
+  PANEL.appendChild(HEAD);
+  var NAV = document.createElement("nav");
+  NAV.className = "nt-nav";
+  function makeLabel(node) {
+    var label = (node.textContent || "").replace(/\s+/g, " ").trim();
+    var clean = label.replace(/^[\p{Extended_Pictographic}\p{Emoji_Modifier}‍️\s]+/u, "").trim();
+    return clean || label;
+  }
+  function addItem(href, text, cls, idx) {
+    var a = document.createElement("a");
+    a.href = href;
+    a.className = "nt-link " + (cls || "nt-l1");
+    a.setAttribute("data-i", idx);
+    a.title = text;
+    a.textContent = text.length > 42 ? text.slice(0, 42) + "…" : text;
+    NAV.appendChild(a);
+    return a;
+  }
+  var LINKS = [];
+  if (HEADINGS.length >= 2) {
+    var minLv = 99, k, lv;
+    for (k = 0; k < HEADINGS.length; k++) {
+      lv = parseInt(HEADINGS[k].tagName.charAt(1), 10);
+      if (lv < minLv) minLv = lv;
+    }
+    for (k = 0; k < HEADINGS.length; k++) {
+      lv = parseInt(HEADINGS[k].tagName.charAt(1), 10) - minLv;
+      if (lv > 5) lv = 5;
+      LINKS.push(addItem("#" + HEADINGS[k].id, makeLabel(HEADINGS[k]), "nt-l" + (lv + 1), k));
+    }
+  } else {
+    var j;
+    for (j = 0; j < PAGE_LINKS.length; j++) {
+      LINKS.push(addItem(PAGE_LINKS[j].getAttribute("href"), makeLabel(PAGE_LINKS[j]), "nt-l1", j));
+    }
+  }
+  PANEL.appendChild(NAV);
+  ROOT.appendChild(PANEL);
+  document.body.appendChild(ROOT);
+  var isHeadingNav = HEADINGS.length >= 2;
+  function setActive(idx) {
+    for (var n = 0; n < LINKS.length; n++) LINKS[n].classList.remove("nt-active");
+    if (LINKS[idx]) LINKS[idx].classList.add("nt-active");
+  }
+  var ticking = false;
+  function onScroll() {
+    if (ticking || !isHeadingNav) return;
+    ticking = true;
+    requestAnimationFrame(function () {
+      var mark = window.scrollY + 90;
+      var idx = 0;
+      for (var n = 0; n < HEADINGS.length; n++) {
+        var top = HEADINGS[n].getBoundingClientRect().top + window.scrollY;
+        if (top <= mark) idx = n; else break;
+      }
+      setActive(idx);
+      ticking = false;
+    });
+  }
+  window.addEventListener("scroll", onScroll, { passive: true });
+  if (isHeadingNav) setActive(0);
+  function openPanel() {
+    PANEL.classList.add("nt-open");
+    FAB.classList.add("nt-fab-hide");
+  }
+  function closePanel() {
+    PANEL.classList.remove("nt-open");
+    FAB.classList.remove("nt-fab-hide");
+  }
+  FAB.addEventListener("click", openPanel);
+  CLOSE.addEventListener("click", closePanel);
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape") closePanel();
+  });
+  NAV.addEventListener("click", function (e) {
+    var a = e.target && e.target.closest ? e.target.closest("a.nt-link") : null;
+    if (!a) return;
+    if (window.innerWidth < 860) closePanel();
+  });
+})();
+</script><script>
+(function () {
+  if (document.getElementById("nt-back")) return;
+  var link = "../%E7%BD%91%E5%B7%A5%E5%9F%BA%E7%A1%80%E4%B8%8E%E5%AE%9E%E9%AA%8C%20.html";
+  var style = document.createElement("style");
+  style.textContent = ".nt-back{position:fixed;top:16px;left:16px;z-index:2147483002;display:inline-flex;align-items:center;gap:7px;padding:8px 15px 8px 12px;border-radius:999px;text-decoration:none;color:#37352f;background:rgba(255,255,255,.93);border:1px solid rgba(55,53,47,.14);box-shadow:0 5px 16px rgba(0,0,0,.12);font:600 13px/1 -apple-system,'PingFang SC','Microsoft YaHei','Segoe UI',sans-serif;transition:background .15s,transform .15s,box-shadow .15s;backdrop-filter:blur(6px)}.nt-back:hover{background:#fff;transform:translateY(-1px);box-shadow:0 7px 20px rgba(0,0,0,.16)}.nt-back svg{width:14px;height:14px;flex:none}.nt-back .nt-back-label{white-space:nowrap}@media print{.nt-back{display:none!important}}@media (max-width:900px){.nt-back{padding:0;width:38px;height:38px;border-radius:50%;justify-content:center;top:10px;left:10px}.nt-back .nt-back-label{display:none}}";
+  document.head.appendChild(style);
+  var a = document.createElement("a");
+  a.id = "nt-back";
+  a.className = "nt-back";
+  a.href = link;
+  a.setAttribute("aria-label", "返回网工基础与实验");
+  a.innerHTML = "<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'><path d='M19 12H5'/><path d='M11 18l-6-6 6-6'/></svg><span class='nt-back-label'>网工基础与实验</span>";
+  document.body.appendChild(a);
+})();
+</script></body></html>

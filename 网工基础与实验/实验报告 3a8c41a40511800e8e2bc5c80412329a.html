@@ -1,0 +1,1527 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>实验报告</title><style>
+/* cspell:disable-file */
+/* webkit printing magic: print all background colors */
+html {
+	-webkit-print-color-adjust: exact;
+}
+* {
+	box-sizing: border-box;
+	-webkit-print-color-adjust: exact;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
+@media only screen {
+	body {
+		margin: 2em auto;
+		max-width: 900px;
+		color: rgb(55, 53, 47);
+	}
+}
+
+body {
+	line-height: 1.5;
+	white-space: pre-wrap;
+}
+
+a,
+a.visited {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.pdf-relative-link-path {
+	font-size: 80%;
+	color: #444;
+}
+
+h1,
+h2,
+h3 {
+	letter-spacing: -0.01em;
+	line-height: 1.2;
+	font-weight: 600;
+	margin-bottom: 0;
+}
+
+/* Override strong tags inside headings to maintain consistent weight */
+h1 strong,
+h2 strong,
+h3 strong {
+	font-weight: 600;
+}
+
+.page-title {
+	font-size: 2.5rem;
+	font-weight: 700;
+	margin-top: 0;
+	margin-bottom: 0.75em;
+}
+
+h1 {
+	font-size: 1.875rem;
+	margin-top: 1.875rem;
+}
+
+h2 {
+	font-size: 1.5rem;
+	margin-top: 1.5rem;
+}
+
+h3 {
+	font-size: 1.25rem;
+	margin-top: 1.25rem;
+}
+
+.source {
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	padding: 1.5em;
+	word-break: break-all;
+}
+
+.callout {
+	border-radius: 10px;
+	padding: 1rem;
+}
+
+/* For default-background callouts, render the border outline. */
+.callout.block-color-default_background {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+figure {
+	margin: 1.25em 0;
+	page-break-inside: avoid;
+}
+
+/*
+ * Toggles and callouts hold arbitrary content, so they can easily be taller
+ * than a page. They must stay breakable: avoiding breaks inside them makes
+ * Chromium push the whole block onto the next page, which leaves the previous
+ * page mostly empty before every long toggle.
+ */
+details,
+aside {
+	margin: 1.25em 0;
+}
+
+/* Keep a toggle's title on the same page as the start of its content. */
+summary {
+	page-break-after: avoid;
+	break-after: avoid;
+}
+
+/*
+ * Toggle headings render as <h1/h2/h3 style="display:inline-block"> inside
+ * <summary>. Without this reset, the heading's margin-top pushes it below the
+ * ::marker (▼), so the triangle and the title appear on separate lines.
+ */
+summary h1,
+summary h2,
+summary h3,
+summary h4 {
+	margin-top: 0;
+}
+
+figcaption {
+	opacity: 0.5;
+	font-size: 85%;
+	margin-top: 0.5em;
+}
+
+mark {
+	background-color: transparent;
+}
+
+.indented {
+	padding-left: 1.5em;
+}
+
+hr {
+	background: transparent;
+	display: block;
+	width: 100%;
+	height: 1px;
+	visibility: visible;
+	border: none;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+img {
+	max-width: 100%;
+}
+
+@media only print {
+	img {
+		max-height: 100vh;
+		object-fit: contain;
+	}
+
+	table.collection-content {
+		width: 100%;
+		table-layout: fixed;
+	}
+
+	table.collection-content th,
+	table.collection-content td {
+		overflow-wrap: anywhere;
+	}
+
+	table.collection-content td > .user,
+	table.collection-content td > time {
+		white-space: pre-wrap;
+	}
+}
+
+@page {
+	margin: 1in;
+}
+
+.collection-content-wrapper {
+	overflow-x: auto;
+}
+
+@media only print {
+	.collection-content-wrapper {
+		overflow-x: visible;
+	}
+}
+
+.collection-content {
+	font-size: 0.875rem;
+}
+
+.collection-content td {
+	white-space: pre-wrap;
+	word-break: break-word;
+}
+
+.column-list {
+	display: flex;
+	gap: 46px;
+}
+
+.column {
+	min-width: 0;
+	overflow: hidden;
+}
+
+.column > *:first-child {
+	margin-top: 0;
+}
+
+.table_of_contents-item {
+	display: block;
+	font-size: 0.875rem;
+	line-height: 1.3;
+	padding-inline: 0.125rem;
+	padding-block: 0.375rem;
+}
+
+.table_of_contents-indent-1 {
+	margin-left: 1.5rem;
+}
+
+.table_of_contents-indent-2 {
+	margin-left: 3rem;
+}
+
+.table_of_contents-indent-3 {
+	margin-left: 4.5rem;
+}
+
+.table_of_contents-link {
+	text-decoration: none;
+	opacity: 0.7;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.18);
+}
+
+table,
+th,
+td {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+table {
+	border-collapse: collapse;
+	border-left: none;
+	border-right: none;
+}
+
+th,
+td {
+	font-weight: normal;
+	padding: 0.25em 0.5em;
+	line-height: 1.5;
+	min-height: 1.5em;
+	text-align: left;
+}
+
+th {
+	color: rgba(55, 53, 47, 0.6);
+}
+
+ol,
+ul {
+	margin: 0;
+	margin-block-start: 0.6em;
+	margin-block-end: 0.6em;
+}
+
+li > ol:first-child,
+li > ul:first-child {
+	margin-block-start: 0.6em;
+}
+
+ul > li {
+	list-style: disc;
+}
+
+ul.to-do-list {
+	padding-inline-start: 0;
+}
+
+ul.to-do-list > li {
+	list-style: none;
+}
+
+.to-do-children-checked {
+	text-decoration: line-through;
+	opacity: 0.375;
+}
+
+ul.toggle > li {
+	list-style: none;
+}
+
+ul {
+	padding-inline-start: 1.7em;
+}
+
+ul > li {
+	padding-left: 0.1em;
+}
+
+ol {
+	padding-inline-start: 1.6em;
+}
+
+ol.numbered-list.numbered-list-digits-2 {
+	padding-inline-start: 2em;
+}
+
+ol.numbered-list.numbered-list-digits-3plus {
+	padding-inline-start: 2.4em;
+}
+
+ol > li {
+	padding-left: 0.2em;
+}
+
+.mono ol {
+	padding-inline-start: 2em;
+}
+
+.mono ol > li {
+	text-indent: -0.4em;
+}
+
+.toggle {
+	padding-inline-start: 0em;
+	list-style-type: none;
+}
+
+/* Indent toggle children */
+.toggle > li > details {
+	padding-left: 1.7em;
+}
+
+.toggle > li > details > summary {
+	margin-left: -1.1em;
+}
+
+.selected-value {
+	display: inline-block;
+	padding: 0 0.5em;
+	background: rgba(206, 205, 202, 0.5);
+	border-radius: 3px;
+	margin-right: 0.5em;
+	margin-top: 0.3em;
+	margin-bottom: 0.3em;
+	white-space: nowrap;
+}
+
+.collection-title {
+	display: inline-block;
+	margin-right: 1em;
+}
+
+.page-description {
+	margin-bottom: 2em;
+}
+
+.simple-table {
+	margin-top: 1em;
+	font-size: 0.875rem;
+	empty-cells: show;
+}
+.simple-table td {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table th {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table-header-color {
+	background: rgb(247, 246, 243);
+	color: black;
+}
+.simple-table-header {
+	font-weight: 500;
+}
+
+time {
+	opacity: 0.5;
+}
+
+.icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	max-width: 1.2em;
+	max-height: 1.2em;
+	text-decoration: none;
+	vertical-align: text-bottom;
+	margin-right: 0.5em;
+}
+
+/*
+ * Render emoji icons using a ::before pseudo-element to keep the glyph
+ * out of the DOM textContent traversal. This avoids double-rendering icons
+ * in callouts and page titles.
+ * NOTE(slim/html-export-pseudo-icons): I can't tagref this because it will
+ * flag as a duplicate tag after codegen.
+ */
+.icon[data-emoji]::before {
+	content: attr(data-emoji);
+}
+
+img.icon {
+	border-radius: 3px;
+}
+
+.callout img.notion-static-icon {
+	width: 1em;
+	height: 1em;
+}
+
+.callout p {
+	margin: 0;
+}
+
+.callout h1,
+.callout h2,
+.callout h3 {
+	margin: 0 0 0.6rem;
+}
+
+.user-icon {
+	width: 1.5em;
+	height: 1.5em;
+	border-radius: 100%;
+	margin-right: 0.5rem;
+}
+
+.user-icon-inner {
+	font-size: 0.8em;
+}
+
+.text-icon {
+	border: 1px solid #000;
+	text-align: center;
+}
+
+.page-cover-image {
+	display: block;
+	object-fit: cover;
+	width: 100%;
+	max-height: 30vh;
+}
+
+.page-header-icon {
+	font-size: 3rem;
+	margin-bottom: 1rem;
+}
+
+.page-header-icon-with-cover {
+	margin-top: -0.72em;
+	margin-left: 0.07em;
+}
+
+.page-header-icon img {
+	border-radius: 3px;
+}
+
+.link-to-page {
+	margin: 1em 0;
+	padding: 0;
+	border: none;
+	font-weight: 500;
+}
+
+p > .user {
+	opacity: 0.5;
+}
+
+td > .user,
+td > time {
+	white-space: nowrap;
+}
+
+input[type="checkbox"] {
+	margin-right: 0.4em;
+	vertical-align: middle;
+}
+
+p {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+.image {
+	border: none;
+	margin: 1.5em 0;
+	padding: 0;
+	border-radius: 0;
+	text-align: center;
+}
+
+.code,
+code {
+	background: rgba(135, 131, 120, 0.15);
+	border-radius: 3px;
+	padding: 0.2em 0.4em;
+	border-radius: 3px;
+	font-size: 85%;
+	tab-size: 2;
+}
+
+code {
+	color: #eb5757;
+}
+
+.code {
+	padding: 1.5em 1em;
+}
+
+.code-wrap {
+	white-space: pre-wrap;
+	word-break: break-all;
+}
+
+.code > code {
+	background: none;
+	padding: 0;
+	font-size: 100%;
+	color: inherit;
+}
+
+blockquote {
+	font-size: 1em;
+	margin: 1em 0;
+	padding-left: 1em;
+	border-left: 3px solid rgb(55, 53, 47);
+}
+
+blockquote.quote-large {
+	font-size: 1.25em;
+}
+
+.bookmark {
+	text-decoration: none;
+	max-height: 8em;
+	padding: 0;
+	display: flex;
+	width: 100%;
+	align-items: stretch;
+}
+
+.bookmark-title {
+	font-size: 0.85em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	height: 1.75em;
+	white-space: nowrap;
+}
+
+.bookmark-text {
+	display: flex;
+	flex-direction: column;
+}
+
+.bookmark-info {
+	flex: 4 1 180px;
+	padding: 12px 14px 14px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.bookmark-image {
+	width: 33%;
+	flex: 1 1 180px;
+	display: block;
+	position: relative;
+	object-fit: cover;
+	border-radius: 1px;
+}
+
+.bookmark-description {
+	color: rgba(55, 53, 47, 0.6);
+	font-size: 0.75em;
+	overflow: hidden;
+	max-height: 4.5em;
+	word-break: break-word;
+}
+
+.bookmark-href {
+	font-size: 0.75em;
+	margin-top: 0.25em;
+}
+
+.tab {
+	margin: 1.25em 0;
+	padding-inline: 1rem;
+	border: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+.sans { font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"; }
+.code { font-family: "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace; }
+.serif { font-family: Lyon-Text, Georgia, ui-serif, serif; }
+.mono { font-family: iawriter-mono, Nitti, Menlo, Courier, monospace; }
+.pdf .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK JP'; }
+.pdf:lang(zh-CN) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC'; }
+.pdf:lang(zh-TW) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK TC'; }
+.pdf:lang(ko-KR) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK KR'; }
+.pdf .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.pdf .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK JP'; }
+.pdf:lang(zh-CN) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK SC'; }
+.pdf:lang(zh-TW) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK TC'; }
+.pdf:lang(ko-KR) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK KR'; }
+.pdf .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.highlight-default {
+	color: rgba(44, 44, 43, 1);
+}
+.highlight-gray {
+	color: rgba(125, 122, 117, 1);
+	fill: rgba(125, 122, 117, 1);
+}
+.highlight-brown {
+	color: rgba(159, 118, 90, 1);
+	fill: rgba(159, 118, 90, 1);
+}
+.highlight-orange {
+	color: rgba(210, 123, 45, 1);
+	fill: rgba(210, 123, 45, 1);
+}
+.highlight-yellow {
+	color: rgba(203, 148, 52, 1);
+	fill: rgba(203, 148, 52, 1);
+}
+.highlight-teal {
+	color: rgba(80, 148, 110, 1);
+	fill: rgba(80, 148, 110, 1);
+}
+.highlight-blue {
+	color: rgba(56, 125, 201, 1);
+	fill: rgba(56, 125, 201, 1);
+}
+.highlight-purple {
+	color: rgba(154, 107, 180, 1);
+	fill: rgba(154, 107, 180, 1);
+}
+.highlight-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.highlight-red {
+	color: rgba(207, 81, 72, 1);
+	fill: rgba(207, 81, 72, 1);
+}
+.highlight-default_background {
+	color: rgba(44, 44, 43, 1);
+}
+.highlight-gray_background {
+	background: rgba(42, 28, 0, 0.07);
+}
+.highlight-brown_background {
+	background: rgba(139, 46, 0, 0.086);
+}
+.highlight-orange_background {
+	background: rgba(224, 101, 1, 0.129);
+}
+.highlight-yellow_background {
+	background: rgba(211, 168, 0, 0.137);
+}
+.highlight-teal_background {
+	background: rgba(0, 100, 45, 0.09);
+}
+.highlight-blue_background {
+	background: rgba(0, 124, 215, 0.094);
+}
+.highlight-purple_background {
+	background: rgba(102, 0, 178, 0.078);
+}
+.highlight-pink_background {
+	background: rgba(197, 0, 93, 0.086);
+}
+.highlight-red_background {
+	background: rgba(223, 22, 0, 0.094);
+}
+.block-color-default {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray {
+	color: rgba(125, 122, 117, 1);
+	fill: rgba(125, 122, 117, 1);
+}
+.block-color-brown {
+	color: rgba(159, 118, 90, 1);
+	fill: rgba(159, 118, 90, 1);
+}
+.block-color-orange {
+	color: rgba(210, 123, 45, 1);
+	fill: rgba(210, 123, 45, 1);
+}
+.block-color-yellow {
+	color: rgba(203, 148, 52, 1);
+	fill: rgba(203, 148, 52, 1);
+}
+.block-color-teal {
+	color: rgba(80, 148, 110, 1);
+	fill: rgba(80, 148, 110, 1);
+}
+.block-color-blue {
+	color: rgba(56, 125, 201, 1);
+	fill: rgba(56, 125, 201, 1);
+}
+.block-color-purple {
+	color: rgba(154, 107, 180, 1);
+	fill: rgba(154, 107, 180, 1);
+}
+.block-color-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.block-color-red {
+	color: rgba(207, 81, 72, 1);
+	fill: rgba(207, 81, 72, 1);
+}
+.block-color-default_background {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray_background {
+	background: rgba(240, 239, 237, 1);
+}
+.block-color-brown_background {
+	background: rgba(245, 237, 233, 1);
+}
+.block-color-orange_background {
+	background: rgba(251, 235, 222, 1);
+}
+.block-color-yellow_background {
+	background: rgba(249, 243, 220, 1);
+}
+.block-color-teal_background {
+	background: rgba(232, 241, 236, 1);
+}
+.block-color-blue_background {
+	background: rgba(229, 242, 252, 1);
+}
+.block-color-purple_background {
+	background: rgba(243, 235, 249, 1);
+}
+.block-color-pink_background {
+	background: rgba(250, 233, 241, 1);
+}
+.block-color-red_background {
+	background: rgba(252, 233, 231, 1);
+}
+.select-value-color-default { background-color: rgba(42, 28, 0, 0.07); }
+.select-value-color-gray { background-color: rgba(28, 19, 1, 0.11); }
+.select-value-color-brown { background-color: rgba(127, 51, 0, 0.156); }
+.select-value-color-orange { background-color: rgba(196, 88, 0, 0.203); }
+.select-value-color-yellow { background-color: rgba(209, 156, 0, 0.282); }
+.select-value-color-green { background-color: rgba(0, 96, 38, 0.156); }
+.select-value-color-blue { background-color: rgba(0, 118, 217, 0.203); }
+.select-value-color-purple { background-color: rgba(92, 0, 163, 0.141); }
+.select-value-color-pink { background-color: rgba(183, 0, 78, 0.152); }
+.select-value-color-red { background-color: rgba(206, 24, 0, 0.164); }
+
+.checkbox {
+	display: inline-flex;
+	vertical-align: text-bottom;
+	width: 16;
+	height: 16;
+	background-size: 16px;
+	margin-left: 2px;
+	margin-right: 5px;
+}
+
+.checkbox-on {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20width%3D%2216%22%20height%3D%2216%22%20fill%3D%22%2358A9D7%22%2F%3E%0A%3Cpath%20d%3D%22M6.71429%2012.2852L14%204.9995L12.7143%203.71436L6.71429%209.71378L3.28571%206.2831L2%207.57092L6.71429%2012.2852Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+
+.checkbox-off {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20x%3D%220.75%22%20y%3D%220.75%22%20width%3D%2214.5%22%20height%3D%2214.5%22%20fill%3D%22white%22%20stroke%3D%22%2336352F%22%20stroke-width%3D%221.5%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+	
+</style><style>@import url('https://cdn.jsdelivr.net/npm/katex@0.16.25/dist/katex-swap.min.css')</style></head><body><article id="3a8c41a4-0511-800e-8e2b-c5c80412329a" class="page sans"><header><h1 class="page-title" dir="auto">实验报告</h1><p class="page-description" dir="auto"></p></header><div class="page-body"><h4 id="3abc41a4-0511-809c-949b-cb575390282b" class="" dir="auto">🤪引入默认路由实验</h4><figure id="3abc41a4-0511-8057-9014-ebfa9782fd2f" class="image" data-notion-image="OSPF%20V2/image%209.png" dir="ltr"><a href="OSPF%20V2/image%209.png"><img style="width:703.9659423828125px" src="OSPF%20V2/image%209.png"/></a></figure><p id="3abc41a4-0511-8030-bf22-dc2d239c0718" class="" dir="auto">需求：AR5和数据中心之间使用默认路由</p><p id="3abc41a4-0511-807f-bb72-e65d4b424932" class="" dir="auto">配置命令</p><p id="3abc41a4-0511-8025-a749-d68fff20c8f9" class="" dir="auto">AR1</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-kotlin.min.js" integrity="sha512-nLUQ1JXk2Kj5a8FlfriL+WmiGbAq3W/dQirx3IlVfkpU7byrzLD19pJnYsG8vPTDvsRMpQDVSezvzkKUNcqUSw==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><pre id="3abc41a4-0511-80a0-a312-c3ee59a21967" class="code code-wrap" data-notion-code-syntax="kotlin"><code class="language-kotlin" style="white-space:pre-wrap;word-break:break-all">[AR1]sysname AR1
+
+[AR1]interface GigabitEthernet 0/0/0
+[AR1-GigabitEthernet0/0/0]ip address 192.168.1.254 24
+[AR1-GigabitEthernet0/0/0]quit
+
+[AR1]interface GigabitEthernet 0/0/1
+[AR1-GigabitEthernet0/0/1]ip address 192.168.12.1 24
+[AR1-GigabitEthernet0/0/1]quit
+
+[AR1]ospf 1
+[AR1-ospf-1]area 1
+[AR1-ospf-1-area-0.0.0.1]network 192.168.1.0 0.0.0.255
+[AR1-ospf-1-area-0.0.0.1]network 192.168.12.0 0.0.0.255
+[AR1-ospf-1-area-0.0.0.1]quit
+[AR1-ospf-1]router-id 1.1.1.1
+[AR1-ospf-1]quit
+
+[AR1]reset ospf 1 process</code></pre><p id="3abc41a4-0511-8093-b957-eeffe229e344" class="" dir="auto">AR2</p><pre id="3abc41a4-0511-808d-a628-da7f1507f7b0" class="code code-wrap" data-notion-code-syntax="kotlin"><code class="language-kotlin" style="white-space:pre-wrap;word-break:break-all">[AR2]sysname AR2
+
+[AR2]interface GigabitEthernet 0/0/0
+[AR2-GigabitEthernet0/0/0]ip address 192.168.12.2 24
+[AR2-GigabitEthernet0/0/0]quit
+
+[AR2]interface GigabitEthernet 0/0/1
+[AR2-GigabitEthernet0/0/1]ip address 192.168.23.2 24
+[AR2-GigabitEthernet0/0/1]quit
+
+[AR2]ospf 1 router-id 2.2.2.2
+
+[AR2-ospf-1]area 1
+[AR2-ospf-1-area-0.0.0.1]network 192.168.12.0 0.0.0.255
+[AR2-ospf-1-area-0.0.0.1]network 192.168.23.0 0.0.0.255
+[AR2-ospf-1-area-0.0.0.1]quit</code></pre><p id="3abc41a4-0511-8064-bafa-d13c61c8f858" class="" dir="auto">AR3</p><pre id="3abc41a4-0511-80f6-a0eb-c283cba776be" class="code code-wrap" data-notion-code-syntax="kotlin"><code class="language-kotlin" style="white-space:pre-wrap;word-break:break-all">[AR3]sysname AR3
+
+[AR3]interface GigabitEthernet 0/0/0
+[AR3-GigabitEthernet0/0/0]ip address 192.168.23.3 24
+[AR3-GigabitEthernet0/0/0]quit
+
+[AR3]interface GigabitEthernet 0/0/1
+[AR3-GigabitEthernet0/0/1]ip address 192.168.34.3 24
+[AR3-GigabitEthernet0/0/1]quit
+
+[AR3]ospf 1 router-id 3.3.3.3
+
+[AR3-ospf-1]area 1
+[AR3-ospf-1-area-0.0.0.1]network 192.168.23.0 0.0.0.255
+[AR3-ospf-1-area-0.0.0.1]quit
+
+[AR3-ospf-1]area 0
+[AR3-ospf-1-area-0.0.0.0]network 192.168.34.0 0.0.0.255
+[AR3-ospf-1-area-0.0.0.0]quit</code></pre><p id="3abc41a4-0511-8062-82a2-c688486b2582" class="" dir="auto">AR4</p><pre id="3abc41a4-0511-80ab-849e-f47011e2c89d" class="code code-wrap" data-notion-code-syntax="kotlin"><code class="language-kotlin" style="white-space:pre-wrap;word-break:break-all">[AR4]sysname AR4
+
+[AR4]interface GigabitEthernet 0/0/0
+[AR4-GigabitEthernet0/0/0]ip address 192.168.34.4 24
+[AR4-GigabitEthernet0/0/0]quit
+
+[AR4]interface GigabitEthernet 0/0/1
+[AR4-GigabitEthernet0/0/1]ip address 192.168.45.4 24
+[AR4-GigabitEthernet0/0/1]quit
+
+[AR4]ospf 1 router-id 4.4.4.4
+
+[AR4-ospf-1]area 0
+[AR4-ospf-1-area-0.0.0.0]network 192.168.34.0 0.0.0.255
+[AR4-ospf-1-area-0.0.0.0]network 192.168.45.0 0.0.0.255
+[AR4-ospf-1-area-0.0.0.0]quit</code></pre><p id="3abc41a4-0511-8033-9026-f633f925d9d6" class="" dir="auto">AR5</p><pre id="3abc41a4-0511-808f-a93f-ebb7a49834b7" class="code code-wrap" data-notion-code-syntax="kotlin"><code class="language-kotlin" style="white-space:pre-wrap;word-break:break-all">[AR5]sysname AR5
+
+[AR5]interface GigabitEthernet 0/0/0
+[AR5-GigabitEthernet0/0/0]ip address 192.168.45.5 24
+[AR5-GigabitEthernet0/0/0]quit
+
+[AR5]interface GigabitEthernet 0/0/1
+[AR5-GigabitEthernet0/0/1]ip address 192.168.56.5 24
+[AR5-GigabitEthernet0/0/1]quit
+
+[AR5]ospf 1 router-id 5.5.5.5
+
+[AR5-ospf-1]area 0
+[AR5-ospf-1-area-0.0.0.0]network 192.168.45.0 0.0.0.255
+[AR5-ospf-1-area-0.0.0.0]quit
+
+[AR5]ip route-static 0.0.0.0 0 192.168.56.6
+
+[AR5]ospf 1
+[AR5-ospf-1]default-route-advertise   //引入默认路由，默认为类型2</code></pre><p id="3abc41a4-0511-8002-81eb-d95d05514edd" class="" dir="auto">修改类型：<br/><code>[AR5-ospf-1]default-route-advertise type 1</code> 切换类型</p><p id="3abc41a4-0511-8029-a137-d05a82ee76fd" class="" dir="auto"><code>default-route-advertise type 2 cost 10000</code> 修改路由开销</p><p id="3abc41a4-0511-8012-b9f4-ec45b2a0d866" class="" dir="auto"><code>default-route-advertise cost</code> 也可以</p><p id="3abc41a4-0511-801a-9634-c6ecbc6dbe22" class="" dir="auto">AR6</p><pre id="3abc41a4-0511-8019-a9d6-fe642a16aef2" class="code code-wrap" data-notion-code-syntax="kotlin"><code class="language-kotlin" style="white-space:pre-wrap;word-break:break-all">[AR6]sysname AR6
+
+[AR6]interface GigabitEthernet 0/0/0
+[AR6-GigabitEthernet0/0/0]ip address 192.168.56.6 24
+[AR6-GigabitEthernet0/0/0]quit
+
+[AR6]interface GigabitEthernet 0/0/1
+[AR6-GigabitEthernet0/0/1]ip address 192.168.2.254 24
+[AR6-GigabitEthernet0/0/1]quit
+
+[AR6]ip route-static 192.168.0.0 16 192.168.56.5</code></pre><h3 id="3abc41a4-0511-809d-b5d4-dc2a34505a0d" class="" dir="auto">😝特殊区域</h3><p id="3abc41a4-0511-80b2-b3f6-cb4c6f1ea738" class="" dir="auto">该配置在上面的配置为基础下进行配置。</p><h4 id="3abc41a4-0511-80f6-9bc5-e53729aa4b8c" class="" dir="auto">🤩stub 末梢区域</h4><p id="3abc41a4-0511-8022-9c0b-ffa0d69a49cb" class="" dir="auto">需求：使该拓扑图的area 1即使在外部路由产生问题或者动荡时也不受影响。</p><aside class="block-color-gray_background callout" data-notion-callout="" data-notion-callout-icon="💡" data-notion-callout-background="gray_background" style="white-space:pre-wrap;display:flex" id="3abc41a4-0511-806f-b00f-ebabc131e488" dir="ltr"><div style="font-size:1.5em"><span class="icon" data-emoji="💡"></span></div><div style="width:100%"><p id="3abc41a4-0511-8098-9e0e-c7a0f8ac3342" class="" dir="auto">区域里允许存在 1/2 /3 类LSA ，不允许存在 4/5 类LSA ，意思是引入的外部路由如果动荡，不会影响本区域，想访问外部路由，在ABR 产生一条  3类 的默认路由功能的 LSA  </p></div></aside><p id="3abc41a4-0511-8039-99f6-c7d8f0728d36" class="" dir="auto">配置命令：</p><pre id="3abc41a4-0511-803f-8a51-f4ce369de9ce" class="code code-wrap" data-notion-code-syntax="kotlin"><code class="language-kotlin" style="white-space:pre-wrap;word-break:break-all">ospf 1 
+ area 0.0.0.1 
+  stub
+在所有属于area 1的设备配置。</code></pre><p id="3abc41a4-0511-8013-bb0f-d84bd76ec8b8" class="" dir="auto">配置后的OSPF路由表</p><pre id="3abc41a4-0511-80ca-8e0a-f16178927e3b" class="code code-wrap" data-notion-code-syntax="kotlin"><code class="language-kotlin" style="white-space:pre-wrap;word-break:break-all">&lt;AR1&gt;display ospf routing
+
+	 OSPF Process 1 with Router ID 1.1.1.1
+		  Routing Tables 
+
+ Routing for Network 
+ Destination        Cost  Type       NextHop         AdvRouter       Area
+ 192.168.1.0/24     1     Stub       192.168.1.254   1.1.1.1         0.0.0.1
+ 192.168.12.0/24    1     Transit    192.168.12.1    1.1.1.1         0.0.0.1
+ 0.0.0.0/0          3     Inter-area 192.168.12.2    3.3.3.3         0.0.0.1
+ 192.168.23.0/24    2     Transit    192.168.12.2    2.2.2.2         0.0.0.1
+ 192.168.34.0/24    3     Inter-area 192.168.12.2    3.3.3.3         0.0.0.1
+ 192.168.45.0/24    4     Inter-area 192.168.12.2    3.3.3.3         0.0.0.1
+
+ Total Nets: 6  
+ Intra Area: 3  Inter Area: 3  ASE: 0  NSSA: 0 
+ 
+ 
+ 划线的即为增加的去往外网的默认路由</code></pre><p id="3abc41a4-0511-808c-829b-f49a57021ca0" class="" dir="auto">配置Area 1 Stub</p><p id="3abc41a4-0511-80fa-b220-f61fb5d1b03a" class="" dir="auto">拒绝：<br/>Type5</p><p id="3abc41a4-0511-8013-bc17-f04d92b6860b" class="" dir="auto">增加：<br/>ABR默认路由</p><p id="3abc41a4-0511-8070-abb0-c5c22856fbe8" class="" dir="auto">路由：<br/>内部路由<br/>默认出口</p><h4 id="3abc41a4-0511-80da-a826-dae7720a5f0e" class="" dir="auto">😜<strong>totally  STUB完全末梢区</strong></h4><p id="3abc41a4-0511-801e-99c4-ed14881483db" class="" dir="auto">需求：既不想外部路由影响也不想其他区域影响。</p><aside class="block-color-gray_background callout" data-notion-callout="" data-notion-callout-icon="💡" data-notion-callout-background="gray_background" style="white-space:pre-wrap;display:flex" id="3abc41a4-0511-80c2-9f66-e430ff1257a0" dir="ltr"><div style="font-size:1.5em"><span class="icon" data-emoji="💡"></span></div><div style="width:100%"><p id="3abc41a4-0511-8011-b9d0-ddd5575ddb91" class="" dir="auto">区域里允许存在 1、2类 LSA , 不允许存在 3/4/5 LSA  ，意思是引入的外部路由动荡不会影响本区域，同时其他的LSA 动荡也不会影响本区域， 想访问其他区域及外网 ， ABR 上产生一条 3类的 默认路由功能的 LSA  （即上面产生的默认路由）</p></div></aside><p id="3abc41a4-0511-80a8-9b5a-ff61bad85c08" class="" dir="auto">配置命令</p><pre id="3abc41a4-0511-80a0-91c3-f9237c913f67" class="code code-wrap" data-notion-code-syntax="kotlin"><code class="language-kotlin" style="white-space:pre-wrap;word-break:break-all">在区域1 内所有设备配置完STUB 之后， 在 ABR 区域上追加下面的命令
+ area 0.0.0.1 
+  stub no-summary</code></pre><h4 id="3abc41a4-0511-80a7-8b87-f0dbbbe90b26" class="" dir="auto">🤪<strong>NSSA</strong></h4><figure id="3abc41a4-0511-8075-8b15-d456ad6f55a6" class="image" data-notion-image="OSPF%20V2/%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE_2026-07-26_235002.png" dir="ltr"><a href="OSPF%20V2/%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE_2026-07-26_235002.png"><img style="width:703.9886474609375px" src="OSPF%20V2/%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE_2026-07-26_235002.png"/></a></figure><p id="3abc41a4-0511-80a3-9b58-d991a7c668ea" class="" dir="auto">需求：实现合作伙伴通过公司网络访问数据中心（AR1的GE0/0/0接口地址删掉以及其OSPF的宣告也删除）。</p><p id="3abc41a4-0511-804b-8c0b-c9642492ddea" class="" dir="auto">但是现状是，既不能有外部路由也能有其它区域的路由，既3、4、5类的LSA都被禁止了</p><p id="3abc41a4-0511-800d-925c-d345bcfa02eb" class="" dir="auto">于是出现了NSSA</p><aside class="block-color-gray_background callout" data-notion-callout="" data-notion-callout-icon="💡" data-notion-callout-background="gray_background" style="white-space:pre-wrap;display:flex" id="3abc41a4-0511-80e7-8c89-cf2447405794" dir="ltr"><div style="font-size:1.5em"><span class="icon" data-emoji="💡"></span></div><div style="width:100%"><p id="3abc41a4-0511-8029-ad5b-ed382ae24f73" class="" dir="auto">这个区域里不存在5类LSA  ， 但是可以存在外部路由，这个外部路由不是以5类LSA 形式存在的， 以 7类LSA 形式存在。</p><p id="3abc41a4-0511-8073-85a4-c1612606f022" class="" dir="auto">区域里允许存在 1、2、3、7类 LSA , 不允许存在 4/5 LSA  ，意思是引入的外部路由动荡不会影响本区域， 想访问其他区域及服务器外网 ， ABR 上产生一条 7类的 默认路由功能的 LSA  ，这条LSA 具有将特殊区域的7类LSA 转换成其他区域认识的5类LSA 。 在ASBR 上产生去往合作伙伴的7类LSA  。</p></div></aside><p id="3abc41a4-0511-8056-92da-cab367f4acea" class="" dir="auto">配置命令：</p><pre id="3abc41a4-0511-80bd-af45-e6fecb8d29da" class="code code-wrap" data-notion-code-syntax="kotlin"><code class="language-kotlin" style="white-space:pre-wrap;word-break:break-all">ospf 1 
+ area 0.0.0.1 
+  nssa
+所有区域1内的设备都配置NSSA，删除stub  </code></pre><p id="3abc41a4-0511-80da-90f6-fbd2abbdffc3" class="" dir="auto">nssa域的OSPF路由表</p><pre id="3abc41a4-0511-80fc-9c7e-cd45ed6f39ef" class="code code-wrap" data-notion-code-syntax="kotlin"><code class="language-kotlin" style="white-space:pre-wrap;word-break:break-all">[AR1]display ospf lsdb
+
+	 OSPF Process 1 with Router ID 1.1.1.1
+		 Link State Database 
+
+		         Area: 0.0.0.1
+ Type      LinkState ID    AdvRouter          Age  Len   Sequence   Metric
+ Router    2.2.2.2         2.2.2.2            288  48    80000008       1
+ Router    1.1.1.1         1.1.1.1            317  36    80000005       1
+ Router    3.3.3.3         3.3.3.3            283  36    80000005       1
+ Network   192.168.23.3    3.3.3.3            283  32    80000002       0
+ Network   192.168.12.2    2.2.2.2            315  32    80000002       0
+ Sum-Net   192.168.45.0    3.3.3.3            333  28    80000001       2
+ Sum-Net   192.168.34.0    3.3.3.3            333  28    80000001       1
+ NSSA      192.168.1.0     1.1.1.1            361  36    80000001       1
+ NSSA      0.0.0.0         3.3.3.3            333  36    80000001       1
+</code></pre><p id="3abc41a4-0511-8027-9381-db841f887268" class="" dir="auto"><code>NSSA      192.168.1.0     1.1.1.1            361  36    80000001       1</code></p><p id="3abc41a4-0511-8049-a330-f9c5d120e6c0" class="" dir="auto">可以得知AR1作为ASBR引入该外部路由（第七类LSA）</p><p id="3abc41a4-0511-8080-97a9-fb9b6ab1005c" class="" dir="auto"><code> NSSA      0.0.0.0         3.3.3.3            333  36    80000001       1</code></p><p id="3abc41a4-0511-8065-afac-e1fd80caf571" class="" dir="auto">nssa默认路由，如果在本域找不到就走这个路由（将7类转为5类给其他域）</p><aside class="block-color-gray_background callout" data-notion-callout="" data-notion-callout-icon="💡" data-notion-callout-background="gray_background" style="white-space:pre-wrap;display:flex" id="3abc41a4-0511-80e4-ae61-e47a2a343982" dir="ltr"><div style="font-size:1.5em"><span class="icon" data-emoji="💡"></span></div><div style="width:100%"><p id="3abc41a4-0511-8033-bfc1-f17fbd29e5da" class="" dir="auto">并且这里还存在三类LSA</p></div></aside><p id="3abc41a4-0511-80b2-83c4-e6711ab55c7f" class="" dir="auto">对于其它不是NSSA域的来说就是第5类</p><pre id="3abc41a4-0511-80b8-bfac-cd2a967b9231" class="code code-wrap" data-notion-code-syntax="kotlin"><code class="language-kotlin" style="white-space:pre-wrap;word-break:break-all">[AR4]display ospf lsdb
+
+	 OSPF Process 1 with Router ID 4.4.4.4
+		 Link State Database 
+
+		         Area: 0.0.0.0
+ Type      LinkState ID    AdvRouter          Age  Len   Sequence   Metric
+ Router    4.4.4.4         4.4.4.4           1771  48    8000001C       1
+ Router    5.5.5.5         5.5.5.5            459  36    8000001A       1
+ Router    3.3.3.3         3.3.3.3           1225  36    8000001A       1
+ Network   192.168.34.3    3.3.3.3            151  32    80000017       0
+ Network   192.168.45.4    4.4.4.4           1771  32    80000016       0
+ Sum-Net   192.168.23.0    3.3.3.3           1225  28    80000018       1
+ Sum-Net   192.168.12.0    3.3.3.3           1181  28    80000001       2
+ 
+
+		 AS External Database
+ Type      LinkState ID    AdvRouter          Age  Len   Sequence   Metric
+ External  0.0.0.0         5.5.5.5            135  36    80000015    10000
+ External  192.168.1.0     3.3.3.3           1181  36    80000001       1
+</code></pre><h4 id="3abc41a4-0511-80c1-b0c7-efa1032a34c9" class="" dir="auto">🤩<strong>totally NSSA</strong></h4><p id="3abc41a4-0511-8011-8ec0-d97924cc3d89" class="" dir="auto">为了同时外部路由和其他区域的路由不会影响到本区域，即</p><aside class="block-color-gray_background callout" data-notion-callout="" data-notion-callout-icon="💡" data-notion-callout-background="gray_background" style="white-space:pre-wrap;display:flex" id="3abc41a4-0511-8012-9e7a-e66c0a550eba" dir="ltr"><div style="font-size:1.5em"><span class="icon" data-emoji="💡"></span></div><div style="width:100%"><p id="3abc41a4-0511-8009-bf80-cc32de427027" class="" dir="auto">区域里允许存在 1、2 . 7类 LSA , 不允许存在 3/4/5 LSA  ，意思是引入的外部路由动荡不会影响本区域，相访问其他区域及服务器外网 ， ABR 上产生一条3类 默认路由 ，也会产生一条7类默认路由，这个七类是为了进行7转5类 。 ASBR 上产生七类LSA 是为了访问合作伙伴的网络。</p></div></aside><p id="3abc41a4-0511-8005-a4d4-d2c073042e04" class="" dir="auto">配置命令</p><p id="3abc41a4-0511-802c-8e14-d72787c256f9" class="" dir="auto">在 nssa 基础上 ， 在ABR 上 区域1 追加   NSSA no-summary</p><pre id="3abc41a4-0511-8033-9103-eb8579f33acb" class="code code-wrap" data-notion-code-syntax="kotlin"><code class="language-kotlin" style="white-space:pre-wrap;word-break:break-all">[AR3]system-view
+[AR3]ospf 1
+[AR3-ospf-1]area 1
+[AR3-ospf-1-area-0.0.0.1]nssa no-summary</code></pre><p id="3abc41a4-0511-808a-92b2-d4653c1e38e8" class="" dir="auto">查看数据库</p><pre id="3abc41a4-0511-8098-82f8-e96f5e732698" class="code code-wrap" data-notion-code-syntax="kotlin"><code class="language-kotlin" style="white-space:pre-wrap;word-break:break-all">[AR1]display ospf lsdb
+
+	 OSPF Process 1 with Router ID 1.1.1.1
+		 Link State Database 
+
+		         Area: 0.0.0.1
+ Type      LinkState ID    AdvRouter          Age  Len   Sequence   Metric
+ Router    2.2.2.2         2.2.2.2              4  48    80000015       1
+ Router    1.1.1.1         1.1.1.1            393  48    80000008       1
+ Router    3.3.3.3         3.3.3.3              7  36    80000006       1
+ Network   192.168.23.2    2.2.2.2              4  32    80000002       0
+ Network   192.168.12.2    2.2.2.2            422  32    80000002       0
+ Sum-Net   0.0.0.0         3.3.3.3             15  28    80000001       1
+ NSSA      192.168.1.0     1.1.1.1            429  36    80000003       1
+ NSSA      0.0.0.0         3.3.3.3              8  36    80000003       1
+</code></pre><p id="3abc41a4-0511-80c9-8a5b-ecb270e029d7" class="" dir="auto">三类LSA只留下默认路由。</p><h4 id="3abc41a4-0511-80d1-8d0b-ef58b9cd92e2" class="" dir="auto">☺️静默接口</h4><p id="3abc41a4-0511-805b-899b-dd0f52f63c84" class="" dir="auto">接口参与OSPF路由计算，但是不发送、不接收OSPF报文。（比如用在主机和路由器之间）</p><p id="3abc41a4-0511-80fd-a7a2-dcef1c46505c" class="" dir="auto">这样就阻断LSA的报文向主机进行发送这种浪费资源的行为</p><pre id="3abc41a4-0511-8022-9eaa-f84430a6e1a3" class="code code-wrap" data-notion-code-syntax="kotlin"><code class="language-kotlin" style="white-space:pre-wrap;word-break:break-all">[AR1-ospf-1]silent-interface ?
+  Cellular         Cellular interface
+  GigabitEthernet  GigabitEthernet interface
+  all              Suppress and receive routing on all interfaces
+</code></pre><h4 id="3abc41a4-0511-8020-84e5-ed351a6afdd1" class="" dir="auto">🤭路由汇总</h4><figure id="3abc41a4-0511-804e-8ea2-c4bf3229067e" class="image" data-notion-image="OSPF%20V2/image%2010.png" dir="ltr"><a href="OSPF%20V2/image%2010.png"><img style="width:703.9886474609375px" src="OSPF%20V2/image%2010.png"/></a></figure><p id="3abc41a4-0511-80aa-8e2b-f315f594d49b" class="" dir="auto">若直接<strong>在AR1配置接口然后宣告</strong>，会出现这种情况：</p><pre id="3abc41a4-0511-80f4-8035-c251c5c12c2e" class="code code-wrap" data-notion-code-syntax="kotlin"><code class="language-kotlin" style="white-space:pre-wrap;word-break:break-all">[AR3]display ip routing-table
+Route Flags: R - relay, D - download to fib
+------------------------------------------------------------------------------
+Routing Tables: Public
+         Destinations : 19       Routes : 19       
+
+Destination/Mask    Proto   Pre  Cost      Flags NextHop         Interface
+
+      10.10.1.1/32  OSPF    10   2           D   192.168.23.2    GigabitEthernet
+0/0/0
+      10.10.2.1/32  OSPF    10   2           D   192.168.23.2    GigabitEthernet
+0/0/0
+      10.10.3.1/32  OSPF    10   2           D   192.168.23.2    GigabitEthernet
+0/0/0
+      10.10.4.1/32  OSPF    10   2           D   192.168.23.2    GigabitEthernet
+0/0/0
+</code></pre><p id="3abc41a4-0511-8060-80af-cc2f6ec193e3" class="" dir="auto">这样会使得数据库和路由表规模变大，占用更多资源。</p><p id="3abc41a4-0511-80ab-9097-ce43d4a18f1b" class="" dir="auto">同时如果以<strong>外部路由的引入</strong>的方法，会出现这种情况：</p><pre id="3abc41a4-0511-8023-9b71-e60b55015723" class="code code-wrap" data-notion-code-syntax="kotlin"><code class="language-kotlin" style="white-space:pre-wrap;word-break:break-all">[AR4]display ip routing-table
+Route Flags: R - relay, D - download to fib
+------------------------------------------------------------------------------
+Routing Tables: Public
+         Destinations : 23       Routes : 23       
+
+Destination/Mask    Proto   Pre  Cost      Flags NextHop         Interface
+
+      10.10.1.1/32  OSPF    10   3           D   192.168.34.3    GigabitEthernet
+0/0/0
+      10.10.2.1/32  OSPF    10   3           D   192.168.34.3    GigabitEthernet
+0/0/0
+      10.10.3.1/32  OSPF    10   3           D   192.168.34.3    GigabitEthernet
+0/0/0
+      10.10.4.1/32  OSPF    10   3           D   192.168.34.3    GigabitEthernet
+0/0/0
+      10.11.1.0/24  O_ASE   150  1           D   192.168.45.5    GigabitEthernet
+0/0/1
+      10.11.2.0/24  O_ASE   150  1           D   192.168.45.5    GigabitEthernet
+0/0/1
+      10.11.3.0/24  O_ASE   150  1           D   192.168.45.5    GigabitEthernet
+0/0/1
+      10.11.4.0/24  O_ASE   150  1           D   192.168.45.5    GigabitEthernet
+0/0/1
+</code></pre><p id="3abc41a4-0511-8008-b2cb-fdb1b45eb6d5" class="" dir="auto">同样会导致路由条目太多</p><p id="3abc41a4-0511-80d9-857c-f5277f9c1547" class="" dir="auto">对于第一种在区域里用network宣告的解决办法：<strong>abr路由汇总</strong></p><p id="3abc41a4-0511-8068-baf2-cb332b1c3cc4" class="" dir="auto">配置命令：</p><pre id="3abc41a4-0511-8080-a4a2-e3cabc674576" class="code code-wrap" data-notion-code-syntax="kotlin"><code class="language-kotlin" style="white-space:pre-wrap;word-break:break-all">[AR2-ospf-1-area-0.0.0.12]abr-summary ?
+  IP_ADDR&lt;X.X.X.X&gt;  IP address
+  
+  
+  需要在该域的ABR设备上配置
+  这里问号处应填写该连续地址的相同前缀，可精细可大概
+  例如：abr-summary 10.10.0.0 255.255.0.0
+这里只精细到前面16位实际上可以继续展开。</code></pre><p id="3abc41a4-0511-8074-b4d0-c31582c0a180" class="" dir="auto">第二种作为外部路由import-route引入的情况下，解决办法：<strong>asbr路由汇总</strong></p><p id="3abc41a4-0511-8084-b2d5-d29ddf30c365" class="" dir="auto">配置命令：</p><pre id="3abc41a4-0511-80b1-8e32-fb506ec84674" class="code code-wrap" data-notion-code-syntax="kotlin"><code class="language-kotlin" style="white-space:pre-wrap;word-break:break-all">asbr-summary
+在该外部路由的ASBR设备上配置
+精细示例
+asbr-summary 10.11.0.0 255.255.248.0</code></pre><p id="3abc41a4-0511-8098-815f-d247f2ba3219" class="" dir="auto"><mark class="highlight-yellow" data-notion-highlight="yellow"><strong>完整配置命令</strong></mark></p><p id="3abc41a4-0511-80a0-abf8-c7a802eb4838" class="" dir="auto">AR1</p><pre id="3abc41a4-0511-8006-8768-d92357b9e210" class="code code-wrap" data-notion-code-syntax="kotlin"><code class="language-kotlin" style="white-space:pre-wrap;word-break:break-all">&lt;Huawei&gt;system-view
+[Huawei]sysname AR1
+
+[AR1]interface GigabitEthernet 0/0/0
+[AR1-GigabitEthernet0/0/0]ip address 192.168.1.254 24
+[AR1-GigabitEthernet0/0/0]quit
+
+[AR1]interface GigabitEthernet 0/0/1
+[AR1-GigabitEthernet0/0/1]ip address 192.168.12.1 24
+[AR1-GigabitEthernet0/0/1]quit
+
+[AR1]ospf 1 router-id 1.1.1.1
+
+[AR1]interface LoopBack 0
+[AR1-LoopBack0]ip address 10.10.1.1 24
+[AR1-LoopBack0]quit
+
+[AR1]interface LoopBack 1
+[AR1-LoopBack1]ip address 10.10.2.1 24
+[AR1-LoopBack1]quit
+
+[AR1]interface LoopBack 2
+[AR1-LoopBack2]ip address 10.10.3.1 24
+[AR1-LoopBack2]quit
+
+[AR1]interface LoopBack 3
+[AR1-LoopBack3]ip address 10.10.4.1 24
+[AR1-LoopBack3]quit
+
+[AR1]ospf 1
+[AR1-ospf-1]area 12
+[AR1-ospf-1-area-0.0.0.12]network 192.168.12.0 0.0.0.255
+[AR1-ospf-1-area-0.0.0.12]network 192.168.1.0 0.0.0.255
+[AR1-ospf-1-area-0.0.0.12]network 10.10.1.0 0.0.0.255
+[AR1-ospf-1-area-0.0.0.12]network 10.10.2.0 0.0.0.255
+[AR1-ospf-1-area-0.0.0.12]network 10.10.3.0 0.0.0.255
+[AR1-ospf-1-area-0.0.0.12]network 10.10.4.0 0.0.0.255
+[AR1-ospf-1-area-0.0.0.12]quit
+
+[AR1-ospf-1]silent-interface GigabitEthernet 0/0/0</code></pre><p id="3abc41a4-0511-80aa-8347-d09e1d51ce2e" class="" dir="auto">AR2</p><pre id="3abc41a4-0511-80ba-90de-cc189b93bc65" class="code code-wrap" data-notion-code-syntax="kotlin"><code class="language-kotlin" style="white-space:pre-wrap;word-break:break-all">&lt;Huawei&gt;system-view
+[Huawei]sysname AR2
+
+[AR2]interface GigabitEthernet 0/0/0
+[AR2-GigabitEthernet0/0/0]ip address 192.168.12.2 24
+[AR2-GigabitEthernet0/0/0]quit
+
+[AR2]interface GigabitEthernet 0/0/1
+[AR2-GigabitEthernet0/0/1]ip address 192.168.23.2 24
+[AR2-GigabitEthernet0/0/1]quit
+
+[AR2]ospf 1 router-id 2.2.2.2
+
+[AR2]ospf 1
+[AR2-ospf-1]area 12
+[AR2-ospf-1-area-0.0.0.12]network 192.168.12.0 0.0.0.255
+[AR2-ospf-1-area-0.0.0.12]quit
+
+[AR2-ospf-1]area 0
+[AR2-ospf-1-area-0.0.0.0]network 192.168.23.0 0.0.0.255
+[AR2-ospf-1-area-0.0.0.0]quit
+
+[AR2-ospf-1]area 12
+[AR2-ospf-1-area-0.0.0.12]abr-summary 10.10.0.0 255.255.0.0</code></pre><p id="3abc41a4-0511-80e1-b440-c403dc442e29" class="" dir="auto">AR3</p><pre id="3abc41a4-0511-801a-9cb2-c49e2294a9a5" class="code code-wrap" data-notion-code-syntax="kotlin"><code class="language-kotlin" style="white-space:pre-wrap;word-break:break-all">&lt;Huawei&gt;system-view
+[Huawei]sysname AR3
+
+[AR3]interface GigabitEthernet 0/0/0
+[AR3-GigabitEthernet0/0/0]ip address 192.168.23.3 24
+[AR3-GigabitEthernet0/0/0]quit
+
+[AR3]interface GigabitEthernet 0/0/1
+[AR3-GigabitEthernet0/0/1]ip address 192.168.34.3 24
+[AR3-GigabitEthernet0/0/1]quit
+
+[AR3]ospf 1 router-id 3.3.3.3
+
+[AR3]ospf 1
+[AR3-ospf-1]area 0
+[AR3-ospf-1-area-0.0.0.0]network 192.168.23.0 0.0.0.255
+[AR3-ospf-1-area-0.0.0.0]network 192.168.34.0 0.0.0.255
+[AR3-ospf-1-area-0.0.0.0]quit</code></pre><p id="3abc41a4-0511-8080-8cb4-c9b51bf64eb3" class="" dir="auto">AR4</p><pre id="3abc41a4-0511-8076-9559-d826ecdc0e5c" class="code code-wrap" data-notion-code-syntax="kotlin"><code class="language-kotlin" style="white-space:pre-wrap;word-break:break-all">&lt;Huawei&gt;system-view
+[Huawei]sysname AR4
+
+[AR4]interface GigabitEthernet 0/0/0
+[AR4-GigabitEthernet0/0/0]ip address 192.168.34.4 24
+[AR4-GigabitEthernet0/0/0]quit
+
+[AR4]interface GigabitEthernet 0/0/1
+[AR4-GigabitEthernet0/0/1]ip address 192.168.45.4 24
+[AR4-GigabitEthernet0/0/1]quit
+
+[AR4]ospf 1 router-id 4.4.4.4
+
+[AR4]ospf 1
+[AR4-ospf-1]area 0
+[AR4-ospf-1-area-0.0.0.0]network 192.168.34.0 0.0.0.255
+[AR4-ospf-1-area-0.0.0.0]network 192.168.45.0 0.0.0.255
+[AR4-ospf-1-area-0.0.0.0]quit</code></pre><p id="3abc41a4-0511-80c2-a962-c87bfbd66673" class="" dir="auto">AR5</p><pre id="3abc41a4-0511-803f-8a9a-dcf61f78115b" class="code code-wrap" data-notion-code-syntax="kotlin"><code class="language-kotlin" style="white-space:pre-wrap;word-break:break-all">&lt;Huawei&gt;system-view
+[Huawei]sysname AR5
+
+[AR5]interface GigabitEthernet 0/0/0
+[AR5-GigabitEthernet0/0/0]ip address 192.168.45.5 24
+[AR5-GigabitEthernet0/0/0]quit
+
+[AR5]interface GigabitEthernet 0/0/1
+[AR5-GigabitEthernet0/0/1]ip address 192.168.56.5 24
+[AR5-GigabitEthernet0/0/1]quit
+
+[AR5]ospf 1 router-id 5.5.5.5
+
+[AR5]ospf 1
+[AR5-ospf-1]area 0
+[AR5-ospf-1-area-0.0.0.0]network 192.168.45.0 0.0.0.255
+[AR5-ospf-1-area-0.0.0.0]quit
+
+[AR5-ospf-1]area 56
+[AR5-ospf-1-area-0.0.0.56]network 192.168.56.0 0.0.0.255
+[AR5-ospf-1-area-0.0.0.56]quit</code></pre><p id="3abc41a4-0511-80a7-a2ff-df70257d6dae" class="" dir="auto">AR6</p><pre id="3abc41a4-0511-8079-bcba-dd06f0dccc8f" class="code code-wrap" data-notion-code-syntax="kotlin"><code class="language-kotlin" style="white-space:pre-wrap;word-break:break-all">&lt;Huawei&gt;system-view
+[Huawei]sysname AR6
+
+[AR6]interface GigabitEthernet 0/0/0
+[AR6-GigabitEthernet0/0/0]ip address 192.168.56.6 24
+[AR6-GigabitEthernet0/0/0]quit
+
+[AR6]interface GigabitEthernet 0/0/1
+[AR6-GigabitEthernet0/0/1]ip address 192.168.2.254 24
+[AR6-GigabitEthernet0/0/1]quit
+
+[AR6]ospf 1 router-id 6.6.6.6
+
+[AR6]ospf 1
+[AR6-ospf-1]area 56
+[AR6-ospf-1-area-0.0.0.56]network 192.168.56.0 0.0.0.255
+[AR6-ospf-1-area-0.0.0.56]network 192.168.2.0 0.0.0.255
+[AR6-ospf-1-area-0.0.0.56]quit
+
+[AR6]interface LoopBack 0
+[AR6-LoopBack0]ip address 10.11.1.1 24
+[AR6-LoopBack0]quit
+
+[AR6]interface LoopBack 1
+[AR6-LoopBack1]ip address 10.11.2.1 24
+[AR6-LoopBack1]quit
+
+[AR6]interface LoopBack 2
+[AR6-LoopBack2]ip address 10.11.3.1 24
+[AR6-LoopBack2]quit
+
+[AR6]interface LoopBack 3
+[AR6-LoopBack3]ip address 10.11.4.1 24
+[AR6-LoopBack3]quit
+
+[AR6]ospf 1
+[AR6-ospf-1]import-route direct
+
+[AR6-ospf-1]asbr-summary 10.11.0.0 255.255.248.0</code></pre><p id="3abc41a4-0511-804b-bd1c-d06a54f18a32" class="" dir="auto">路由表结果：</p><pre id="3abc41a4-0511-80db-99d8-d0f5d97181e6" class="code code-wrap" data-notion-code-syntax="kotlin"><code class="language-kotlin" style="white-space:pre-wrap;word-break:break-all">&lt;AR3&gt;display ip routing-table
+Route Flags: R - relay, D - download to fib
+------------------------------------------------------------------------------
+Routing Tables: Public
+         Destinations : 17       Routes : 17       
+
+Destination/Mask    Proto   Pre  Cost      Flags NextHop         Interface
+
+      10.10.0.0/16  OSPF    10   2           D   192.168.23.2    GigabitEthernet
+0/0/0
+      10.11.0.0/21  O_ASE   150  2           D   192.168.34.4    GigabitEthernet
+0/0/1
+</code></pre><p id="3abc41a4-0511-802f-a5c7-d15cc744ffd8" class="" dir="auto">连续同一网段的地址进行路由汇总，使路由规模减少，简洁。</p><h2 id="3abc41a4-0511-806f-b339-c1e416d6e2b3" class="" dir="auto">😜开销值影响选路</h2><p id="3abc41a4-0511-8044-9eee-e6d473cd5be5" class="" dir="auto">开销影响选路的应用：</p><ul id="3abc41a4-0511-8062-9498-c7f07bf5e406" class="bulleted-list" dir="auto"><li style="list-style-type:disc"><strong>链路主备控制</strong></li></ul><ul id="3abc41a4-0511-807c-ac74-c6f02fb1c719" class="bulleted-list" dir="auto"><li style="list-style-type:disc"><strong>双出口流量控制</strong></li></ul><ul id="3abc41a4-0511-8030-9b98-d57128d955b8" class="bulleted-list" dir="auto"><li style="list-style-type:disc"><strong>解决OSPF次优路径问题</strong></li></ul><ul id="3abc41a4-0511-80bf-b346-ff01bbdcd861" class="bulleted-list" dir="auto"><li style="list-style-type:disc"><strong>调整ECMP负载均衡</strong></li></ul><aside class="block-color-gray_background callout" data-notion-callout="" data-notion-callout-icon="💡" data-notion-callout-background="gray_background" style="white-space:pre-wrap;display:flex" id="3abc41a4-0511-80ad-b5f3-f4ee9d6b0a58" dir="ltr"><div style="font-size:1.5em"><span class="icon" data-emoji="💡"></span></div><div style="width:100%"><p id="3abc41a4-0511-80c3-adb5-cd6142ea3c6d" class="" dir="auto">查看数据流量走哪条链路的技巧</p><p id="3abc41a4-0511-8088-a62c-f0f4650c3d89" class="" dir="auto">1、抓包</p><p id="3abc41a4-0511-80f0-9fe0-d45a79eb0077" class="" dir="auto">2、查看路由表下一跳：<code>display ip routing-table 192.168.2.1</code></p></div></aside><p id="3abc41a4-0511-803c-87a8-f0d37366fb3c" class="" dir="auto">输出：</p><pre id="3abc41a4-0511-802a-88d5-f5f28defcea9" class="code code-wrap" data-notion-code-syntax="kotlin"><code class="language-kotlin" style="white-space:pre-wrap;word-break:break-all">display ip routing-table 192.168.2.1
+Route Flags: R - relay, D - download to fib
+------------------------------------------------------------------------------
+Routing Table : Public
+Summary Count : 1
+Destination/Mask    Proto   Pre  Cost      Flags NextHop         Interface
+
+    192.168.2.0/24  OSPF    10   4           D   192.168.27.8    GigabitEthernet
+0/0/2
+</code></pre><figure id="3abc41a4-0511-808f-8b93-ededa0934390" class="image" data-notion-image="OSPF%20V2/image%2011.png" dir="ltr"><a href="OSPF%20V2/image%2011.png"><img style="width:703.9886474609375px" src="OSPF%20V2/image%2011.png"/></a></figure><p id="3abc41a4-0511-80c4-b0ee-d84de8fbfb01" class="" dir="auto">在该场景中，为了让这个路由器可靠性更高，在AREA 0加入了一个路由器作为备份，但是现在这个路由器会提供比之前的链路开销值更短的链路，为了让这个AR8边缘化，让流量数据不走这个路由器应该怎么做？</p><p id="3abc41a4-0511-8089-a1fb-fb93068d5dac" class="" dir="auto">默认的开销值为1</p><aside class="block-color-gray_background callout" data-notion-callout="" data-notion-callout-icon="💡" data-notion-callout-background="gray_background" style="white-space:pre-wrap;display:flex" id="3abc41a4-0511-80b9-8ac8-eb5c487983dc" dir="ltr"><div style="font-size:1.5em"><span class="icon" data-emoji="💡"></span></div><div style="width:100%"><p id="3abc41a4-0511-805c-92c2-f0b9d9cec704" class="" dir="auto">计算开销方法：<br/>沿着数据流量的转发 方向的出接口进行cost值累加计算；<br/>或者沿着路由的方向的入接口进行cost值累加计算。</p></div></aside><p id="3abc41a4-0511-80b1-ab3e-e18db01466ae" class="" dir="auto">在AR2路由器中，流量要到达PC2，选路会走：</p><pre id="3abc41a4-0511-8081-8f3f-c72b645ce0c9" class="code code-wrap" data-notion-code-syntax="kotlin"><code class="language-kotlin" style="white-space:pre-wrap;word-break:break-all">Destination/Mask    Proto   Pre  Cost      Flags NextHop         Interface
+
+    192.168.2.0/24  OSPF    10   4           D   192.168.27.8    GigabitEthernet
+0/0/2
+
+</code></pre><p id="3abc41a4-0511-8048-a822-f24c9f31cd32" class="" dir="auto">正常的思路应该在27.0/24这接口上增加开销值。</p><h4 id="3abc41a4-0511-807d-ac46-c111a195fbfa" class="" dir="auto">修改OSPF接口开销值配置命令</h4><pre id="3abc41a4-0511-80e7-8ca0-f4623a0c0fd3" class="code code-wrap" data-notion-code-syntax="kotlin"><code class="language-kotlin" style="white-space:pre-wrap;word-break:break-all">[Huawei]interface GigabitEthernet x/x/x
+[Huawei-GigabitEthernetx/x/x]ospf cost 100   //直接修改cost，一般都用这个
+
+修改带宽参考值（改的话要全面修改）
+Cost = 带宽参考值 / 接口带宽
+[AR2-ospf-1]bandwidth-reference ?
+  INTEGER&lt;1-2147483648&gt;  The reference bandwidth (Mbits/s)
+</code></pre><p id="3abc41a4-0511-8049-bf49-cb6d5222e3ba" class="" dir="auto">注意修改开销值不要只修改去的路，回来的路也要修改（如果需要的话）</p><p id="3abc41a4-0511-80e6-b1f0-d27e17d4dde7" class="" dir="auto">
+</p><p id="3abc41a4-0511-8020-b33c-f4442445aa33" class="" dir="auto"><code>stub-router</code> 用于将OSPF设备设置为 <strong>Stub Router（用在设备维护和</strong><mark class="highlight-red" data-notion-highlight="red"><strong>启动保护</strong></mark><strong>的时候）</strong>。</p><p id="3abc41a4-0511-80c6-a6e9-e66e1d3b2127" class="" dir="auto">作用：</p><blockquote id="3abc41a4-0511-8026-85ed-f823fbd0d4e6" class="" dir="auto">降低本设备在OSPF中的路径优先级，让其他路由器尽量不选择经过该设备转发流量。</blockquote><p id="3abc41a4-0511-8079-b806-dbf292d4499e" class="" dir="auto">实现方式：</p><ul id="3abc41a4-0511-8037-84f4-e880002d5b39" class="bulleted-list" dir="auto"><li style="list-style-type:disc">修改自身发布的 <strong>Type 1 Router-LSA</strong></li></ul><ul id="3abc41a4-0511-80d1-b43a-f88551b160f5" class="bulleted-list" dir="auto"><li style="list-style-type:disc">将Transit链路Cost设置为最大值 <strong>65535</strong></li></ul><ul id="3abc41a4-0511-80b3-ac30-d1eef50418a0" class="bulleted-list" dir="auto"><li style="list-style-type:disc">其他OSPF设备重新计算SPF后，会绕开该设备</li></ul><p id="3abc41a4-0511-80f8-896f-dd4e52e620a7" class="" dir="auto">
+</p><p id="3abc41a4-0511-80b0-9fc2-f165ad1ea646" class="" dir="auto">完整配置命令（在上一个实验的基础上）</p><p id="3abc41a4-0511-80fa-93df-e278bec9b919" class="" dir="auto">AR8</p><pre id="3abc41a4-0511-80a3-bda0-d485e3abc60f" class="code code-wrap" data-notion-code-syntax="kotlin"><code class="language-kotlin" style="white-space:pre-wrap;word-break:break-all">&lt;Huawei&gt;undo terminal monitor
+
+&lt;Huawei&gt;system-view
+[Huawei]sysname AR8
+
+[AR8]interface GigabitEthernet 0/0/0
+[AR8-GigabitEthernet0/0/0]ip address 192.168.37.8 24
+[AR8-GigabitEthernet0/0/0]quit
+
+[AR8]interface GigabitEthernet 0/0/1
+[AR8-GigabitEthernet0/0/1]ip address 192.168.47.8 24
+[AR8-GigabitEthernet0/0/1]quit
+
+[AR8]interface GigabitEthernet 0/0/2
+[AR8-GigabitEthernet0/0/2]ip address 192.168.27.8 24
+[AR8-GigabitEthernet0/0/2]quit
+
+[AR8]interface GigabitEthernet 4/0/0
+[AR8-GigabitEthernet4/0/0]ip address 192.168.57.8 24
+[AR8-GigabitEthernet4/0/0]quit
+
+
+[AR8]ospf 1 router-id 8.8.8.8
+
+[AR8-ospf-1]area 0
+
+[AR8-ospf-1-area-0.0.0.0]network 192.168.27.0 0.0.0.255
+[AR8-ospf-1-area-0.0.0.0]network 192.168.37.0 0.0.0.255
+[AR8-ospf-1-area-0.0.0.0]network 192.168.47.0 0.0.0.255
+[AR8-ospf-1-area-0.0.0.0]network 192.168.57.0 0.0.0.255
+
+[AR8]ospf 1
+[AR8-ospf-1]stub-router  //设备启动保护
+
+[AR8-ospf-1]undo stub-router
+</code></pre><p id="3abc41a4-0511-8009-bc42-d1ca85b63a30" class="" dir="auto">AR2</p><pre id="3abc41a4-0511-8073-a374-f7056edecc75" class="code code-wrap" data-notion-code-syntax="kotlin"><code class="language-kotlin" style="white-space:pre-wrap;word-break:break-all">[AR2]interface GigabitEthernet 0/0/2
+[AR2-GigabitEthernet0/0/2]ospf cost 10
+[AR2-GigabitEthernet0/0/2]quit</code></pre><p id="3abc41a4-0511-80e7-a4f0-ef81444dcbaf" class="" dir="auto">AR3</p><pre id="3abc41a4-0511-80d4-9fd3-fdffb5f767aa" class="code code-wrap" data-notion-code-syntax="kotlin"><code class="language-kotlin" style="white-space:pre-wrap;word-break:break-all">[AR3]interface GigabitEthernet 0/0/2
+[AR3-GigabitEthernet0/0/2]ospf cost 10
+[AR3-GigabitEthernet0/0/2]quit</code></pre><p id="3abc41a4-0511-80e8-a8b5-d0e2ee52082f" class="" dir="auto">AR4</p><pre id="3abc41a4-0511-807b-9c77-eb6328adfc28" class="code code-wrap" data-notion-code-syntax="kotlin"><code class="language-kotlin" style="white-space:pre-wrap;word-break:break-all">[AR4]interface GigabitEthernet 0/0/2
+[AR4-GigabitEthernet0/0/2]ospf cost 10
+[AR4-GigabitEthernet0/0/2]quit</code></pre><p id="3abc41a4-0511-8082-9ba9-e0f25665a3fc" class="" dir="auto">AR5</p><pre id="3abc41a4-0511-805f-92b2-df5e15163c77" class="code code-wrap" data-notion-code-syntax="kotlin"><code class="language-kotlin" style="white-space:pre-wrap;word-break:break-all">[AR5]interface GigabitEthernet 0/0/2
+[AR5-GigabitEthernet0/0/2]ospf cost 10
+[AR4-GigabitEthernet0/0/2]quit</code></pre><h4 id="3abc41a4-0511-80de-8ede-d41d8b21fc03" class="" dir="auto">🤭<strong>直连路由过滤</strong></h4><figure id="3abc41a4-0511-8093-ad12-db4461f20c1b" class="image" data-notion-image="OSPF%20V2/image%2012.png" dir="ltr"><a href="OSPF%20V2/image%2012.png"><img style="width:703.9886474609375px" src="OSPF%20V2/image%2012.png"/></a></figure><p id="3abc41a4-0511-808e-9d6b-e100307f7aae" class="" dir="auto">该实验在上一个实验的基础上，删掉路由汇总的内容。</p><p id="3abc41a4-0511-804c-94c9-f6041af2fcab" class="" dir="auto">路由表在没进行过滤的时候是这样显示直连路由的：</p><pre id="3abc41a4-0511-8017-a5ef-cc572030c2af" class="code code-wrap" data-notion-code-syntax="kotlin"><code class="language-kotlin" style="white-space:pre-wrap;word-break:break-all">[AR3]display ip routing-table
+Route Flags: R - relay, D - download to fib
+------------------------------------------------------------------------------
+Routing Tables: Public
+         Destinations : 29       Routes : 31       
+
+Destination/Mask    Proto   Pre  Cost      Flags NextHop         Interface
+
+      10.10.1.1/32  OSPF    10   2           D   192.168.23.2    GigabitEthernet
+0/0/0
+      10.10.2.1/32  OSPF    10   2           D   192.168.23.2    GigabitEthernet
+0/0/0
+      10.10.3.1/32  OSPF    10   2           D   192.168.23.2    GigabitEthernet
+0/0/0
+      10.10.4.1/32  OSPF    10   2           D   192.168.23.2    GigabitEthernet
+0/0/0
+      10.11.1.0/24  O_ASE   150  1           D   192.168.34.4    GigabitEthernet
+0/0/1
+      10.11.2.0/24  O_ASE   150  1           D   192.168.34.4    GigabitEthernet
+0/0/1
+      10.11.3.0/24  O_ASE   150  1           D   192.168.34.4    GigabitEthernet
+0/0/1
+      10.11.4.0/24  O_ASE   150  1           D   192.168.34.4    GigabitEthernet
+0/0/1
+</code></pre><p id="3abc41a4-0511-80e4-a92f-c60deadba4cc" class="" dir="auto">结合acl使用</p><pre id="3abc41a4-0511-8042-be0f-fcc68153a4b1" class="code code-wrap" data-notion-code-syntax="kotlin"><code class="language-kotlin" style="white-space:pre-wrap;word-break:break-all">[AR6-ospf-1]import-route direct ?
+  cost          Set cost
+  route-policy  Route policy
+  tag           Specify route tag
+  type          Metric type of the imported external routes
+  &lt;cr&gt;          Please press ENTER to execute command 
+  
+  ACL 是过滤数据包的，Route-policy 是控制路由的。
+</code></pre><p id="3abc41a4-0511-80ca-a0c3-fd482e28ffbb" class="" dir="auto">先配ACL再配<strong>route-policy<br/>配置命令</strong></p><p id="3abc41a4-0511-801f-91ed-c0bc9d589d1b" class="" dir="auto">AR6</p><pre id="3abc41a4-0511-8068-aa8c-eb3ec17db184" class="code code-wrap" data-notion-code-syntax="kotlin"><code class="language-kotlin" style="white-space:pre-wrap;word-break:break-all">[AR6]acl 2000
+[AR6-acl-basic-2000]rule 5 permit source 10.11.1.1 0.0.0.255
+
+[AR6]route-policy lxf permit node 10
+[AR6-route-policy]if-match acl 2000
+
+[AR6]ospf
+[AR6-ospf-1]import-route direct route-policy lxf</code></pre><p id="3abc41a4-0511-80e2-8bca-f36ae4f2f477" class="" dir="auto">详细查询命令步骤：</p><pre id="3abc41a4-0511-8095-b1d9-d54850aca2ac" class="code code-wrap" data-notion-code-syntax="kotlin"><code class="language-kotlin" style="white-space:pre-wrap;word-break:break-all">[AR6]route-policy ?
+  STRING&lt;1-40&gt;  Name of the route policy
+
+[AR6]route-policy lxf ?
+  deny    Specify a deny rule
+  permit  Specify a permit rule
+
+[AR6]route-policy lxf permit ?
+  node  Node of the route policy
+
+[AR6]route-policy lxf permit node ?
+  INTEGER&lt;0-65535&gt;  Index of the node
+
+[AR6-route-policy]if-match ?
+  acl                  Specify an ACL
+  as-path-filter       BGP AS path list
+  community-filter     Match BGP community filter
+  cost                 Match metric of route
+  extcommunity-filter  Match external community filter
+  interface            Specify interface matching first hop of routes
+  ip                   IP information
+  ip-prefix            Specify address prefix-list
+  ipv6                 IPv6 Information
+  mpls-label           Give the Label
+  rd-filter            Route-distinguisher filter
+  route-type           Match route-type of route
+  tag                  Match tag of route
+
+[AR6-route-policy]if-match acl ?
+  INTEGER&lt;2000-2999&gt;  Apply basic ACL
+  STRING&lt;1-32&gt;        Specify ACL name
+
+[AR6-ospf-1]import-route direct route-policy lxf ?
+  cost  Set cost
+  tag   Specify route tag
+  type  Metric type of imported external routes</code></pre><p id="3abc41a4-0511-804e-80aa-f28e4d741edc" class="" dir="auto"><code><strong>route-policy</strong></code></p><ol type="1" id="3abc41a4-0511-80b0-816a-f31b9c86b322" class="numbered-list" start="1" dir="auto"><li><strong>route-policy 本身不会生效，必须被调用，</strong>route-policy 只是一个规则，需要绑定到具体功能中</li></ol><ol type="1" id="3abc41a4-0511-804b-9a36-e86712fc5d7e" class="numbered-list" start="2" dir="auto"><li>route-policy 由 node 组成</li></ol><ul id="3abc41a4-0511-8029-8d0f-d257eb1d7c76" class="bulleted-list" dir="auto"><li style="list-style-type:disc"><code>lxf</code>：策略名称</li></ul><ul id="3abc41a4-0511-80a0-b36b-cd896c705d4b" class="bulleted-list" dir="auto"><li style="list-style-type:disc"><code>permit/deny</code>：允许或拒绝</li></ul><ul id="3abc41a4-0511-80d9-8126-d180d4212b32" class="bulleted-list" dir="auto"><li style="list-style-type:disc"><code>node 10</code>：匹配节点编号</li></ul><p id="3abc41a4-0511-80eb-9e64-c56309b2d8d9" class="" dir="auto">多个 node 按编号从小到大匹配。（步长为10）</p><ol type="1" id="3abc41a4-0511-801d-82fa-fd2af5e6eb47" class="numbered-list" start="3" dir="auto"><li>node 之间是“或”的关系</li></ol><ol type="1" id="3abc41a4-0511-80be-866e-ed3027b7adab" class="numbered-list" start="4" dir="auto"><li>同一个 node 内多个 if-match 是“与”的关系</li></ol><ol type="1" id="3abc41a4-0511-8077-a796-dd5b60a4c34a" class="numbered-list" start="5" dir="auto"><li>ACL和route-policy使用时，<mark class="highlight-red" data-notion-highlight="red"><strong>默认规则是拒绝</strong></mark></li></ol><pre id="3abc41a4-0511-80ae-baf3-ceebb8f2007f" class="code code-wrap" data-notion-code-syntax="kotlin"><code class="language-kotlin" style="white-space:pre-wrap;word-break:break-all">route-policy lxf permit node 10
+ if-match acl 2000
+ if-match ip-prefix test
+ 
+ 必须同时满足：
+ACL 2000
+ip-prefix test
+
+才匹配成功。</code></pre><p id="3abc41a4-0511-805e-823a-ccd2836fff9d" class="" dir="auto">并且，逻辑接口和acl匹配要完全匹配，掩码也要一致。<br/></p><p id="3abc41a4-0511-809c-a36f-e90b58dc70a5" class="" dir="auto">结果展示：</p><pre id="3abc41a4-0511-804a-8944-e7500e5b263b" class="code code-wrap" data-notion-code-syntax="kotlin"><code class="language-kotlin" style="white-space:pre-wrap;word-break:break-all">[AR3]display ip routing-table
+Route Flags: R - relay, D - download to fib
+------------------------------------------------------------------------------
+Routing Tables: Public
+         Destinations : 26       Routes : 28       
+
+Destination/Mask    Proto   Pre  Cost      Flags NextHop         Interface
+
+      10.10.1.1/32  OSPF    10   2           D   192.168.23.2    GigabitEthernet
+0/0/0
+      10.10.2.1/32  OSPF    10   2           D   192.168.23.2    GigabitEthernet
+0/0/0
+      10.10.3.1/32  OSPF    10   2           D   192.168.23.2    GigabitEthernet
+0/0/0
+      10.10.4.1/32  OSPF    10   2           D   192.168.23.2    GigabitEthernet
+0/0/0
+      10.11.1.0/24  O_ASE   150  1           D   192.168.34.4    GigabitEthernet
+0/0/1
+
+
+//只剩下需求的路由、</code></pre><p id="3abc41a4-0511-8064-899f-c84dc0a235ae" class="" dir="auto">
+</p></div></article><span class="sans" style="font-size:14px;padding-top:2em"></span><script>
+(function () {
+  "use strict";
+  var PAGE = document.querySelector(".page-body");
+  if (!PAGE) return;
+  var HEADINGS = [], i, h;
+  var ALL = PAGE.querySelectorAll("h1, h2, h3, h4, h5, h6");
+  for (i = 0; i < ALL.length; i++) {
+    h = ALL[i];
+    if (h.closest && h.closest("aside, blockquote, details, summary, figure, th, td")) continue;
+    if (!h.id) continue;
+    HEADINGS.push(h);
+  }
+  var PAGE_LINKS = [];
+  if (HEADINGS.length < 2) {
+    var pl = PAGE.querySelectorAll(".link-to-page a");
+    for (i = 0; i < pl.length; i++) {
+      var hr = pl[i].getAttribute("href");
+      if (hr) PAGE_LINKS.push(pl[i]);
+    }
+    if (PAGE_LINKS.length < 2) return;
+  }
+  var CSS = "" +
+  "html{scroll-behavior:smooth}" +
+  ".page-body h1,.page-body h2,.page-body h3,.page-body h4,.page-body h5,.page-body h6{scroll-margin-top:14px}" +
+  ".nt-fab{position:fixed;right:18px;bottom:18px;z-index:2147483001;display:flex;align-items:center;gap:7px;padding:0 20px;height:52px;border:none;border-radius:999px;cursor:pointer;color:#fff;background:rgba(37,37,37,.93);font:600 14px/1 -apple-system,'PingFang SC','Microsoft YaHei','Segoe UI',sans-serif;letter-spacing:.5px;box-shadow:0 6px 22px rgba(0,0,0,.18);transition:transform .15s ease,opacity .2s ease}" +
+  ".nt-fab:hover{transform:translateY(-2px)}" +
+  ".nt-fab svg{width:18px;height:18px;flex:none}" +
+  ".nt-fab.nt-fab-hide{opacity:0;pointer-events:none}" +
+  ".nt-panel{position:fixed;top:0;right:0;bottom:0;z-index:2147483000;display:flex;flex-direction:column;width:min(340px,88vw);background:rgba(255,255,255,.97);border-left:1px solid rgba(55,53,47,.08);box-shadow:-10px 0 30px rgba(0,0,0,.09);transform:translateX(102%);visibility:hidden;transition:transform .25s ease,visibility .25s ease;font-family:-apple-system,'PingFang SC','Microsoft YaHei','Segoe UI',sans-serif}" +
+  ".nt-panel.nt-open{transform:none;visibility:visible}" +
+  ".nt-head{display:flex;align-items:center;gap:8px;padding:16px 18px 12px;border-bottom:1px solid rgba(55,53,47,.06);flex:none}" +
+  ".nt-head .nt-title{font-weight:700;font-size:15px;color:#1f1e1c}" +
+  ".nt-head .nt-count{font-size:12px;color:rgba(55,53,47,.55);background:rgba(55,53,47,.06);padding:2px 8px;border-radius:99px;white-space:nowrap}" +
+  ".nt-close{margin-left:auto;width:30px;height:30px;border:none;border-radius:8px;cursor:pointer;font-size:15px;color:rgba(55,53,47,.7);background:transparent;line-height:1}" +
+  ".nt-close:hover{background:rgba(55,53,47,.08)}" +
+  ".nt-nav{overflow-y:auto;padding:10px 12px 16px;flex:1;-webkit-overflow-scrolling:touch}" +
+  ".nt-link{display:block;text-decoration:none;color:rgba(55,53,47,.8);font-size:13.5px;line-height:1.55;padding:6px 10px;border-radius:8px;border-left:2px solid transparent;transition:background .12s,color .12s;overflow-wrap:anywhere}" +
+  ".nt-link:hover{background:rgba(55,53,47,.06);color:#111}" +
+  ".nt-link.nt-active{background:rgba(35,131,226,.10);color:#0b66c3;border-left-color:#2383e2;font-weight:600}" +
+  ".nt-l1{font-weight:600;color:#161513;margin-top:5px}" +
+  ".nt-l2{padding-left:22px}.nt-l3{padding-left:34px}.nt-l4{padding-left:46px}.nt-l5{padding-left:58px}.nt-l6{padding-left:70px}" +
+  "@media print{.nt-fab,.nt-panel{display:none!important}}" +
+  "@media (max-width:480px){.nt-panel{width:88vw}}";
+  var ST = document.createElement("style");
+  ST.textContent = CSS;
+  document.head.appendChild(ST);
+  var ROOT = document.createElement("div");
+  ROOT.className = "nt-root";
+  var FAB = document.createElement("button");
+  FAB.type = "button";
+  FAB.className = "nt-fab";
+  FAB.setAttribute("aria-label", "打开本页目录");
+  FAB.innerHTML = "<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M4 6h16M4 12h16M4 18h10'/></svg>目录";
+  ROOT.appendChild(FAB);
+  var PANEL = document.createElement("aside");
+  PANEL.className = "nt-panel";
+  PANEL.setAttribute("aria-label", "本页目录");
+  var HEAD = document.createElement("div");
+  HEAD.className = "nt-head";
+  var T = document.createElement("span");
+  T.className = "nt-title";
+  T.textContent = "本页目录";
+  var CNT = document.createElement("span");
+  CNT.className = "nt-count";
+  CNT.textContent = (HEADINGS.length >= 2 ? HEADINGS.length + " 节" : PAGE_LINKS.length + " 页");
+  var CLOSE = document.createElement("button");
+  CLOSE.type = "button";
+  CLOSE.className = "nt-close";
+  CLOSE.setAttribute("aria-label", "关闭目录");
+  CLOSE.textContent = "✕";
+  HEAD.appendChild(T);
+  HEAD.appendChild(CNT);
+  HEAD.appendChild(CLOSE);
+  PANEL.appendChild(HEAD);
+  var NAV = document.createElement("nav");
+  NAV.className = "nt-nav";
+  function makeLabel(node) {
+    var label = (node.textContent || "").replace(/\s+/g, " ").trim();
+    var clean = label.replace(/^[\p{Extended_Pictographic}\p{Emoji_Modifier}‍️\s]+/u, "").trim();
+    return clean || label;
+  }
+  function addItem(href, text, cls, idx) {
+    var a = document.createElement("a");
+    a.href = href;
+    a.className = "nt-link " + (cls || "nt-l1");
+    a.setAttribute("data-i", idx);
+    a.title = text;
+    a.textContent = text.length > 42 ? text.slice(0, 42) + "…" : text;
+    NAV.appendChild(a);
+    return a;
+  }
+  var LINKS = [];
+  if (HEADINGS.length >= 2) {
+    var minLv = 99, k, lv;
+    for (k = 0; k < HEADINGS.length; k++) {
+      lv = parseInt(HEADINGS[k].tagName.charAt(1), 10);
+      if (lv < minLv) minLv = lv;
+    }
+    for (k = 0; k < HEADINGS.length; k++) {
+      lv = parseInt(HEADINGS[k].tagName.charAt(1), 10) - minLv;
+      if (lv > 5) lv = 5;
+      LINKS.push(addItem("#" + HEADINGS[k].id, makeLabel(HEADINGS[k]), "nt-l" + (lv + 1), k));
+    }
+  } else {
+    var j;
+    for (j = 0; j < PAGE_LINKS.length; j++) {
+      LINKS.push(addItem(PAGE_LINKS[j].getAttribute("href"), makeLabel(PAGE_LINKS[j]), "nt-l1", j));
+    }
+  }
+  PANEL.appendChild(NAV);
+  ROOT.appendChild(PANEL);
+  document.body.appendChild(ROOT);
+  var isHeadingNav = HEADINGS.length >= 2;
+  function setActive(idx) {
+    for (var n = 0; n < LINKS.length; n++) LINKS[n].classList.remove("nt-active");
+    if (LINKS[idx]) LINKS[idx].classList.add("nt-active");
+  }
+  var ticking = false;
+  function onScroll() {
+    if (ticking || !isHeadingNav) return;
+    ticking = true;
+    requestAnimationFrame(function () {
+      var mark = window.scrollY + 90;
+      var idx = 0;
+      for (var n = 0; n < HEADINGS.length; n++) {
+        var top = HEADINGS[n].getBoundingClientRect().top + window.scrollY;
+        if (top <= mark) idx = n; else break;
+      }
+      setActive(idx);
+      ticking = false;
+    });
+  }
+  window.addEventListener("scroll", onScroll, { passive: true });
+  if (isHeadingNav) setActive(0);
+  function openPanel() {
+    PANEL.classList.add("nt-open");
+    FAB.classList.add("nt-fab-hide");
+  }
+  function closePanel() {
+    PANEL.classList.remove("nt-open");
+    FAB.classList.remove("nt-fab-hide");
+  }
+  FAB.addEventListener("click", openPanel);
+  CLOSE.addEventListener("click", closePanel);
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape") closePanel();
+  });
+  NAV.addEventListener("click", function (e) {
+    var a = e.target && e.target.closest ? e.target.closest("a.nt-link") : null;
+    if (!a) return;
+    if (window.innerWidth < 860) closePanel();
+  });
+})();
+</script><script>
+(function () {
+  if (document.getElementById("nt-back")) return;
+  var link = "../%E7%BD%91%E5%B7%A5%E5%9F%BA%E7%A1%80%E4%B8%8E%E5%AE%9E%E9%AA%8C%20.html";
+  var style = document.createElement("style");
+  style.textContent = ".nt-back{position:fixed;top:16px;left:16px;z-index:2147483002;display:inline-flex;align-items:center;gap:7px;padding:8px 15px 8px 12px;border-radius:999px;text-decoration:none;color:#37352f;background:rgba(255,255,255,.93);border:1px solid rgba(55,53,47,.14);box-shadow:0 5px 16px rgba(0,0,0,.12);font:600 13px/1 -apple-system,'PingFang SC','Microsoft YaHei','Segoe UI',sans-serif;transition:background .15s,transform .15s,box-shadow .15s;backdrop-filter:blur(6px)}.nt-back:hover{background:#fff;transform:translateY(-1px);box-shadow:0 7px 20px rgba(0,0,0,.16)}.nt-back svg{width:14px;height:14px;flex:none}.nt-back .nt-back-label{white-space:nowrap}@media print{.nt-back{display:none!important}}@media (max-width:900px){.nt-back{padding:0;width:38px;height:38px;border-radius:50%;justify-content:center;top:10px;left:10px}.nt-back .nt-back-label{display:none}}";
+  document.head.appendChild(style);
+  var a = document.createElement("a");
+  a.id = "nt-back";
+  a.className = "nt-back";
+  a.href = link;
+  a.setAttribute("aria-label", "返回网工基础与实验");
+  a.innerHTML = "<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'><path d='M19 12H5'/><path d='M11 18l-6-6 6-6'/></svg><span class='nt-back-label'>网工基础与实验</span>";
+  document.body.appendChild(a);
+})();
+</script></body></html>

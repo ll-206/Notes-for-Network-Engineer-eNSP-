@@ -1,0 +1,1041 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>IPV6与双栈技术</title><meta name="data-notion-page-icon" content="🌐"/><link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Ctext%20y%3D%22.9em%22%20font-size%3D%2290%22%3E%F0%9F%8C%90%3C%2Ftext%3E%3C%2Fsvg%3E"/><style>
+/* cspell:disable-file */
+/* webkit printing magic: print all background colors */
+html {
+	-webkit-print-color-adjust: exact;
+}
+* {
+	box-sizing: border-box;
+	-webkit-print-color-adjust: exact;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
+@media only screen {
+	body {
+		margin: 2em auto;
+		max-width: 900px;
+		color: rgb(55, 53, 47);
+	}
+}
+
+body {
+	line-height: 1.5;
+	white-space: pre-wrap;
+}
+
+a,
+a.visited {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.pdf-relative-link-path {
+	font-size: 80%;
+	color: #444;
+}
+
+h1,
+h2,
+h3 {
+	letter-spacing: -0.01em;
+	line-height: 1.2;
+	font-weight: 600;
+	margin-bottom: 0;
+}
+
+/* Override strong tags inside headings to maintain consistent weight */
+h1 strong,
+h2 strong,
+h3 strong {
+	font-weight: 600;
+}
+
+.page-title {
+	font-size: 2.5rem;
+	font-weight: 700;
+	margin-top: 0;
+	margin-bottom: 0.75em;
+}
+
+h1 {
+	font-size: 1.875rem;
+	margin-top: 1.875rem;
+}
+
+h2 {
+	font-size: 1.5rem;
+	margin-top: 1.5rem;
+}
+
+h3 {
+	font-size: 1.25rem;
+	margin-top: 1.25rem;
+}
+
+.source {
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	padding: 1.5em;
+	word-break: break-all;
+}
+
+.callout {
+	border-radius: 10px;
+	padding: 1rem;
+}
+
+/* For default-background callouts, render the border outline. */
+.callout.block-color-default_background {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+figure {
+	margin: 1.25em 0;
+	page-break-inside: avoid;
+}
+
+/*
+ * Toggles and callouts hold arbitrary content, so they can easily be taller
+ * than a page. They must stay breakable: avoiding breaks inside them makes
+ * Chromium push the whole block onto the next page, which leaves the previous
+ * page mostly empty before every long toggle.
+ */
+details,
+aside {
+	margin: 1.25em 0;
+}
+
+/* Keep a toggle's title on the same page as the start of its content. */
+summary {
+	page-break-after: avoid;
+	break-after: avoid;
+}
+
+/*
+ * Toggle headings render as <h1/h2/h3 style="display:inline-block"> inside
+ * <summary>. Without this reset, the heading's margin-top pushes it below the
+ * ::marker (▼), so the triangle and the title appear on separate lines.
+ */
+summary h1,
+summary h2,
+summary h3,
+summary h4 {
+	margin-top: 0;
+}
+
+figcaption {
+	opacity: 0.5;
+	font-size: 85%;
+	margin-top: 0.5em;
+}
+
+mark {
+	background-color: transparent;
+}
+
+.indented {
+	padding-left: 1.5em;
+}
+
+hr {
+	background: transparent;
+	display: block;
+	width: 100%;
+	height: 1px;
+	visibility: visible;
+	border: none;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+img {
+	max-width: 100%;
+}
+
+@media only print {
+	img {
+		max-height: 100vh;
+		object-fit: contain;
+	}
+
+	table.collection-content {
+		width: 100%;
+		table-layout: fixed;
+	}
+
+	table.collection-content th,
+	table.collection-content td {
+		overflow-wrap: anywhere;
+	}
+
+	table.collection-content td > .user,
+	table.collection-content td > time {
+		white-space: pre-wrap;
+	}
+}
+
+@page {
+	margin: 1in;
+}
+
+.collection-content-wrapper {
+	overflow-x: auto;
+}
+
+@media only print {
+	.collection-content-wrapper {
+		overflow-x: visible;
+	}
+}
+
+.collection-content {
+	font-size: 0.875rem;
+}
+
+.collection-content td {
+	white-space: pre-wrap;
+	word-break: break-word;
+}
+
+.column-list {
+	display: flex;
+	gap: 46px;
+}
+
+.column {
+	min-width: 0;
+	overflow: hidden;
+}
+
+.column > *:first-child {
+	margin-top: 0;
+}
+
+.table_of_contents-item {
+	display: block;
+	font-size: 0.875rem;
+	line-height: 1.3;
+	padding-inline: 0.125rem;
+	padding-block: 0.375rem;
+}
+
+.table_of_contents-indent-1 {
+	margin-left: 1.5rem;
+}
+
+.table_of_contents-indent-2 {
+	margin-left: 3rem;
+}
+
+.table_of_contents-indent-3 {
+	margin-left: 4.5rem;
+}
+
+.table_of_contents-link {
+	text-decoration: none;
+	opacity: 0.7;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.18);
+}
+
+table,
+th,
+td {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+table {
+	border-collapse: collapse;
+	border-left: none;
+	border-right: none;
+}
+
+th,
+td {
+	font-weight: normal;
+	padding: 0.25em 0.5em;
+	line-height: 1.5;
+	min-height: 1.5em;
+	text-align: left;
+}
+
+th {
+	color: rgba(55, 53, 47, 0.6);
+}
+
+ol,
+ul {
+	margin: 0;
+	margin-block-start: 0.6em;
+	margin-block-end: 0.6em;
+}
+
+li > ol:first-child,
+li > ul:first-child {
+	margin-block-start: 0.6em;
+}
+
+ul > li {
+	list-style: disc;
+}
+
+ul.to-do-list {
+	padding-inline-start: 0;
+}
+
+ul.to-do-list > li {
+	list-style: none;
+}
+
+.to-do-children-checked {
+	text-decoration: line-through;
+	opacity: 0.375;
+}
+
+ul.toggle > li {
+	list-style: none;
+}
+
+ul {
+	padding-inline-start: 1.7em;
+}
+
+ul > li {
+	padding-left: 0.1em;
+}
+
+ol {
+	padding-inline-start: 1.6em;
+}
+
+ol.numbered-list.numbered-list-digits-2 {
+	padding-inline-start: 2em;
+}
+
+ol.numbered-list.numbered-list-digits-3plus {
+	padding-inline-start: 2.4em;
+}
+
+ol > li {
+	padding-left: 0.2em;
+}
+
+.mono ol {
+	padding-inline-start: 2em;
+}
+
+.mono ol > li {
+	text-indent: -0.4em;
+}
+
+.toggle {
+	padding-inline-start: 0em;
+	list-style-type: none;
+}
+
+/* Indent toggle children */
+.toggle > li > details {
+	padding-left: 1.7em;
+}
+
+.toggle > li > details > summary {
+	margin-left: -1.1em;
+}
+
+.selected-value {
+	display: inline-block;
+	padding: 0 0.5em;
+	background: rgba(206, 205, 202, 0.5);
+	border-radius: 3px;
+	margin-right: 0.5em;
+	margin-top: 0.3em;
+	margin-bottom: 0.3em;
+	white-space: nowrap;
+}
+
+.collection-title {
+	display: inline-block;
+	margin-right: 1em;
+}
+
+.page-description {
+	margin-bottom: 2em;
+}
+
+.simple-table {
+	margin-top: 1em;
+	font-size: 0.875rem;
+	empty-cells: show;
+}
+.simple-table td {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table th {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table-header-color {
+	background: rgb(247, 246, 243);
+	color: black;
+}
+.simple-table-header {
+	font-weight: 500;
+}
+
+time {
+	opacity: 0.5;
+}
+
+.icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	max-width: 1.2em;
+	max-height: 1.2em;
+	text-decoration: none;
+	vertical-align: text-bottom;
+	margin-right: 0.5em;
+}
+
+/*
+ * Render emoji icons using a ::before pseudo-element to keep the glyph
+ * out of the DOM textContent traversal. This avoids double-rendering icons
+ * in callouts and page titles.
+ * NOTE(slim/html-export-pseudo-icons): I can't tagref this because it will
+ * flag as a duplicate tag after codegen.
+ */
+.icon[data-emoji]::before {
+	content: attr(data-emoji);
+}
+
+img.icon {
+	border-radius: 3px;
+}
+
+.callout img.notion-static-icon {
+	width: 1em;
+	height: 1em;
+}
+
+.callout p {
+	margin: 0;
+}
+
+.callout h1,
+.callout h2,
+.callout h3 {
+	margin: 0 0 0.6rem;
+}
+
+.user-icon {
+	width: 1.5em;
+	height: 1.5em;
+	border-radius: 100%;
+	margin-right: 0.5rem;
+}
+
+.user-icon-inner {
+	font-size: 0.8em;
+}
+
+.text-icon {
+	border: 1px solid #000;
+	text-align: center;
+}
+
+.page-cover-image {
+	display: block;
+	object-fit: cover;
+	width: 100%;
+	max-height: 30vh;
+}
+
+.page-header-icon {
+	font-size: 3rem;
+	margin-bottom: 1rem;
+}
+
+.page-header-icon-with-cover {
+	margin-top: -0.72em;
+	margin-left: 0.07em;
+}
+
+.page-header-icon img {
+	border-radius: 3px;
+}
+
+.link-to-page {
+	margin: 1em 0;
+	padding: 0;
+	border: none;
+	font-weight: 500;
+}
+
+p > .user {
+	opacity: 0.5;
+}
+
+td > .user,
+td > time {
+	white-space: nowrap;
+}
+
+input[type="checkbox"] {
+	margin-right: 0.4em;
+	vertical-align: middle;
+}
+
+p {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+.image {
+	border: none;
+	margin: 1.5em 0;
+	padding: 0;
+	border-radius: 0;
+	text-align: center;
+}
+
+.code,
+code {
+	background: rgba(135, 131, 120, 0.15);
+	border-radius: 3px;
+	padding: 0.2em 0.4em;
+	border-radius: 3px;
+	font-size: 85%;
+	tab-size: 2;
+}
+
+code {
+	color: #eb5757;
+}
+
+.code {
+	padding: 1.5em 1em;
+}
+
+.code-wrap {
+	white-space: pre-wrap;
+	word-break: break-all;
+}
+
+.code > code {
+	background: none;
+	padding: 0;
+	font-size: 100%;
+	color: inherit;
+}
+
+blockquote {
+	font-size: 1em;
+	margin: 1em 0;
+	padding-left: 1em;
+	border-left: 3px solid rgb(55, 53, 47);
+}
+
+blockquote.quote-large {
+	font-size: 1.25em;
+}
+
+.bookmark {
+	text-decoration: none;
+	max-height: 8em;
+	padding: 0;
+	display: flex;
+	width: 100%;
+	align-items: stretch;
+}
+
+.bookmark-title {
+	font-size: 0.85em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	height: 1.75em;
+	white-space: nowrap;
+}
+
+.bookmark-text {
+	display: flex;
+	flex-direction: column;
+}
+
+.bookmark-info {
+	flex: 4 1 180px;
+	padding: 12px 14px 14px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.bookmark-image {
+	width: 33%;
+	flex: 1 1 180px;
+	display: block;
+	position: relative;
+	object-fit: cover;
+	border-radius: 1px;
+}
+
+.bookmark-description {
+	color: rgba(55, 53, 47, 0.6);
+	font-size: 0.75em;
+	overflow: hidden;
+	max-height: 4.5em;
+	word-break: break-word;
+}
+
+.bookmark-href {
+	font-size: 0.75em;
+	margin-top: 0.25em;
+}
+
+.tab {
+	margin: 1.25em 0;
+	padding-inline: 1rem;
+	border: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+.sans { font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"; }
+.code { font-family: "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace; }
+.serif { font-family: Lyon-Text, Georgia, ui-serif, serif; }
+.mono { font-family: iawriter-mono, Nitti, Menlo, Courier, monospace; }
+.pdf .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK JP'; }
+.pdf:lang(zh-CN) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC'; }
+.pdf:lang(zh-TW) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK TC'; }
+.pdf:lang(ko-KR) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK KR'; }
+.pdf .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.pdf .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK JP'; }
+.pdf:lang(zh-CN) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK SC'; }
+.pdf:lang(zh-TW) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK TC'; }
+.pdf:lang(ko-KR) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK KR'; }
+.pdf .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.highlight-default {
+	color: rgba(44, 44, 43, 1);
+}
+.highlight-gray {
+	color: rgba(125, 122, 117, 1);
+	fill: rgba(125, 122, 117, 1);
+}
+.highlight-brown {
+	color: rgba(159, 118, 90, 1);
+	fill: rgba(159, 118, 90, 1);
+}
+.highlight-orange {
+	color: rgba(210, 123, 45, 1);
+	fill: rgba(210, 123, 45, 1);
+}
+.highlight-yellow {
+	color: rgba(203, 148, 52, 1);
+	fill: rgba(203, 148, 52, 1);
+}
+.highlight-teal {
+	color: rgba(80, 148, 110, 1);
+	fill: rgba(80, 148, 110, 1);
+}
+.highlight-blue {
+	color: rgba(56, 125, 201, 1);
+	fill: rgba(56, 125, 201, 1);
+}
+.highlight-purple {
+	color: rgba(154, 107, 180, 1);
+	fill: rgba(154, 107, 180, 1);
+}
+.highlight-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.highlight-red {
+	color: rgba(207, 81, 72, 1);
+	fill: rgba(207, 81, 72, 1);
+}
+.highlight-default_background {
+	color: rgba(44, 44, 43, 1);
+}
+.highlight-gray_background {
+	background: rgba(42, 28, 0, 0.07);
+}
+.highlight-brown_background {
+	background: rgba(139, 46, 0, 0.086);
+}
+.highlight-orange_background {
+	background: rgba(224, 101, 1, 0.129);
+}
+.highlight-yellow_background {
+	background: rgba(211, 168, 0, 0.137);
+}
+.highlight-teal_background {
+	background: rgba(0, 100, 45, 0.09);
+}
+.highlight-blue_background {
+	background: rgba(0, 124, 215, 0.094);
+}
+.highlight-purple_background {
+	background: rgba(102, 0, 178, 0.078);
+}
+.highlight-pink_background {
+	background: rgba(197, 0, 93, 0.086);
+}
+.highlight-red_background {
+	background: rgba(223, 22, 0, 0.094);
+}
+.block-color-default {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray {
+	color: rgba(125, 122, 117, 1);
+	fill: rgba(125, 122, 117, 1);
+}
+.block-color-brown {
+	color: rgba(159, 118, 90, 1);
+	fill: rgba(159, 118, 90, 1);
+}
+.block-color-orange {
+	color: rgba(210, 123, 45, 1);
+	fill: rgba(210, 123, 45, 1);
+}
+.block-color-yellow {
+	color: rgba(203, 148, 52, 1);
+	fill: rgba(203, 148, 52, 1);
+}
+.block-color-teal {
+	color: rgba(80, 148, 110, 1);
+	fill: rgba(80, 148, 110, 1);
+}
+.block-color-blue {
+	color: rgba(56, 125, 201, 1);
+	fill: rgba(56, 125, 201, 1);
+}
+.block-color-purple {
+	color: rgba(154, 107, 180, 1);
+	fill: rgba(154, 107, 180, 1);
+}
+.block-color-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.block-color-red {
+	color: rgba(207, 81, 72, 1);
+	fill: rgba(207, 81, 72, 1);
+}
+.block-color-default_background {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray_background {
+	background: rgba(240, 239, 237, 1);
+}
+.block-color-brown_background {
+	background: rgba(245, 237, 233, 1);
+}
+.block-color-orange_background {
+	background: rgba(251, 235, 222, 1);
+}
+.block-color-yellow_background {
+	background: rgba(249, 243, 220, 1);
+}
+.block-color-teal_background {
+	background: rgba(232, 241, 236, 1);
+}
+.block-color-blue_background {
+	background: rgba(229, 242, 252, 1);
+}
+.block-color-purple_background {
+	background: rgba(243, 235, 249, 1);
+}
+.block-color-pink_background {
+	background: rgba(250, 233, 241, 1);
+}
+.block-color-red_background {
+	background: rgba(252, 233, 231, 1);
+}
+.select-value-color-default { background-color: rgba(42, 28, 0, 0.07); }
+.select-value-color-gray { background-color: rgba(28, 19, 1, 0.11); }
+.select-value-color-brown { background-color: rgba(127, 51, 0, 0.156); }
+.select-value-color-orange { background-color: rgba(196, 88, 0, 0.203); }
+.select-value-color-yellow { background-color: rgba(209, 156, 0, 0.282); }
+.select-value-color-green { background-color: rgba(0, 96, 38, 0.156); }
+.select-value-color-blue { background-color: rgba(0, 118, 217, 0.203); }
+.select-value-color-purple { background-color: rgba(92, 0, 163, 0.141); }
+.select-value-color-pink { background-color: rgba(183, 0, 78, 0.152); }
+.select-value-color-red { background-color: rgba(206, 24, 0, 0.164); }
+
+.checkbox {
+	display: inline-flex;
+	vertical-align: text-bottom;
+	width: 16;
+	height: 16;
+	background-size: 16px;
+	margin-left: 2px;
+	margin-right: 5px;
+}
+
+.checkbox-on {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20width%3D%2216%22%20height%3D%2216%22%20fill%3D%22%2358A9D7%22%2F%3E%0A%3Cpath%20d%3D%22M6.71429%2012.2852L14%204.9995L12.7143%203.71436L6.71429%209.71378L3.28571%206.2831L2%207.57092L6.71429%2012.2852Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+
+.checkbox-off {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20x%3D%220.75%22%20y%3D%220.75%22%20width%3D%2214.5%22%20height%3D%2214.5%22%20fill%3D%22white%22%20stroke%3D%22%2336352F%22%20stroke-width%3D%221.5%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+	
+</style><style>@import url('https://cdn.jsdelivr.net/npm/katex@0.16.25/dist/katex-swap.min.css')</style></head><body><article id="3b7c41a4-0511-805a-a6a4-e61bea4c4b54" class="page sans" data-notion-page-icon="🌐"><header><div class="page-header-icon undefined"><span class="icon" data-emoji="🌐"></span></div><h1 class="page-title" dir="auto">IPV6与双栈技术</h1><p class="page-description" dir="auto"></p></header><div class="page-body"><h1 id="460abf57-90e7-4a20-9ad7-89168fd40b58" class="" dir="auto">IPv4 与 IPv6 基础笔记</h1><h2 id="0bcad47c-2377-4f72-b8ef-581997993b4b" class="" dir="auto">一、IPv4</h2><h3 id="0edeb900-8db1-4a88-b7a8-1880d0e72499" class="" dir="auto">1. 基本信息</h3><ul id="89b721fd-2988-4d98-8c00-34204c7caf62" class="bulleted-list" dir="auto"><li style="list-style-type:disc"><strong>地址长度：</strong>32 位</li></ul><ul id="36e2cd13-ee50-4453-af2d-d5e066c1f502" class="bulleted-list" dir="auto"><li style="list-style-type:disc"><strong>分组方式：</strong>分为 4 组，每组 8 位</li></ul><ul id="2afa4bf7-4b96-499e-8411-fc06651e8620" class="bulleted-list" dir="auto"><li style="list-style-type:disc"><strong>字节数：</strong>4 字节</li></ul><ul id="61939a25-2c9d-4026-8bd7-706e5e6ac4bf" class="bulleted-list" dir="auto"><li style="list-style-type:disc"><strong>表示方式：</strong>点分十进制</li></ul><ul id="40144286-a663-4f93-98eb-9cff3b009787" class="bulleted-list" dir="auto"><li style="list-style-type:disc"><strong>示例：</strong><code>192.168.1.1</code></li></ul><p id="ec9796d0-cb1a-4237-9f90-4e9ad9e250bd" class="" dir="auto">IPv4 地址总数：</p><figure id="733f1ba1-60ff-41db-abf5-722f5cb2ca0c" class="equation" data-notion-equation="2^{32}=4,294,967,296" dir="auto"><style>@import url('https://cdn.jsdelivr.net/npm/katex@0.16.25/dist/katex-swap.min.css')</style><div class="equation-container"><span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8641em;"></span><span class="mord"><span class="mord">2</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8641em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">32</span></span></span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8389em;vertical-align:-0.1944em;"></span><span class="mord">4</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">294</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">967</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">296</span></span></span></span></span></div></figure><p id="63829241-df0c-49d1-9ad3-5c7494547ba5" class="" dir="auto">即约 43 亿个地址。实际可供设备使用的地址数量更少，因为部分地址具有特殊用途。</p><h3 id="71d41be1-ba52-4fea-97b1-f0e2451b49c2" class="" dir="auto">2. 地址结构</h3><p id="ab535dd6-6762-464c-9ab1-e60975f2aeea" class="" dir="auto">IPv4 地址由两部分组成：</p><ul id="bf83f727-a890-4457-be1a-db39ec1a9f02" class="bulleted-list" dir="auto"><li style="list-style-type:disc"><strong>网络部分：</strong>标识设备所在的网络</li></ul><ul id="2fce76d5-37c7-472e-a446-f00754b900e9" class="bulleted-list" dir="auto"><li style="list-style-type:disc"><strong>主机部分：</strong>标识该网络中的具体设备</li></ul><p id="c73e2c1b-577d-4253-b18e-8746267673d8" class="" dir="auto">子网掩码或前缀长度用于区分网络部分与主机部分。</p><p id="a6311c98-093e-4906-bbf4-775fe37b68d7" class="" dir="auto">示例：</p><ul id="74061c93-7306-4df0-827e-cdccf0da89f8" class="bulleted-list" dir="auto"><li style="list-style-type:disc">IPv4 地址：<code>192.168.1.10/24</code></li></ul><ul id="5d278e6a-4458-48a3-a66c-68fdd206bbfc" class="bulleted-list" dir="auto"><li style="list-style-type:disc">网络部分：<code>192.168.1.0</code></li></ul><ul id="9f4e39ac-e73a-49b2-81d8-c925970cfcaf" class="bulleted-list" dir="auto"><li style="list-style-type:disc">主机部分：最后 8 位</li></ul><h3 id="ebf9dec1-0e93-47da-b4b1-23f1a847c145" class="" dir="auto">3. 传统分类</h3><p id="425a8684-878b-4c76-8913-816d8deedf2b" class="" dir="auto">IPv4 地址传统上分为 A、B、C、D、E 五类：</p><table id="ac2cf611-a58d-4725-af9d-6de968578eec" class="simple-table" dir="ltr"><thead class="simple-table-header"><tr id="ea6bf55b-0903-4921-a8d2-43aa3e506acb" dir="ltr"><th id="lz{L" class="simple-table-header-color simple-table-header">类别</th><th id="bd~J" class="simple-table-header-color simple-table-header">主要用途</th></tr></thead><tbody><tr id="dc5d9d1e-87c3-4017-abf3-72ef3fba21b6" dir="ltr"><td id="lz{L" class="">A 类</td><td id="bd~J" class="">大型网络</td></tr><tr id="fb514537-26e9-4d64-a77d-6c470c34da0e" dir="ltr"><td id="lz{L" class="">B 类</td><td id="bd~J" class="">中型网络</td></tr><tr id="af8ad107-f1b6-4b2d-be36-78e5a87d259b" dir="ltr"><td id="lz{L" class="">C 类</td><td id="bd~J" class="">小型网络</td></tr><tr id="1a8b8b36-6570-4e9f-9f0a-c1427b8dc02a" dir="ltr"><td id="lz{L" class="">D 类</td><td id="bd~J" class="">组播</td></tr><tr id="1272c37e-4fa1-406f-b7ff-9d7493e161e4" dir="ltr"><td id="lz{L" class="">E 类</td><td id="bd~J" class="">实验和保留用途</td></tr></tbody></table><blockquote id="a26c9264-77ef-4da1-9d2c-d50c2e7423d3" class="" dir="auto">现代网络主要采用 CIDR 和前缀长度进行地址划分，A、B、C 类属于传统分类方式。</blockquote><h3 id="1789cbff-2727-41ae-aae1-98f260ace75d" class="" dir="auto">4. 私有地址与公网地址</h3><p id="ebd15768-767d-4f6d-ade6-56f6a81c11a2" class="" dir="auto">常见 IPv4 私有地址范围：</p><table id="ecddb0bc-4d32-4c32-aadc-9eacefabe2e7" class="simple-table" dir="ltr"><thead class="simple-table-header"><tr id="4c5ea43e-2969-4c2c-91ac-3cb4592fe756" dir="ltr"><th id="WayW" class="simple-table-header-color simple-table-header">地址范围</th><th id="GOgy" class="simple-table-header-color simple-table-header">前缀</th></tr></thead><tbody><tr id="2728f492-178d-4a0f-b7bb-7767a52424cd" dir="ltr"><td id="WayW" class=""><code>10.0.0.0～10.255.255.255</code></td><td id="GOgy" class=""><code>10.0.0.0/8</code></td></tr><tr id="a3d20740-f2a2-42cd-9465-252648effcac" dir="ltr"><td id="WayW" class=""><code>172.16.0.0～172.31.255.255</code></td><td id="GOgy" class=""><code>172.16.0.0/12</code></td></tr><tr id="89ac1617-ba7f-4c4a-ba63-7ebfbccf83d6" dir="ltr"><td id="WayW" class=""><code>192.168.0.0～192.168.255.255</code></td><td id="GOgy" class=""><code>192.168.0.0/16</code></td></tr></tbody></table><ul id="3d303272-ce15-4e4f-aa8b-df855a5c00e2" class="bulleted-list" dir="auto"><li style="list-style-type:disc"><strong>私有地址：</strong>供内部网络使用，不能直接在公网路由。</li></ul><ul id="f3bd7542-151e-4f1e-b865-167b1dce004f" class="bulleted-list" dir="auto"><li style="list-style-type:disc"><strong>公网地址：</strong>能够在互联网中进行全局路由。</li></ul><ul id="2e366fef-28d4-4a7c-b15f-575e1e789d94" class="bulleted-list" dir="auto"><li style="list-style-type:disc"><strong>NAT：</strong>可将私有地址转换为公网地址，缓解 IPv4 地址不足的问题。</li></ul><h3 id="b8f5cbfe-69fa-4de2-9fd5-2d8a613e8ffe" class="" dir="auto">5. IPv4 相关技术</h3><ul id="b2766b63-6306-411f-a658-160588e1efbe" class="bulleted-list" dir="auto"><li style="list-style-type:disc">子网划分</li></ul><ul id="321fb9eb-b617-410c-9010-bacdadebaf22" class="bulleted-list" dir="auto"><li style="list-style-type:disc">NAT 地址转换</li></ul><ul id="f1fd18bd-e720-4386-851d-eb34c4d53ba1" class="bulleted-list" dir="auto"><li style="list-style-type:disc">静态路由</li></ul><ul id="12d3a7cc-fb81-4962-9393-3f638c04a0c2" class="bulleted-list" dir="auto"><li style="list-style-type:disc">OSPFv2</li></ul><hr id="96feff63-a918-4bec-bc68-abcac0a337d3" dir="auto"/><h2 id="67e2871b-1e4c-4d8a-8dfb-89fa5952cf4f" class="" dir="auto">二、IPv6</h2><h3 id="0a842604-e049-458c-a26f-5bf0f7e668a8" class="" dir="auto">1. 基本信息</h3><ul id="29a1147d-0a2a-46d3-a288-065ce69233bc" class="bulleted-list" dir="auto"><li style="list-style-type:disc"><strong>地址长度：</strong>128 位</li></ul><ul id="0a2b3744-8b2e-4c4a-8f75-f779279e6dcf" class="bulleted-list" dir="auto"><li style="list-style-type:disc"><strong>分组方式：</strong>分为 8 组，每组 16 位</li></ul><ul id="da4b263b-8311-47e1-8b0e-56c8134bb5bc" class="bulleted-list" dir="auto"><li style="list-style-type:disc"><strong>每组字节数：</strong>2 字节</li></ul><ul id="4d78f340-c858-493a-9486-c2e27d1d44d0" class="bulleted-list" dir="auto"><li style="list-style-type:disc"><strong>总字节数：</strong>16 字节</li></ul><ul id="410337c4-0b95-48b2-baa5-e50aa887a611" class="bulleted-list" dir="auto"><li style="list-style-type:disc"><strong>表示方式：</strong>冒分十六进制</li></ul><ul id="9078a327-3c18-4e27-8c90-45c676a74da5" class="bulleted-list" dir="auto"><li style="list-style-type:disc"><strong>默认局域网前缀长度：</strong>通常为 <code>/64</code></li></ul><p id="5908a712-f3ee-464c-ad6f-8a0c3a2d82b6" class="" dir="auto">IPv6 地址总数：</p><figure id="beaa299b-f63d-497e-961e-c4c7ef8e87d9" class="equation" data-notion-equation="2^{128}" dir="auto"><style>@import url('https://cdn.jsdelivr.net/npm/katex@0.16.25/dist/katex-swap.min.css')</style><div class="equation-container"><span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8641em;"></span><span class="mord"><span class="mord">2</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8641em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">128</span></span></span></span></span></span></span></span></span></span></span></span></span></div></figure><p id="a95b5afb-fb2c-4e36-8596-dd6802a6b573" class="" dir="auto">约为：</p><figure id="53a07b27-75a4-4d49-9a3a-b8bef56fb9b7" class="equation" data-notion-equation="3.4\times10^{38}" dir="auto"><style>@import url('https://cdn.jsdelivr.net/npm/katex@0.16.25/dist/katex-swap.min.css')</style><div class="equation-container"><span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7278em;vertical-align:-0.0833em;"></span><span class="mord">3.4</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.8641em;"></span><span class="mord">1</span><span class="mord"><span class="mord">0</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8641em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">38</span></span></span></span></span></span></span></span></span></span></span></span></span></div></figure><p id="22045e25-56cd-490c-a0d3-afd0bfca3fa2" class="" dir="auto">IPv6 地址数量极其庞大，但仍需进行合理、分层的地址规划，便于路由汇总、网络管理和故障排查。</p><h3 id="241eff79-176e-4386-b62d-d7d0e853fc45" class="" dir="auto">2. 十六进制与二进制的关系</h3><p id="5af1b402-fc25-4dd0-a305-5b6e22ff3ed9" class="" dir="auto">一个十六进制数可表示 4 位二进制数：</p><figure id="73bd4a73-248c-4a2a-915f-2075083bd21b" class="equation" data-notion-equation="1\text{ 个十六进制数}=4\text{ 位二进制数}" dir="auto"><style>@import url('https://cdn.jsdelivr.net/npm/katex@0.16.25/dist/katex-swap.min.css')</style><div class="equation-container"><span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord">1</span><span class="mord text"><span class="mord"> </span><span class="mord cjk_fallback">个十六进制数</span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord">4</span><span class="mord text"><span class="mord"> </span><span class="mord cjk_fallback">位二进制数</span></span></span></span></span></span></div></figure><p id="2a44ad1a-717a-4ee1-b731-067c97e1f6ea" class="" dir="auto">因此：</p><figure id="df1b968d-541c-4c54-bbf4-5132bf82dfbd" class="equation" data-notion-equation="128\div4=32" dir="auto"><style>@import url('https://cdn.jsdelivr.net/npm/katex@0.16.25/dist/katex-swap.min.css')</style><div class="equation-container"><span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7278em;vertical-align:-0.0833em;"></span><span class="mord">128</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">÷</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">4</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">32</span></span></span></span></span></div></figure><p id="3b1eaa7d-7879-43c0-92c0-a2ae6a4d1248" class="" dir="auto">一个完整的 IPv6 地址共包含 32 个十六进制数。</p><h3 id="10dba8a8-4a2e-4321-b9c4-dd7b35c782b2" class="" dir="auto">3. 地址结构</h3><p id="3add72df-ea9c-46ef-9c7c-845ffeb6260d" class="" dir="auto">IPv6 地址通常由两部分组成：</p><ul id="6fd19124-00b3-44ea-a57a-eb19bbb161f1" class="bulleted-list" dir="auto"><li style="list-style-type:disc"><strong>网络前缀：</strong>标识网络</li></ul><ul id="be19a1b1-ec76-4359-af60-317c0251ccab" class="bulleted-list" dir="auto"><li style="list-style-type:disc"><strong>接口标识：</strong>标识网络接口，相当于 IPv4 中的主机部分</li></ul><p id="3ed2dc8c-8a6f-4c95-8b44-643d1f9c064f" class="" dir="auto">前缀长度的作用类似于 IPv4 的子网掩码。</p><p id="3ffe7c3f-774d-49d6-9b65-13960ba16ed0" class="" dir="auto">示例：</p><ul id="6f59af64-d02c-4727-91c6-0d811f019999" class="bulleted-list" dir="auto"><li style="list-style-type:disc">IPv6 地址：<code>2409:a00:7870:0:88e4::2219/64</code></li></ul><ul id="04883733-cd57-4e1e-bc86-c4f1eb8b101d" class="bulleted-list" dir="auto"><li style="list-style-type:disc">网络前缀：前 64 位</li></ul><ul id="416f1ca4-58a4-49a3-9ef8-af3af1c907a9" class="bulleted-list" dir="auto"><li style="list-style-type:disc">接口标识：后 64 位</li></ul><h3 id="10bd982f-27bd-4a25-9cd1-938af8c2a0ea" class="" dir="auto">4. 全球单播地址</h3><p id="5ad3e85c-e0d1-47ee-8361-c0cf1ea4b012" class="" dir="auto">IPv6 全球单播地址的主要范围为：</p><p id="45c148c0-cd1b-4a24-9196-e9eaec3e4ad0" class="" dir="auto"><code>2000::/3</code></p><p id="474555e7-d5cb-49dc-83cb-962f5232290c" class="" dir="auto">其作用类似于 IPv4 公网地址，可在全球 IPv6 网络中进行路由。<code>2001::/16</code> 位于全球单播地址范围内，但不能代表全部 IPv6 公网地址。</p><h3 id="f8ade84f-0a1d-4360-9c03-02de2148cc73" class="" dir="auto">5. 硬件与软件支持</h3><p id="cf42c9b9-ba25-4c40-b98b-b244f54376ec" class="" dir="auto">使用 IPv6 需要相关硬件和软件共同支持：</p><ul id="ad8d1b1b-b74e-4834-a58b-00f2e2d06823" class="bulleted-list" dir="auto"><li style="list-style-type:disc"><strong>硬件：</strong>手机、电脑、服务器、路由器、交换机等</li></ul><ul id="380ece3f-26f5-4ce7-b2ff-214d86a4b6f4" class="bulleted-list" dir="auto"><li style="list-style-type:disc"><strong>软件：</strong>操作系统、应用软件和网络服务等</li></ul><h3 id="e5e605b6-07e2-4a32-9add-a25b7322305e" class="" dir="auto">6. IPv6 相关技术</h3><ul id="f1408445-a32e-402f-8776-31b37942fb4a" class="bulleted-list" dir="auto"><li style="list-style-type:disc">IPv6 地址规划</li></ul><ul id="26ef699a-25f8-4284-9eba-e0e826e48607" class="bulleted-list" dir="auto"><li style="list-style-type:disc">IPv6 静态路由</li></ul><ul id="62d80961-312b-4bfb-aafe-3346217b1330" class="bulleted-list" dir="auto"><li style="list-style-type:disc">OSPFv3</li></ul><hr id="cfad3fb5-80cd-45c0-ae47-ad37ccec2cb4" dir="auto"/><h2 id="0f716e80-d1f3-4830-9550-eb03bd637032" class="" dir="auto">三、IPv6 地址简写规则</h2><p id="5f5698cb-f752-4d06-b7df-beeabddb77d0" class="" dir="auto">原始地址：</p><p id="3e66c34d-4359-443a-b665-310b5e46a964" class="" dir="auto"><code>2409:0a00:7870:0000:88e4:0000:0000:2219</code></p><h3 id="ca2424ec-9e42-414b-a502-7cec4098d811" class="" dir="auto">规则一：省略每组前导 0</h3><p id="dfd93cfb-994b-415c-a9aa-c5e201c0d681" class="" dir="auto">每组开头连续出现的 0 可以省略，但一组中的所有数字不能直接全部删掉。</p><p id="e6e8a86c-1ba1-4c95-83b5-2cf557b232ae" class="" dir="auto"><code>2409:a00:7870:0000:88e4:0000:0000:2219</code></p><h3 id="f530e83a-ff21-41d3-9c61-bc7ec6738944" class="" dir="auto">规则二：全 0 的一组可写为 0</h3><p id="d83172d7-878f-4b72-b5f9-e53ce4c1f212" class="" dir="auto"><code>2409:a00:7870:0:88e4:0:0:2219</code></p><h3 id="10029098-a41e-48e0-aada-c3557d073a11" class="" dir="auto">规则三：连续的全 0 组可用双冒号简写</h3><p id="8d1193c5-27d6-49e8-900d-127d87941be1" class="" dir="auto">连续两组或更多全 0 组可以使用 <code>::</code> 代替：</p><p id="0678a137-c7de-45f6-a54d-17fcc69ec15f" class="" dir="auto"><code>2409:a00:7870:0:88e4::2219</code></p><aside class="block-color-yellow_background callout" data-notion-callout="" data-notion-callout-icon="⚠️" data-notion-callout-background="yellow_background" style="white-space:pre-wrap;display:flex" id="66357977-fea6-466d-8cf0-78b6039f6678" dir="ltr"><div style="font-size:1.5em"><span class="icon" data-emoji="⚠️"></span></div><div style="width:100%"><p id="56139eaa-904b-4b8f-8652-30dd1f5be45a" class="" dir="auto">一个 IPv6 地址中最多只能使用一次 <code>::</code>，否则无法判断被省略了多少组全 0。</p></div></aside><h3 id="2c2e549a-a805-4003-aa54-bd8b0c82b78a" class="" dir="auto">简写结果</h3><p id="72a32acb-0dfa-42e6-964e-ab683e873392" class="" dir="auto"><code>2409:0a00:7870:0000:88e4:0000:0000:2219</code></p><p id="c3430a43-70d1-4b9e-ac3f-5dc7a58bfd6b" class="" dir="auto">可简写为：</p><p id="47baf26a-5e7d-41da-b889-c3da409b1fa2" class="" dir="auto"><code>2409:a00:7870:0:88e4::2219</code></p><hr id="b867409b-dc85-4620-9283-b54686c18c3e" dir="auto"/><h2 id="4d7492e2-e163-4ef5-9a24-3945ffb120f7" class="" dir="auto">四、IPv4 与 IPv6 对比</h2><table id="6b92c3cb-8af8-4ce0-b8e6-f496d55d1958" class="simple-table" dir="ltr"><thead class="simple-table-header"><tr id="1adc3785-586a-4a7c-a0c5-10dc05c421b7" dir="ltr"><th id="qHxq" class="simple-table-header-color simple-table-header">对比项</th><th id="Lg[B" class="simple-table-header-color simple-table-header">IPv4</th><th id="KQQ@" class="simple-table-header-color simple-table-header">IPv6</th></tr></thead><tbody><tr id="5e16ee66-8ec3-4c29-aac4-7fc7a2a3227c" dir="ltr"><th id="qHxq" class="simple-table-header-color simple-table-header">地址长度</th><td id="Lg[B" class="">32 位</td><td id="KQQ@" class="">128 位</td></tr><tr id="6415cf29-0f08-48e2-a56c-46562ed116e2" dir="ltr"><th id="qHxq" class="simple-table-header-color simple-table-header">字节数</th><td id="Lg[B" class="">4 字节</td><td id="KQQ@" class="">16 字节</td></tr><tr id="45fbc08d-cc08-4c46-8383-06b5cc9be37c" dir="ltr"><th id="qHxq" class="simple-table-header-color simple-table-header">表示方式</th><td id="Lg[B" class="">点分十进制</td><td id="KQQ@" class="">冒号十六进制</td></tr><tr id="792268f4-9815-4b0c-b1f0-b18e52349c73" dir="ltr"><th id="qHxq" class="simple-table-header-color simple-table-header">地址示例</th><td id="Lg[B" class=""><code>192.168.1.1</code></td><td id="KQQ@" class=""><code>2409:a00:7870:0:88e4::2219</code></td></tr><tr id="6d575b08-a5b4-4548-8c1a-1c49862305cd" dir="ltr"><th id="qHxq" class="simple-table-header-color simple-table-header">地址数量</th><td id="Lg[B" class=""><span data-notion-inline-equation="2^{32}" class="notion-text-equation-token" contenteditable="false"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8141em;"></span><span class="mord"><span class="mord">2</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">32</span></span></span></span></span></span></span></span></span></span></span></span></span></td><td id="KQQ@" class=""><span data-notion-inline-equation="2^{128}" class="notion-text-equation-token" contenteditable="false"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8141em;"></span><span class="mord"><span class="mord">2</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">128</span></span></span></span></span></span></span></span></span></span></span></span></span></td></tr><tr id="b2a5351e-30bc-4702-9cf4-4f9ff9046e62" dir="ltr"><th id="qHxq" class="simple-table-header-color simple-table-header">地址结构</th><td id="Lg[B" class="">网络部分＋主机部分</td><td id="KQQ@" class="">网络前缀＋接口标识</td></tr><tr id="52189566-1d95-4123-a006-d8dad401b461" dir="ltr"><th id="qHxq" class="simple-table-header-color simple-table-header">常用 OSPF 版本</th><td id="Lg[B" class="">OSPFv2</td><td id="KQQ@" class="">OSPFv3</td></tr></tbody></table><h1 id="3b7c41a4-0511-8076-b223-df0d2b4a7383" class="" dir="auto">IPV6双栈技术</h1><figure id="3b7c41a4-0511-806e-a6de-da8ce2cb8edd" class="image" data-notion-image="IPV6%E4%B8%8E%E5%8F%8C%E6%A0%88%E6%8A%80%E6%9C%AF/image.png" dir="ltr"><a href="IPV6%E4%B8%8E%E5%8F%8C%E6%A0%88%E6%8A%80%E6%9C%AF/image.png"><img style="width:703.95458984375px" src="IPV6%E4%B8%8E%E5%8F%8C%E6%A0%88%E6%8A%80%E6%9C%AF/image.png"/></a></figure><p id="3b7c41a4-0511-80c9-bf22-e7e64a9cd9a0" class="" dir="auto">现在公司内部使用IPV4 协议  ,想升级IPV6 网络 ，如何稳定切换到iPV6   </p><h3 id="3b7c41a4-0511-8015-8c49-c69ac99f52fa" class="" dir="auto"><strong>配置命令</strong></h3><p id="3b7c41a4-0511-807e-b906-d378e11055dc" class="" dir="auto">AR1</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-kotlin.min.js" integrity="sha512-nLUQ1JXk2Kj5a8FlfriL+WmiGbAq3W/dQirx3IlVfkpU7byrzLD19pJnYsG8vPTDvsRMpQDVSezvzkKUNcqUSw==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><pre id="3b7c41a4-0511-8014-8dcc-f7213f946e65" class="code code-wrap" data-notion-code-syntax="kotlin"><code class="language-kotlin" style="white-space:pre-wrap;word-break:break-all">sysname AR1
+
+interface GigabitEthernet 0/0/0
+ ip address 192.168.12.1 24
+ quit
+
+ip route-static 192.168.23.0 24 192.168.12.2
+ip route-static 192.168.34.0 24 192.168.12.2
+
+IPV6操作：
+interface GigabitEthernet 0/0/0
+ ipv6 enable
+ ipv6 address 2001:12::1 64
+ quit
+
+ipv6 route-static 2001:23:: 64 2001:12::2
+ipv6 route-static 2001:34:: 64 2001:12::2</code></pre><p id="3b7c41a4-0511-80ab-b3e6-c6732554a7c8" class="" dir="auto">AR2</p><pre id="3b7c41a4-0511-80ff-afd8-ed8516a3fa2b" class="code code-wrap" data-notion-code-syntax="kotlin"><code class="language-kotlin" style="white-space:pre-wrap;word-break:break-all">sysname AR2
+
+interface GigabitEthernet 0/0/0
+ ip address 192.168.12.2 24
+ quit
+
+interface GigabitEthernet 0/0/1
+ ip address 192.168.23.2 24
+ quit
+
+ip route-static 192.168.34.0 24 192.168.23.3
+
+IPV6操作：
+interface GigabitEthernet 0/0/0
+ ipv6 enable
+ ipv6 address 2001:12::2 64
+ quit
+
+interface GigabitEthernet 0/0/1
+ ipv6 enable
+ ipv6 address 2001:23::2 64
+ quit
+
+ipv6 route-static 2001:34:: 64 2001:23::3</code></pre><p id="3b7c41a4-0511-8043-b6d8-f8e513340699" class="" dir="auto">AR3</p><pre id="3b7c41a4-0511-804c-af59-deca6e0add46" class="code code-wrap" data-notion-code-syntax="kotlin"><code class="language-kotlin" style="white-space:pre-wrap;word-break:break-all">sysname AR3
+
+interface GigabitEthernet 0/0/0
+ ip address 192.168.23.3 24
+ quit
+
+interface GigabitEthernet 0/0/1
+ ip address 192.168.34.3 24
+ quit
+
+ip route-static 192.168.12.0 24 192.168.23.2
+
+IPV6操作:
+interface GigabitEthernet 0/0/0
+ ipv6 enable
+ ipv6 address 2001:23::3 64
+ quit
+
+interface GigabitEthernet 0/0/1
+ ipv6 enable
+ ipv6 address 2001:34::3 64
+ quit
+
+ipv6 route-static 2001:12:: 64 2001:23::2</code></pre><p id="3b7c41a4-0511-8082-a760-cdcb1c59afb2" class="" dir="auto">AR4</p><pre id="3b7c41a4-0511-80f6-80e3-ed267d46b3cc" class="code code-wrap" data-notion-code-syntax="kotlin"><code class="language-kotlin" style="white-space:pre-wrap;word-break:break-all">sysname AR4
+
+interface GigabitEthernet 0/0/0
+ ip address 192.168.34.4 24
+ quit
+
+ip route-static 192.168.12.0 24 192.168.34.3
+ip route-static 192.168.23.0 24 192.168.34.3
+
+IPV6操作:
+interface GigabitEthernet 0/0/0
+ ipv6 enable
+ ipv6 address 2001:34::4 64
+ quit
+
+ipv6 route-static 2001:23:: 64 2001:34::3
+ipv6 route-static 2001:12:: 64 2001:34::3</code></pre></div></article><span class="sans" style="font-size:14px;padding-top:2em"></span><script>
+(function () {
+  "use strict";
+  var PAGE = document.querySelector(".page-body");
+  if (!PAGE) return;
+  var HEADINGS = [], i, h;
+  var ALL = PAGE.querySelectorAll("h1, h2, h3, h4, h5, h6");
+  for (i = 0; i < ALL.length; i++) {
+    h = ALL[i];
+    if (h.closest && h.closest("aside, blockquote, details, summary, figure, th, td")) continue;
+    if (!h.id) continue;
+    HEADINGS.push(h);
+  }
+  var PAGE_LINKS = [];
+  if (HEADINGS.length < 2) {
+    var pl = PAGE.querySelectorAll(".link-to-page a");
+    for (i = 0; i < pl.length; i++) {
+      var hr = pl[i].getAttribute("href");
+      if (hr) PAGE_LINKS.push(pl[i]);
+    }
+    if (PAGE_LINKS.length < 2) return;
+  }
+  var CSS = "" +
+  "html{scroll-behavior:smooth}" +
+  ".page-body h1,.page-body h2,.page-body h3,.page-body h4,.page-body h5,.page-body h6{scroll-margin-top:14px}" +
+  ".nt-fab{position:fixed;right:18px;bottom:18px;z-index:2147483001;display:flex;align-items:center;gap:7px;padding:0 20px;height:52px;border:none;border-radius:999px;cursor:pointer;color:#fff;background:rgba(37,37,37,.93);font:600 14px/1 -apple-system,'PingFang SC','Microsoft YaHei','Segoe UI',sans-serif;letter-spacing:.5px;box-shadow:0 6px 22px rgba(0,0,0,.18);transition:transform .15s ease,opacity .2s ease}" +
+  ".nt-fab:hover{transform:translateY(-2px)}" +
+  ".nt-fab svg{width:18px;height:18px;flex:none}" +
+  ".nt-fab.nt-fab-hide{opacity:0;pointer-events:none}" +
+  ".nt-panel{position:fixed;top:0;right:0;bottom:0;z-index:2147483000;display:flex;flex-direction:column;width:min(340px,88vw);background:rgba(255,255,255,.97);border-left:1px solid rgba(55,53,47,.08);box-shadow:-10px 0 30px rgba(0,0,0,.09);transform:translateX(102%);visibility:hidden;transition:transform .25s ease,visibility .25s ease;font-family:-apple-system,'PingFang SC','Microsoft YaHei','Segoe UI',sans-serif}" +
+  ".nt-panel.nt-open{transform:none;visibility:visible}" +
+  ".nt-head{display:flex;align-items:center;gap:8px;padding:16px 18px 12px;border-bottom:1px solid rgba(55,53,47,.06);flex:none}" +
+  ".nt-head .nt-title{font-weight:700;font-size:15px;color:#1f1e1c}" +
+  ".nt-head .nt-count{font-size:12px;color:rgba(55,53,47,.55);background:rgba(55,53,47,.06);padding:2px 8px;border-radius:99px;white-space:nowrap}" +
+  ".nt-close{margin-left:auto;width:30px;height:30px;border:none;border-radius:8px;cursor:pointer;font-size:15px;color:rgba(55,53,47,.7);background:transparent;line-height:1}" +
+  ".nt-close:hover{background:rgba(55,53,47,.08)}" +
+  ".nt-nav{overflow-y:auto;padding:10px 12px 16px;flex:1;-webkit-overflow-scrolling:touch}" +
+  ".nt-link{display:block;text-decoration:none;color:rgba(55,53,47,.8);font-size:13.5px;line-height:1.55;padding:6px 10px;border-radius:8px;border-left:2px solid transparent;transition:background .12s,color .12s;overflow-wrap:anywhere}" +
+  ".nt-link:hover{background:rgba(55,53,47,.06);color:#111}" +
+  ".nt-link.nt-active{background:rgba(35,131,226,.10);color:#0b66c3;border-left-color:#2383e2;font-weight:600}" +
+  ".nt-l1{font-weight:600;color:#161513;margin-top:5px}" +
+  ".nt-l2{padding-left:22px}.nt-l3{padding-left:34px}.nt-l4{padding-left:46px}.nt-l5{padding-left:58px}.nt-l6{padding-left:70px}" +
+  "@media print{.nt-fab,.nt-panel{display:none!important}}" +
+  "@media (max-width:480px){.nt-panel{width:88vw}}";
+  var ST = document.createElement("style");
+  ST.textContent = CSS;
+  document.head.appendChild(ST);
+  var ROOT = document.createElement("div");
+  ROOT.className = "nt-root";
+  var FAB = document.createElement("button");
+  FAB.type = "button";
+  FAB.className = "nt-fab";
+  FAB.setAttribute("aria-label", "打开本页目录");
+  FAB.innerHTML = "<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M4 6h16M4 12h16M4 18h10'/></svg>目录";
+  ROOT.appendChild(FAB);
+  var PANEL = document.createElement("aside");
+  PANEL.className = "nt-panel";
+  PANEL.setAttribute("aria-label", "本页目录");
+  var HEAD = document.createElement("div");
+  HEAD.className = "nt-head";
+  var T = document.createElement("span");
+  T.className = "nt-title";
+  T.textContent = "本页目录";
+  var CNT = document.createElement("span");
+  CNT.className = "nt-count";
+  CNT.textContent = (HEADINGS.length >= 2 ? HEADINGS.length + " 节" : PAGE_LINKS.length + " 页");
+  var CLOSE = document.createElement("button");
+  CLOSE.type = "button";
+  CLOSE.className = "nt-close";
+  CLOSE.setAttribute("aria-label", "关闭目录");
+  CLOSE.textContent = "✕";
+  HEAD.appendChild(T);
+  HEAD.appendChild(CNT);
+  HEAD.appendChild(CLOSE);
+  PANEL.appendChild(HEAD);
+  var NAV = document.createElement("nav");
+  NAV.className = "nt-nav";
+  function makeLabel(node) {
+    var label = (node.textContent || "").replace(/\s+/g, " ").trim();
+    var clean = label.replace(/^[\p{Extended_Pictographic}\p{Emoji_Modifier}‍️\s]+/u, "").trim();
+    return clean || label;
+  }
+  function addItem(href, text, cls, idx) {
+    var a = document.createElement("a");
+    a.href = href;
+    a.className = "nt-link " + (cls || "nt-l1");
+    a.setAttribute("data-i", idx);
+    a.title = text;
+    a.textContent = text.length > 42 ? text.slice(0, 42) + "…" : text;
+    NAV.appendChild(a);
+    return a;
+  }
+  var LINKS = [];
+  if (HEADINGS.length >= 2) {
+    var minLv = 99, k, lv;
+    for (k = 0; k < HEADINGS.length; k++) {
+      lv = parseInt(HEADINGS[k].tagName.charAt(1), 10);
+      if (lv < minLv) minLv = lv;
+    }
+    for (k = 0; k < HEADINGS.length; k++) {
+      lv = parseInt(HEADINGS[k].tagName.charAt(1), 10) - minLv;
+      if (lv > 5) lv = 5;
+      LINKS.push(addItem("#" + HEADINGS[k].id, makeLabel(HEADINGS[k]), "nt-l" + (lv + 1), k));
+    }
+  } else {
+    var j;
+    for (j = 0; j < PAGE_LINKS.length; j++) {
+      LINKS.push(addItem(PAGE_LINKS[j].getAttribute("href"), makeLabel(PAGE_LINKS[j]), "nt-l1", j));
+    }
+  }
+  PANEL.appendChild(NAV);
+  ROOT.appendChild(PANEL);
+  document.body.appendChild(ROOT);
+  var isHeadingNav = HEADINGS.length >= 2;
+  function setActive(idx) {
+    for (var n = 0; n < LINKS.length; n++) LINKS[n].classList.remove("nt-active");
+    if (LINKS[idx]) LINKS[idx].classList.add("nt-active");
+  }
+  var ticking = false;
+  function onScroll() {
+    if (ticking || !isHeadingNav) return;
+    ticking = true;
+    requestAnimationFrame(function () {
+      var mark = window.scrollY + 90;
+      var idx = 0;
+      for (var n = 0; n < HEADINGS.length; n++) {
+        var top = HEADINGS[n].getBoundingClientRect().top + window.scrollY;
+        if (top <= mark) idx = n; else break;
+      }
+      setActive(idx);
+      ticking = false;
+    });
+  }
+  window.addEventListener("scroll", onScroll, { passive: true });
+  if (isHeadingNav) setActive(0);
+  function openPanel() {
+    PANEL.classList.add("nt-open");
+    FAB.classList.add("nt-fab-hide");
+  }
+  function closePanel() {
+    PANEL.classList.remove("nt-open");
+    FAB.classList.remove("nt-fab-hide");
+  }
+  FAB.addEventListener("click", openPanel);
+  CLOSE.addEventListener("click", closePanel);
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape") closePanel();
+  });
+  NAV.addEventListener("click", function (e) {
+    var a = e.target && e.target.closest ? e.target.closest("a.nt-link") : null;
+    if (!a) return;
+    if (window.innerWidth < 860) closePanel();
+  });
+})();
+</script><script>
+(function () {
+  if (document.getElementById("nt-back")) return;
+  var link = "../%E7%BD%91%E5%B7%A5%E5%9F%BA%E7%A1%80%E4%B8%8E%E5%AE%9E%E9%AA%8C%20.html";
+  var style = document.createElement("style");
+  style.textContent = ".nt-back{position:fixed;top:16px;left:16px;z-index:2147483002;display:inline-flex;align-items:center;gap:7px;padding:8px 15px 8px 12px;border-radius:999px;text-decoration:none;color:#37352f;background:rgba(255,255,255,.93);border:1px solid rgba(55,53,47,.14);box-shadow:0 5px 16px rgba(0,0,0,.12);font:600 13px/1 -apple-system,'PingFang SC','Microsoft YaHei','Segoe UI',sans-serif;transition:background .15s,transform .15s,box-shadow .15s;backdrop-filter:blur(6px)}.nt-back:hover{background:#fff;transform:translateY(-1px);box-shadow:0 7px 20px rgba(0,0,0,.16)}.nt-back svg{width:14px;height:14px;flex:none}.nt-back .nt-back-label{white-space:nowrap}@media print{.nt-back{display:none!important}}@media (max-width:900px){.nt-back{padding:0;width:38px;height:38px;border-radius:50%;justify-content:center;top:10px;left:10px}.nt-back .nt-back-label{display:none}}";
+  document.head.appendChild(style);
+  var a = document.createElement("a");
+  a.id = "nt-back";
+  a.className = "nt-back";
+  a.href = link;
+  a.setAttribute("aria-label", "返回网工基础与实验");
+  a.innerHTML = "<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'><path d='M19 12H5'/><path d='M11 18l-6-6 6-6'/></svg><span class='nt-back-label'>网工基础与实验</span>";
+  document.body.appendChild(a);
+})();
+</script></body></html>

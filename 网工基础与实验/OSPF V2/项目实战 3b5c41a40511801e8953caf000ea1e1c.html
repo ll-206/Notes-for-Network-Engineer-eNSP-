@@ -1,0 +1,1620 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>项目实战</title><style>
+/* cspell:disable-file */
+/* webkit printing magic: print all background colors */
+html {
+	-webkit-print-color-adjust: exact;
+}
+* {
+	box-sizing: border-box;
+	-webkit-print-color-adjust: exact;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
+@media only screen {
+	body {
+		margin: 2em auto;
+		max-width: 900px;
+		color: rgb(55, 53, 47);
+	}
+}
+
+body {
+	line-height: 1.5;
+	white-space: pre-wrap;
+}
+
+a,
+a.visited {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.pdf-relative-link-path {
+	font-size: 80%;
+	color: #444;
+}
+
+h1,
+h2,
+h3 {
+	letter-spacing: -0.01em;
+	line-height: 1.2;
+	font-weight: 600;
+	margin-bottom: 0;
+}
+
+/* Override strong tags inside headings to maintain consistent weight */
+h1 strong,
+h2 strong,
+h3 strong {
+	font-weight: 600;
+}
+
+.page-title {
+	font-size: 2.5rem;
+	font-weight: 700;
+	margin-top: 0;
+	margin-bottom: 0.75em;
+}
+
+h1 {
+	font-size: 1.875rem;
+	margin-top: 1.875rem;
+}
+
+h2 {
+	font-size: 1.5rem;
+	margin-top: 1.5rem;
+}
+
+h3 {
+	font-size: 1.25rem;
+	margin-top: 1.25rem;
+}
+
+.source {
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	padding: 1.5em;
+	word-break: break-all;
+}
+
+.callout {
+	border-radius: 10px;
+	padding: 1rem;
+}
+
+/* For default-background callouts, render the border outline. */
+.callout.block-color-default_background {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+figure {
+	margin: 1.25em 0;
+	page-break-inside: avoid;
+}
+
+/*
+ * Toggles and callouts hold arbitrary content, so they can easily be taller
+ * than a page. They must stay breakable: avoiding breaks inside them makes
+ * Chromium push the whole block onto the next page, which leaves the previous
+ * page mostly empty before every long toggle.
+ */
+details,
+aside {
+	margin: 1.25em 0;
+}
+
+/* Keep a toggle's title on the same page as the start of its content. */
+summary {
+	page-break-after: avoid;
+	break-after: avoid;
+}
+
+/*
+ * Toggle headings render as <h1/h2/h3 style="display:inline-block"> inside
+ * <summary>. Without this reset, the heading's margin-top pushes it below the
+ * ::marker (▼), so the triangle and the title appear on separate lines.
+ */
+summary h1,
+summary h2,
+summary h3,
+summary h4 {
+	margin-top: 0;
+}
+
+figcaption {
+	opacity: 0.5;
+	font-size: 85%;
+	margin-top: 0.5em;
+}
+
+mark {
+	background-color: transparent;
+}
+
+.indented {
+	padding-left: 1.5em;
+}
+
+hr {
+	background: transparent;
+	display: block;
+	width: 100%;
+	height: 1px;
+	visibility: visible;
+	border: none;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+img {
+	max-width: 100%;
+}
+
+@media only print {
+	img {
+		max-height: 100vh;
+		object-fit: contain;
+	}
+
+	table.collection-content {
+		width: 100%;
+		table-layout: fixed;
+	}
+
+	table.collection-content th,
+	table.collection-content td {
+		overflow-wrap: anywhere;
+	}
+
+	table.collection-content td > .user,
+	table.collection-content td > time {
+		white-space: pre-wrap;
+	}
+}
+
+@page {
+	margin: 1in;
+}
+
+.collection-content-wrapper {
+	overflow-x: auto;
+}
+
+@media only print {
+	.collection-content-wrapper {
+		overflow-x: visible;
+	}
+}
+
+.collection-content {
+	font-size: 0.875rem;
+}
+
+.collection-content td {
+	white-space: pre-wrap;
+	word-break: break-word;
+}
+
+.column-list {
+	display: flex;
+	gap: 46px;
+}
+
+.column {
+	min-width: 0;
+	overflow: hidden;
+}
+
+.column > *:first-child {
+	margin-top: 0;
+}
+
+.table_of_contents-item {
+	display: block;
+	font-size: 0.875rem;
+	line-height: 1.3;
+	padding-inline: 0.125rem;
+	padding-block: 0.375rem;
+}
+
+.table_of_contents-indent-1 {
+	margin-left: 1.5rem;
+}
+
+.table_of_contents-indent-2 {
+	margin-left: 3rem;
+}
+
+.table_of_contents-indent-3 {
+	margin-left: 4.5rem;
+}
+
+.table_of_contents-link {
+	text-decoration: none;
+	opacity: 0.7;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.18);
+}
+
+table,
+th,
+td {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+table {
+	border-collapse: collapse;
+	border-left: none;
+	border-right: none;
+}
+
+th,
+td {
+	font-weight: normal;
+	padding: 0.25em 0.5em;
+	line-height: 1.5;
+	min-height: 1.5em;
+	text-align: left;
+}
+
+th {
+	color: rgba(55, 53, 47, 0.6);
+}
+
+ol,
+ul {
+	margin: 0;
+	margin-block-start: 0.6em;
+	margin-block-end: 0.6em;
+}
+
+li > ol:first-child,
+li > ul:first-child {
+	margin-block-start: 0.6em;
+}
+
+ul > li {
+	list-style: disc;
+}
+
+ul.to-do-list {
+	padding-inline-start: 0;
+}
+
+ul.to-do-list > li {
+	list-style: none;
+}
+
+.to-do-children-checked {
+	text-decoration: line-through;
+	opacity: 0.375;
+}
+
+ul.toggle > li {
+	list-style: none;
+}
+
+ul {
+	padding-inline-start: 1.7em;
+}
+
+ul > li {
+	padding-left: 0.1em;
+}
+
+ol {
+	padding-inline-start: 1.6em;
+}
+
+ol.numbered-list.numbered-list-digits-2 {
+	padding-inline-start: 2em;
+}
+
+ol.numbered-list.numbered-list-digits-3plus {
+	padding-inline-start: 2.4em;
+}
+
+ol > li {
+	padding-left: 0.2em;
+}
+
+.mono ol {
+	padding-inline-start: 2em;
+}
+
+.mono ol > li {
+	text-indent: -0.4em;
+}
+
+.toggle {
+	padding-inline-start: 0em;
+	list-style-type: none;
+}
+
+/* Indent toggle children */
+.toggle > li > details {
+	padding-left: 1.7em;
+}
+
+.toggle > li > details > summary {
+	margin-left: -1.1em;
+}
+
+.selected-value {
+	display: inline-block;
+	padding: 0 0.5em;
+	background: rgba(206, 205, 202, 0.5);
+	border-radius: 3px;
+	margin-right: 0.5em;
+	margin-top: 0.3em;
+	margin-bottom: 0.3em;
+	white-space: nowrap;
+}
+
+.collection-title {
+	display: inline-block;
+	margin-right: 1em;
+}
+
+.page-description {
+	margin-bottom: 2em;
+}
+
+.simple-table {
+	margin-top: 1em;
+	font-size: 0.875rem;
+	empty-cells: show;
+}
+.simple-table td {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table th {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table-header-color {
+	background: rgb(247, 246, 243);
+	color: black;
+}
+.simple-table-header {
+	font-weight: 500;
+}
+
+time {
+	opacity: 0.5;
+}
+
+.icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	max-width: 1.2em;
+	max-height: 1.2em;
+	text-decoration: none;
+	vertical-align: text-bottom;
+	margin-right: 0.5em;
+}
+
+/*
+ * Render emoji icons using a ::before pseudo-element to keep the glyph
+ * out of the DOM textContent traversal. This avoids double-rendering icons
+ * in callouts and page titles.
+ * NOTE(slim/html-export-pseudo-icons): I can't tagref this because it will
+ * flag as a duplicate tag after codegen.
+ */
+.icon[data-emoji]::before {
+	content: attr(data-emoji);
+}
+
+img.icon {
+	border-radius: 3px;
+}
+
+.callout img.notion-static-icon {
+	width: 1em;
+	height: 1em;
+}
+
+.callout p {
+	margin: 0;
+}
+
+.callout h1,
+.callout h2,
+.callout h3 {
+	margin: 0 0 0.6rem;
+}
+
+.user-icon {
+	width: 1.5em;
+	height: 1.5em;
+	border-radius: 100%;
+	margin-right: 0.5rem;
+}
+
+.user-icon-inner {
+	font-size: 0.8em;
+}
+
+.text-icon {
+	border: 1px solid #000;
+	text-align: center;
+}
+
+.page-cover-image {
+	display: block;
+	object-fit: cover;
+	width: 100%;
+	max-height: 30vh;
+}
+
+.page-header-icon {
+	font-size: 3rem;
+	margin-bottom: 1rem;
+}
+
+.page-header-icon-with-cover {
+	margin-top: -0.72em;
+	margin-left: 0.07em;
+}
+
+.page-header-icon img {
+	border-radius: 3px;
+}
+
+.link-to-page {
+	margin: 1em 0;
+	padding: 0;
+	border: none;
+	font-weight: 500;
+}
+
+p > .user {
+	opacity: 0.5;
+}
+
+td > .user,
+td > time {
+	white-space: nowrap;
+}
+
+input[type="checkbox"] {
+	margin-right: 0.4em;
+	vertical-align: middle;
+}
+
+p {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+.image {
+	border: none;
+	margin: 1.5em 0;
+	padding: 0;
+	border-radius: 0;
+	text-align: center;
+}
+
+.code,
+code {
+	background: rgba(135, 131, 120, 0.15);
+	border-radius: 3px;
+	padding: 0.2em 0.4em;
+	border-radius: 3px;
+	font-size: 85%;
+	tab-size: 2;
+}
+
+code {
+	color: #eb5757;
+}
+
+.code {
+	padding: 1.5em 1em;
+}
+
+.code-wrap {
+	white-space: pre-wrap;
+	word-break: break-all;
+}
+
+.code > code {
+	background: none;
+	padding: 0;
+	font-size: 100%;
+	color: inherit;
+}
+
+blockquote {
+	font-size: 1em;
+	margin: 1em 0;
+	padding-left: 1em;
+	border-left: 3px solid rgb(55, 53, 47);
+}
+
+blockquote.quote-large {
+	font-size: 1.25em;
+}
+
+.bookmark {
+	text-decoration: none;
+	max-height: 8em;
+	padding: 0;
+	display: flex;
+	width: 100%;
+	align-items: stretch;
+}
+
+.bookmark-title {
+	font-size: 0.85em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	height: 1.75em;
+	white-space: nowrap;
+}
+
+.bookmark-text {
+	display: flex;
+	flex-direction: column;
+}
+
+.bookmark-info {
+	flex: 4 1 180px;
+	padding: 12px 14px 14px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.bookmark-image {
+	width: 33%;
+	flex: 1 1 180px;
+	display: block;
+	position: relative;
+	object-fit: cover;
+	border-radius: 1px;
+}
+
+.bookmark-description {
+	color: rgba(55, 53, 47, 0.6);
+	font-size: 0.75em;
+	overflow: hidden;
+	max-height: 4.5em;
+	word-break: break-word;
+}
+
+.bookmark-href {
+	font-size: 0.75em;
+	margin-top: 0.25em;
+}
+
+.tab {
+	margin: 1.25em 0;
+	padding-inline: 1rem;
+	border: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+.sans { font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"; }
+.code { font-family: "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace; }
+.serif { font-family: Lyon-Text, Georgia, ui-serif, serif; }
+.mono { font-family: iawriter-mono, Nitti, Menlo, Courier, monospace; }
+.pdf .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK JP'; }
+.pdf:lang(zh-CN) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC'; }
+.pdf:lang(zh-TW) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK TC'; }
+.pdf:lang(ko-KR) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK KR'; }
+.pdf .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.pdf .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK JP'; }
+.pdf:lang(zh-CN) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK SC'; }
+.pdf:lang(zh-TW) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK TC'; }
+.pdf:lang(ko-KR) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK KR'; }
+.pdf .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.highlight-default {
+	color: rgba(44, 44, 43, 1);
+}
+.highlight-gray {
+	color: rgba(125, 122, 117, 1);
+	fill: rgba(125, 122, 117, 1);
+}
+.highlight-brown {
+	color: rgba(159, 118, 90, 1);
+	fill: rgba(159, 118, 90, 1);
+}
+.highlight-orange {
+	color: rgba(210, 123, 45, 1);
+	fill: rgba(210, 123, 45, 1);
+}
+.highlight-yellow {
+	color: rgba(203, 148, 52, 1);
+	fill: rgba(203, 148, 52, 1);
+}
+.highlight-teal {
+	color: rgba(80, 148, 110, 1);
+	fill: rgba(80, 148, 110, 1);
+}
+.highlight-blue {
+	color: rgba(56, 125, 201, 1);
+	fill: rgba(56, 125, 201, 1);
+}
+.highlight-purple {
+	color: rgba(154, 107, 180, 1);
+	fill: rgba(154, 107, 180, 1);
+}
+.highlight-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.highlight-red {
+	color: rgba(207, 81, 72, 1);
+	fill: rgba(207, 81, 72, 1);
+}
+.highlight-default_background {
+	color: rgba(44, 44, 43, 1);
+}
+.highlight-gray_background {
+	background: rgba(42, 28, 0, 0.07);
+}
+.highlight-brown_background {
+	background: rgba(139, 46, 0, 0.086);
+}
+.highlight-orange_background {
+	background: rgba(224, 101, 1, 0.129);
+}
+.highlight-yellow_background {
+	background: rgba(211, 168, 0, 0.137);
+}
+.highlight-teal_background {
+	background: rgba(0, 100, 45, 0.09);
+}
+.highlight-blue_background {
+	background: rgba(0, 124, 215, 0.094);
+}
+.highlight-purple_background {
+	background: rgba(102, 0, 178, 0.078);
+}
+.highlight-pink_background {
+	background: rgba(197, 0, 93, 0.086);
+}
+.highlight-red_background {
+	background: rgba(223, 22, 0, 0.094);
+}
+.block-color-default {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray {
+	color: rgba(125, 122, 117, 1);
+	fill: rgba(125, 122, 117, 1);
+}
+.block-color-brown {
+	color: rgba(159, 118, 90, 1);
+	fill: rgba(159, 118, 90, 1);
+}
+.block-color-orange {
+	color: rgba(210, 123, 45, 1);
+	fill: rgba(210, 123, 45, 1);
+}
+.block-color-yellow {
+	color: rgba(203, 148, 52, 1);
+	fill: rgba(203, 148, 52, 1);
+}
+.block-color-teal {
+	color: rgba(80, 148, 110, 1);
+	fill: rgba(80, 148, 110, 1);
+}
+.block-color-blue {
+	color: rgba(56, 125, 201, 1);
+	fill: rgba(56, 125, 201, 1);
+}
+.block-color-purple {
+	color: rgba(154, 107, 180, 1);
+	fill: rgba(154, 107, 180, 1);
+}
+.block-color-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.block-color-red {
+	color: rgba(207, 81, 72, 1);
+	fill: rgba(207, 81, 72, 1);
+}
+.block-color-default_background {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray_background {
+	background: rgba(240, 239, 237, 1);
+}
+.block-color-brown_background {
+	background: rgba(245, 237, 233, 1);
+}
+.block-color-orange_background {
+	background: rgba(251, 235, 222, 1);
+}
+.block-color-yellow_background {
+	background: rgba(249, 243, 220, 1);
+}
+.block-color-teal_background {
+	background: rgba(232, 241, 236, 1);
+}
+.block-color-blue_background {
+	background: rgba(229, 242, 252, 1);
+}
+.block-color-purple_background {
+	background: rgba(243, 235, 249, 1);
+}
+.block-color-pink_background {
+	background: rgba(250, 233, 241, 1);
+}
+.block-color-red_background {
+	background: rgba(252, 233, 231, 1);
+}
+.select-value-color-default { background-color: rgba(42, 28, 0, 0.07); }
+.select-value-color-gray { background-color: rgba(28, 19, 1, 0.11); }
+.select-value-color-brown { background-color: rgba(127, 51, 0, 0.156); }
+.select-value-color-orange { background-color: rgba(196, 88, 0, 0.203); }
+.select-value-color-yellow { background-color: rgba(209, 156, 0, 0.282); }
+.select-value-color-green { background-color: rgba(0, 96, 38, 0.156); }
+.select-value-color-blue { background-color: rgba(0, 118, 217, 0.203); }
+.select-value-color-purple { background-color: rgba(92, 0, 163, 0.141); }
+.select-value-color-pink { background-color: rgba(183, 0, 78, 0.152); }
+.select-value-color-red { background-color: rgba(206, 24, 0, 0.164); }
+
+.checkbox {
+	display: inline-flex;
+	vertical-align: text-bottom;
+	width: 16;
+	height: 16;
+	background-size: 16px;
+	margin-left: 2px;
+	margin-right: 5px;
+}
+
+.checkbox-on {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20width%3D%2216%22%20height%3D%2216%22%20fill%3D%22%2358A9D7%22%2F%3E%0A%3Cpath%20d%3D%22M6.71429%2012.2852L14%204.9995L12.7143%203.71436L6.71429%209.71378L3.28571%206.2831L2%207.57092L6.71429%2012.2852Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+
+.checkbox-off {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20x%3D%220.75%22%20y%3D%220.75%22%20width%3D%2214.5%22%20height%3D%2214.5%22%20fill%3D%22white%22%20stroke%3D%22%2336352F%22%20stroke-width%3D%221.5%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+	
+</style><style>@import url('https://cdn.jsdelivr.net/npm/katex@0.16.25/dist/katex-swap.min.css')</style></head><body><article id="3b5c41a4-0511-801e-8953-caf000ea1e1c" class="page sans"><header><h1 class="page-title" dir="auto">项目实战</h1><p class="page-description" dir="auto"></p></header><div class="page-body"><h2 id="3b6c41a4-0511-800a-81b5-e5cc42d3bcdc" class="" dir="auto">单出口</h2><figure id="3b5c41a4-0511-802d-86dc-e427eb18a238" class="image" data-notion-image="%E9%A1%B9%E7%9B%AE%E5%AE%9E%E6%88%98/image.png" dir="ltr"><a href="%E9%A1%B9%E7%9B%AE%E5%AE%9E%E6%88%98/image.png"><img style="width:703.9886474609375px" src="%E9%A1%B9%E7%9B%AE%E5%AE%9E%E6%88%98/image.png"/></a></figure><p id="3b5c41a4-0511-800f-9240-c69ed3dcd02f" class="" dir="auto">公司内部有四个部门，两台服务器都分属不同vlan<br/>公司内部主机通过DHCP服务器获取地址参数<br/>公司网络骨干使用动态路由协议OSPF的area0 ，其他使用非0区域，设备比较老旧<br/>提高内网的安全性使用啦二层冗余和网关冗余<br/>在边界实现内网访问外网<br/>实现内网WEB服务器的成功发布<br/>另外想在公司的外网进行远程管理接入层的四台设备，使用vlan99进行管理<br/>公司内网为了可靠性做了双汇聚、双核心、双出口<br/>汇聚设备是终端的网关设备<br/>核心设备只做二层转发</p><p id="3b5c41a4-0511-80c9-90b3-ea3921ae13f7" class="" dir="auto">配置命令</p><p id="3b5c41a4-0511-80f8-82a9-c483aee8925f" class="" dir="auto">JR-1</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js" integrity="sha512-AKaNmg8COK0zEbjTdMHJAPJ0z6VeNqvRvH4/d5M4sHJbQQUToMBtodq4HaV4fa+WV2UTfoperElm66c9/8cKmQ==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><pre id="3b5c41a4-0511-8028-bb76-eb28cd89bcf8" class="code code-wrap" data-notion-code-syntax="python"><code class="language-python" style="white-space:pre-wrap;word-break:break-all">[JR-1]display current-configuration 
+#
+sysname JR-1
+#
+vlan batch 10 99
+#
+stp region-configuration
+ region-name lxf
+ instance 1 vlan 10
+ instance 2 vlan 20
+ instance 3 vlan 30
+ instance 4 vlan 40
+ instance 5 vlan 15
+ instance 6 vlan 16
+ active region-configuration
+#
+interface Vlanif99
+ ip address 192.168.99.1 255.255.255.0
+#
+interface GigabitEthernet0/0/1
+ port link-type access
+ port default vlan 10
+#
+interface GigabitEthernet0/0/2
+ port link-type access
+ port default vlan 10
+#
+interface GigabitEthernet0/0/3
+ port link-type trunk
+ port trunk allow-pass vlan 10 99
+#
+interface GigabitEthernet0/0/4
+ port link-type trunk
+ port trunk allow-pass vlan 10 99
+#
+ip route-static 0.0.0.0 0.0.0.0 192.168.99.254
+#
+user-interface con 0
+user-interface vty 0 4
+ user privilege level 15
+ set authentication password simple 123
+ protocol inbound all
+#
+return
+[JR-1]</code></pre><p id="3b5c41a4-0511-8055-b2b1-cdaab84db92a" class="" dir="auto">JR-2</p><pre id="3b5c41a4-0511-80dd-966b-e0e1b9ff8c8d" class="code code-wrap" data-notion-code-syntax="python"><code class="language-python" style="white-space:pre-wrap;word-break:break-all">[JR-2]display current-configuration 
+#
+sysname JR-2
+#
+vlan batch 20 99
+#
+stp region-configuration
+ region-name lxf
+ instance 1 vlan 10
+ instance 2 vlan 20
+ instance 3 vlan 30
+ instance 4 vlan 40
+ instance 5 vlan 15
+ instance 6 vlan 16
+ active region-configuration
+#
+interface Vlanif99
+ ip address 192.168.99.2 255.255.255.0
+#
+interface GigabitEthernet0/0/1
+ port link-type access
+ port default vlan 20
+#
+interface GigabitEthernet0/0/2
+ port link-type access
+ port default vlan 20
+#
+interface GigabitEthernet0/0/3
+ port link-type trunk
+ port trunk allow-pass vlan 20 99
+#
+interface GigabitEthernet0/0/4
+ port link-type trunk
+ port trunk allow-pass vlan 20 99
+#
+ip route-static 0.0.0.0 0.0.0.0 192.168.99.254
+#
+user-interface con 0
+user-interface vty 0 4
+ user privilege level 15
+ set authentication password simple 123
+ protocol inbound all
+#
+return
+[JR-2] </code></pre><p id="3b5c41a4-0511-80ca-a0b7-c8857778d83d" class="" dir="auto">JR-3</p><pre id="3b5c41a4-0511-80ba-a1aa-fb6f71532cc5" class="code code-wrap" data-notion-code-syntax="python"><code class="language-python" style="white-space:pre-wrap;word-break:break-all">[JR-3]display current-configuration 
+#
+sysname JR-3
+#
+vlan batch 30 99
+#
+stp region-configuration
+ region-name lxf
+ instance 1 vlan 10
+ instance 2 vlan 20
+ instance 3 vlan 30
+ instance 4 vlan 40
+ instance 5 vlan 15
+ instance 6 vlan 16
+ active region-configuration
+#
+interface Vlanif99
+ ip address 192.168.99.3 255.255.255.0
+#
+interface MEth0/0/1
+#
+interface GigabitEthernet0/0/1
+ port link-type access
+ port default vlan 30
+#
+interface GigabitEthernet0/0/2
+ port link-type access
+ port default vlan 30
+#
+interface GigabitEthernet0/0/3
+ port link-type trunk
+ port trunk allow-pass vlan 30 99
+#
+interface GigabitEthernet0/0/4
+ port link-type trunk
+ port trunk allow-pass vlan 30 99
+#
+ip route-static 0.0.0.0 0.0.0.0 192.168.99.254
+#
+user-interface con 0
+user-interface vty 0 4
+ user privilege level 15
+ set authentication password simple 123
+ protocol inbound all
+#
+return</code></pre><p id="3b5c41a4-0511-8034-a579-ce8a1b5489c4" class="" dir="auto">JR-4</p><pre id="3b5c41a4-0511-80ac-b9db-fd11e4faf0d1" class="code code-wrap" data-notion-code-syntax="python"><code class="language-python" style="white-space:pre-wrap;word-break:break-all">[JR-4]display current-configuration 
+#
+sysname JR-4
+#
+vlan batch 40 99
+#
+stp region-configuration
+ region-name lxf
+ instance 1 vlan 10
+ instance 2 vlan 20
+ instance 3 vlan 30
+ instance 4 vlan 40
+ instance 5 vlan 15
+ instance 6 vlan 16
+ active region-configuration
+
+#
+interface Vlanif99
+ ip address 192.168.99.4 255.255.255.0
+#
+interface MEth0/0/1
+#
+interface GigabitEthernet0/0/1
+ port link-type access
+ port default vlan 40
+#
+interface GigabitEthernet0/0/2
+ port link-type access
+ port default vlan 40
+#
+interface GigabitEthernet0/0/3
+ port link-type trunk
+ port trunk allow-pass vlan 40 99
+#
+interface GigabitEthernet0/0/4
+ port link-type trunk
+ port trunk allow-pass vlan 40 99
+#
+ip route-static 0.0.0.0 0.0.0.0 192.168.99.254
+#
+user-interface con 0
+user-interface vty 0 4
+ user privilege level 15
+ set authentication password simple 123
+ protocol inbound all
+#
+return
+[JR-4]</code></pre><p id="3b5c41a4-0511-8002-99b2-f9b754655bb6" class="" dir="auto">HJ-1</p><pre id="3b5c41a4-0511-80fb-9efc-d66aa51e6d1d" class="code code-wrap" data-notion-code-syntax="python"><code class="language-python" style="white-space:pre-wrap;word-break:break-all">[HJ-1]display current-configuration 
+#
+sysname HJ-1
+#
+dhcp enabl
+#
+vlan batch 10 15 to 16 20 30 40 50 60 99
+#
+stp instance 1 root primary
+stp instance 2 root primary
+stp instance 3 root secondary
+stp instance 4 root secondary
+#
+stp region-configuration
+ region-name lxf
+ instance 1 vlan 10
+ instance 2 vlan 20
+ instance 3 vlan 30
+ instance 4 vlan 40
+ instance 5 vlan 15
+ instance 6 vlan 16
+ active region-configuration
+#
+interface Vlanif10
+ ip address 192.168.10.251 255.255.255.0
+ vrrp vrid 1 virtual-ip 192.168.10.254
+ vrrp vrid 1 priority 200
+ dhcp select relay
+ dhcp relay server-ip 192.168.50.1
+#
+interface Vlanif15
+ ip address 192.168.15.251 255.255.255.0
+#
+interface Vlanif16
+ ip address 192.168.16.251 255.255.255.0
+#
+interface Vlanif20
+ ip address 192.168.20.251 255.255.255.0
+ vrrp vrid 2 virtual-ip 192.168.20.254
+ vrrp vrid 2 priority 200
+ dhcp select relay
+ dhcp relay server-ip 192.168.50.1
+#
+interface Vlanif30
+ ip address 192.168.30.251 255.255.255.0
+ vrrp vrid 3 virtual-ip 192.168.30.254
+ dhcp select relay
+ dhcp relay server-ip 192.168.50.1
+#
+interface Vlanif40
+ ip address 192.168.40.251 255.255.255.0
+ vrrp vrid 4 virtual-ip 192.168.40.254
+ dhcp select relay
+ dhcp relay server-ip 192.168.50.1
+#
+interface Vlanif50
+ ip address 192.168.50.251 255.255.255.0
+#
+interface Vlanif60
+ ip address 192.168.60.251 255.255.255.0
+ ospf cost 10
+#
+interface Vlanif99
+ ip address 192.168.99.251 255.255.255.0
+ vrrp vrid 99 virtual-ip 192.168.99.254
+ vrrp vrid 99 priority 200
+#
+interface GigabitEthernet0/0/1
+ port link-type trunk
+ port trunk allow-pass vlan 10 99
+#
+interface GigabitEthernet0/0/2
+ port link-type trunk
+ port trunk allow-pass vlan 20 99
+#
+interface GigabitEthernet0/0/3
+ port link-type trunk
+ port trunk allow-pass vlan 30 99
+#
+interface GigabitEthernet0/0/4
+ port link-type trunk
+ port trunk allow-pass vlan 40 99
+#
+interface GigabitEthernet0/0/5
+ port link-type trunk
+ port trunk allow-pass vlan 2 to 4094
+#
+interface GigabitEthernet0/0/6
+ port link-type trunk
+ port trunk allow-pass vlan 2 to 4094
+#
+interface GigabitEthernet0/0/7
+ port link-type access
+ port default vlan 50
+#
+interface GigabitEthernet0/0/8
+ port link-type trunk
+ port trunk allow-pass vlan 2 to 4094
+#
+ospf 1 router-id 1.1.1.1
+ area 0.0.0.0
+  network 192.168.15.0 0.0.0.255
+  network 192.168.16.0 0.0.0.255
+ area 0.0.0.10
+  network 192.168.10.0 0.0.0.255
+ area 0.0.0.20
+  network 192.168.20.0 0.0.0.255
+ area 0.0.0.30
+  network 192.168.30.0 0.0.0.255
+ area 0.0.0.40
+  network 192.168.40.0 0.0.0.255
+ area 0.0.0.50
+  network 192.168.50.0 0.0.0.255
+ area 0.0.0.60
+  network 192.168.60.0 0.0.0.255
+ area 0.0.0.99
+  network 192.168.99.0 0.0.0.255
+#
+return</code></pre><p id="3b5c41a4-0511-8077-9d56-d8e5e5b22b09" class="" dir="auto">HJ-2</p><pre id="3b5c41a4-0511-8076-b5ed-d29d45833e58" class="code code-wrap" data-notion-code-syntax="python"><code class="language-python" style="white-space:pre-wrap;word-break:break-all">[HJ-2]display current-configuration 
+#
+sysname HJ-2
+#
+vlan batch 10 15 to 16 20 30 40 50 60 99
+#
+stp instance 1 root secondary
+stp instance 2 root secondary
+stp instance 3 root primary
+stp instance 4 root primary
+#
+dhcp enable
+#
+stp region-configuration
+ region-name lxf
+ instance 1 vlan 10
+ instance 2 vlan 20
+ instance 3 vlan 30
+ instance 4 vlan 40
+ instance 5 vlan 15
+ instance 6 vlan 16
+ active region-configuration
+#
+interface Vlanif10
+ ip address 192.168.10.252 255.255.255.0
+ vrrp vrid 1 virtual-ip 192.168.10.254
+ dhcp select relay
+ dhcp relay server-ip 192.168.50.1
+#
+interface Vlanif15
+ ip address 192.168.15.252 255.255.255.0
+#
+interface Vlanif16
+ ip address 192.168.16.252 255.255.255.0
+#
+interface Vlanif20
+ ip address 192.168.20.252 255.255.255.0
+ vrrp vrid 2 virtual-ip 192.168.20.254
+ dhcp select relay
+ dhcp relay server-ip 192.168.50.1
+#
+interface Vlanif30
+ ip address 192.168.30.252 255.255.255.0
+ vrrp vrid 3 virtual-ip 192.168.30.254
+ vrrp vrid 3 priority 200
+ dhcp select relay
+ dhcp relay server-ip 192.168.50.1
+#
+interface Vlanif40
+ ip address 192.168.40.252 255.255.255.0
+ vrrp vrid 4 virtual-ip 192.168.40.254
+ vrrp vrid 4 priority 200
+ dhcp select relay
+ dhcp relay server-ip 192.168.50.1
+#
+interface Vlanif50
+ ip address 192.168.50.252 255.255.255.0
+#
+interface Vlanif60
+ ip address 192.168.60.254 255.255.255.0
+#
+interface Vlanif99
+ ip address 192.168.99.252 255.255.255.0
+ vrrp vrid 99 virtual-ip 192.168.99.254
+ ospf cost 10
+#
+interface GigabitEthernet0/0/1
+ port link-type trunk
+ port trunk allow-pass vlan 10 99
+#
+interface GigabitEthernet0/0/2
+ port link-type trunk
+ port trunk allow-pass vlan 20 99
+#
+interface GigabitEthernet0/0/3
+ port link-type trunk
+ port trunk allow-pass vlan 30 99
+#
+interface GigabitEthernet0/0/4
+ port link-type trunk
+ port trunk allow-pass vlan 40 99
+#
+interface GigabitEthernet0/0/5
+ port link-type access
+ port default vlan 60
+#
+interface GigabitEthernet0/0/6
+ port link-type trunk
+ port trunk allow-pass vlan 2 to 4094
+#
+interface GigabitEthernet0/0/7
+ port link-type trunk
+ port trunk allow-pass vlan 2 to 4094
+#
+interface GigabitEthernet0/0/8
+ port link-type trunk
+ port trunk allow-pass vlan 2 to 4094
+#
+ospf 1 router-id 2.2.2.2
+ area 0.0.0.0
+  network 192.168.15.0 0.0.0.255
+  network 192.168.16.0 0.0.0.255
+ area 0.0.0.10
+  network 192.168.10.0 0.0.0.255
+ area 0.0.0.20
+  network 192.168.20.0 0.0.0.255
+ area 0.0.0.30
+  network 192.168.30.0 0.0.0.255
+ area 0.0.0.40
+  network 192.168.40.0 0.0.0.255
+ area 0.0.0.50
+  network 192.168.50.0 0.0.0.255
+ area 0.0.0.60
+  network 192.168.60.0 0.0.0.255
+ area 0.0.0.99
+  network 192.168.99.0 0.0.0.255
+#
+return</code></pre><p id="3b5c41a4-0511-80ec-88af-f7d01826a65d" class="" dir="auto">DHCP</p><pre id="3b5c41a4-0511-80f8-8a9d-fc2291b5767b" class="code code-wrap" data-notion-code-syntax="python"><code class="language-python" style="white-space:pre-wrap;word-break:break-all">[DHCP]display current-configuration 
+[V200R003C00]
+#
+ sysname DHCP
+#
+dhcp enable
+#
+ip pool 10
+ gateway-list 192.168.10.254 
+ network 192.168.10.0 mask 255.255.255.0 
+ excluded-ip-address 192.168.10.251 192.168.10.252 
+ dns-list 8.8.8.8 
+#
+ip pool 20
+ gateway-list 192.168.20.254 
+ network 192.168.20.0 mask 255.255.255.0 
+ excluded-ip-address 192.168.20.251 192.168.20.252 
+ dns-list 8.8.8.8 
+#
+ip pool 30
+ gateway-list 192.168.30.254 
+ network 192.168.30.0 mask 255.255.255.0 
+ excluded-ip-address 192.168.30.251 192.168.30.252 
+ dns-list 8.8.8.8 
+#
+ip pool 40
+ gateway-list 192.168.40.254 
+ network 192.168.40.0 mask 255.255.255.0 
+ excluded-ip-address 192.168.40.251 192.168.40.252 
+ dns-list 8.8.8.8 
+#
+interface GigabitEthernet0/0/0
+ ip address 192.168.50.1 255.255.255.0 
+ dhcp select global
+#
+ospf 1 router-id 5.5.5.5 
+ area 0.0.0.50 
+  network 192.168.50.0 0.0.0.255 
+#
+return</code></pre><p id="3b5c41a4-0511-8039-9808-cc22339459ba" class="" dir="auto">HX-1</p><pre id="3b5c41a4-0511-80e1-a59c-ffbd892a374b" class="code code-wrap" data-notion-code-syntax="python"><code class="language-python" style="white-space:pre-wrap;word-break:break-all">[HX-1]display current-configuration 
+#
+sysname HX-1
+#
+vlan batch 10 15 to 16 20 30 40 50 60 99
+#
+stp instance 5 root primary
+stp instance 6 root secondary
+#
+stp region-configuration
+ region-name lxf
+ instance 1 vlan 10
+ instance 2 vlan 20
+ instance 3 vlan 30
+ instance 4 vlan 40
+ instance 5 vlan 15
+ instance 6 vlan 16
+ active region-configuration
+#
+interface GigabitEthernet0/0/1
+ port link-type trunk
+ port trunk allow-pass vlan 2 to 4094
+#
+interface GigabitEthernet0/0/2
+ port link-type trunk
+ port trunk allow-pass vlan 2 to 4094
+#
+interface GigabitEthernet0/0/3
+ port link-type trunk
+ port trunk allow-pass vlan 2 to 4094
+#
+interface GigabitEthernet0/0/4
+ port link-type access
+ port default vlan 15
+return</code></pre><p id="3b5c41a4-0511-8099-aa62-d9e852356da2" class="" dir="auto">HX-2</p><pre id="3b5c41a4-0511-80e6-b317-e0c8ec38e09a" class="code code-wrap" data-notion-code-syntax="python"><code class="language-python" style="white-space:pre-wrap;word-break:break-all">[HX-2]display current-configuration 
+#
+sysname HX-2
+#
+vlan batch 10 15 to 16 20 30 40 50 60 99
+#
+stp instance 5 root secondary
+stp instance 6 root primary
+#
+stp region-configuration
+ region-name lxf
+ instance 1 vlan 10
+ instance 2 vlan 20
+ instance 3 vlan 30
+ instance 4 vlan 40
+ instance 5 vlan 15
+ instance 6 vlan 16
+ active region-configuration
+#
+interface GigabitEthernet0/0/1
+ port link-type trunk
+ port trunk allow-pass vlan 2 to 4094
+#
+interface GigabitEthernet0/0/2
+ port link-type trunk
+ port trunk allow-pass vlan 2 to 4094
+#
+interface GigabitEthernet0/0/3
+ port link-type trunk
+ port trunk allow-pass vlan 2 to 4094
+#
+interface GigabitEthernet0/0/4
+ port link-type access
+ port default vlan 16
+return</code></pre><p id="3b5c41a4-0511-8017-85ae-f65d7b2fd582" class="" dir="auto">NAT</p><pre id="3b5c41a4-0511-80c7-88a5-cd994efdc2da" class="code code-wrap" data-notion-code-syntax="python"><code class="language-python" style="white-space:pre-wrap;word-break:break-all">[NAT]display current-configuration 
+[V200R003C00]
+#
+ sysname NAT
+#
+acl number 2000  
+ rule 5 permit source 192.168.10.0 0.0.0.255 
+ rule 10 permit source 192.168.20.0 0.0.0.255 
+ rule 15 permit source 192.168.30.0 0.0.0.255 
+ rule 20 permit source 192.168.40.0 0.0.0.255 
+#
+ nat address-group 1 99.12.23.3 99.12.23.3
+#
+interface GigabitEthernet0/0/0
+ ip address 192.168.15.1 255.255.255.0 
+ ospf cost 10
+#
+interface GigabitEthernet0/0/1
+ ip address 192.168.16.1 255.255.255.0 
+#
+interface GigabitEthernet0/0/2
+ ip address 99.12.23.1 255.255.255.248 
+ nat server protocol tcp global 99.12.23.4 www inside 192.168.60.1 www
+ nat server protocol tcp global 99.12.23.4 2001 inside 192.168.99.1 telnet
+ nat server protocol tcp global 99.12.23.4 2002 inside 192.168.99.2 telnet
+ nat server protocol tcp global 99.12.23.4 2003 inside 192.168.99.3 telnet
+ nat server protocol tcp global 99.12.23.4 2004 inside 192.168.99.4 telnet
+ nat outbound 2000 address-group 1 
+#
+ospf 1 router-id 8.8.8.8 
+ default-route-advertise
+ area 0.0.0.0 
+  network 192.168.15.0 0.0.0.255 
+  network 192.168.16.0 0.0.0.255 
+#
+ip route-static 0.0.0.0 0.0.0.0 99.12.23.2
+
+return</code></pre><p id="3b5c41a4-0511-8027-a674-ecf353a1ee55" class="" dir="auto">ISP</p><pre id="3b5c41a4-0511-8015-acc0-c8f020a1e3a3" class="code code-wrap" data-notion-code-syntax="python"><code class="language-python" style="white-space:pre-wrap;word-break:break-all">[ISP]display current-configuration 
+[V200R003C00]
+#
+ sysname ISP
+#
+interface GigabitEthernet0/0/0
+ ip address 99.12.23.2 255.255.255.248 
+#
+interface GigabitEthernet0/0/1
+ ip address 192.1.1.254 255.255.255.0 
+
+return</code></pre><h2 id="3b6c41a4-0511-802c-8e4a-c86cb2daee7a" class="" dir="auto">双出口NAT</h2><figure id="3b6c41a4-0511-8093-acb7-cf503aa8324c" class="image" data-notion-image="%E9%A1%B9%E7%9B%AE%E5%AE%9E%E6%88%98/image%201.png" dir="ltr"><a href="%E9%A1%B9%E7%9B%AE%E5%AE%9E%E6%88%98/image%201.png"><img style="width:703.977294921875px" src="%E9%A1%B9%E7%9B%AE%E5%AE%9E%E6%88%98/image%201.png"/></a></figure><p id="3b6c41a4-0511-808b-8ed1-f06005cad52f" class="" dir="auto">在前面的基础上配置：</p><p id="3b6c41a4-0511-806c-8b93-e86ef4898f92" class="" dir="auto">
+</p><p id="3b6c41a4-0511-805d-b628-d662418d6929" class="" dir="auto">所有交换机添加vlan<br/>vlan  batch  25 26</p><p id="3b6c41a4-0511-806a-8a3c-c1247fa1b072" class="" dir="auto">配置MSTP对应的实例</p><p id="3b6c41a4-0511-8011-8cf4-ca9dc09227a0" class="" dir="auto">实例8为vlan25，实例9为vlan26</p><p id="3b6c41a4-0511-8014-9d03-eb8a55996ef3" class="" dir="auto">在HJ中，配置OSPF、MSTP</p><p id="3b6c41a4-0511-8073-9767-e57892475cb9" class="" dir="auto">在HX配置25和26的根桥</p><pre id="3b6c41a4-0511-8072-b44a-ff2a39acd3a6" class="code code-wrap" data-notion-code-syntax="python"><code class="language-python" style="white-space:pre-wrap;word-break:break-all">[NAT-2]display current-configuration 
+[V200R003C00]
+#
+ sysname NAT-2
+#
+acl number 2002  
+ rule 5 permit source 192.168.10.0 0.0.0.255 
+ rule 10 permit source 192.168.20.0 0.0.0.255 
+ rule 15 permit source 192.168.30.0 0.0.0.255 
+ rule 20 permit source 192.168.40.0 0.0.0.255 
+#
+ nat address-group 1 100.12.23.3 100.12.23.3
+#
+interface GigabitEthernet0/0/0
+ ip address 192.168.25.1 255.255.255.0 
+ ospf cost 10
+#
+interface GigabitEthernet0/0/1
+ ip address 192.168.26.1 255.255.255.0 
+#
+interface GigabitEthernet0/0/2
+ ip address 100.12.23.1 255.255.255.248 
+ nat server protocol tcp global 100.12.23.4 www inside 192.168.60.1 www
+ nat server protocol tcp global 100.12.23.4 2001 inside 192.168.99.1 telnet
+ nat server protocol tcp global 100.12.23.4 2002 inside 192.168.99.2 telnet
+ nat server protocol tcp global 100.12.23.4 2003 inside 192.168.99.3 telnet
+ nat server protocol tcp global 100.12.23.4 2004 inside 192.168.99.4 telnet
+ nat outbound 2002 address-group 1 
+#
+ospf 1 router-id 3.3.3.3 
+ default-route-advertise
+ area 0.0.0.0 
+  network 192.168.25.0 0.0.0.255 
+  network 192.168.26.0 0.0.0.255 
+#
+ip route-static 0.0.0.0 0.0.0.0 100.12.23.2
+#
+return</code></pre><h3 id="3b6c41a4-0511-8026-bd01-fcca2e164179" class="" dir="auto">验证</h3><p id="3b6c41a4-0511-8001-9ed4-dc6cf1e502ac" class="" dir="auto">配置完验证：shutdown掉左边的NAT上游接口</p><p id="3b6c41a4-0511-8013-bb91-f6dda6cc9384" class="" dir="auto">然后验证内网外网的通信，端口映射，还有telnet</p><h4 id="3b6c41a4-0511-8039-bc3f-ebeafca01771" class="" dir="auto">双出口主备的实现</h4><p id="3b6c41a4-0511-80e7-a8dd-e98b188a8bbe" class="" dir="auto">首先，查看一下路由表</p><pre id="3b6c41a4-0511-80ba-8bb1-d35dd5127929" class="code code-wrap" data-notion-code-syntax="python"><code class="language-python" style="white-space:pre-wrap;word-break:break-all">HJ-1]display  ip routing-table
+Route Flags: R - relay, D - download to fib
+------------------------------------------------------------------------------
+Routing Tables: Public
+         Destinations : 30       Routes : 33       
+
+Destination/Mask    Proto   Pre  Cost      Flags NextHop         Interface
+
+        0.0.0.0/0   O_ASE   150  1           D   192.168.15.1    Vlanif15
+                    O_ASE   150  1           D   192.168.16.1    Vlanif16
+                    O_ASE   150  1           D   192.168.25.1    Vlanif25
+                    O_ASE   150  1           D   192.168.26.1    Vlanif26
+      127.0.0.0/8   Direct  0    0           D   127.0.0.1       InLoopBack0
+      127.0.0.1/32  Direct  0    0           D   127.0.0.1       InLoopBack0
+   192.168.10.0/24  Direct  0    0           D   192.168.10.251  Vlanif10
+ 192.168.10.251/32  Direct  0    0           D   127.0.0.1       Vlanif10
+ 192.168.10.254/32  Direct  0    0           D   127.0.0.1       Vlanif10
+   192.168.15.0/24  Direct  0    0           D   192.168.15.251  Vlanif15
+ 192.168.15.251/32  Direct  0    0           D   127.0.0.1       Vlanif15
+   192.168.16.0/24  Direct  0    0           D   192.168.16.251  Vlanif16
+ 192.168.16.251/32  Direct  0    0           D   127.0.0.1       Vlanif16
+   192.168.20.0/24  Direct  0    0           D   192.168.20.251  Vlanif20
+ 192.168.20.251/32  Direct  0    0           D   127.0.0.1       Vlanif20
+ 192.168.20.254/32  Direct  0    0           D   127.0.0.1       Vlanif20
+   192.168.25.0/24  Direct  0    0           D   192.168.25.251  Vlanif25
+ 192.168.25.251/32  Direct  0    0           D   127.0.0.1       Vlanif25
+   192.168.26.0/24  Direct  0    0           D   192.168.26.251  Vlanif26
+ 192.168.26.251/32  Direct  0    0           D   127.0.0.1       Vlanif26
+   192.168.30.0/24  Direct  0    0           D   192.168.30.251  Vlanif30
+ 192.168.30.251/32  Direct  0    0           D   127.0.0.1       Vlanif30
+ 192.168.30.254/32  OSPF    10   2           D   192.168.30.252  Vlanif30
+   192.168.40.0/24  Direct  0    0           D   192.168.40.251  Vlanif40
+</code></pre><p id="3b6c41a4-0511-8092-9e7a-df170927e6fe" class="" dir="auto">可知没有配置主备时，有四个去往外部的等价路由</p><p id="3b6c41a4-0511-8036-8928-ef6757c17d05" class="" dir="auto">现在走的是：</p><pre id="3b6c41a4-0511-8063-8031-e27851f3ca59" class="code code-wrap" data-notion-code-syntax="python"><code class="language-python" style="white-space:pre-wrap;word-break:break-all">PC&gt;tracert 192.1.1.1
+
+traceroute to 192.1.1.1, 8 hops max
+(ICMP), press Ctrl+C to stop
+ 1  192.168.10.251   156 ms  78 ms  78 ms
+ 2    *  *  *
+ 3    *99.12.23.2   156 ms  125 ms
+ 4  192.1.1.1   141 ms  125 ms  141 ms
+</code></pre><p id="3b6c41a4-0511-80c9-bead-f6113cd2b3b3" class="" dir="auto">左边的NAT</p><p id="3b6c41a4-0511-80f5-acc2-f4b297834b01" class="" dir="auto">现在修改cost让它走右边的</p><pre id="3b6c41a4-0511-80e7-a843-c968fe52c3dc" class="code code-wrap" data-notion-code-syntax="python"><code class="language-python" style="white-space:pre-wrap;word-break:break-all">ospf 1
+ default-route-advertise cost 10</code></pre><p id="3b6c41a4-0511-802f-aa58-dab6ed43ff8c" class="" dir="auto">验证：</p><pre id="3b6c41a4-0511-8020-af21-cd08cd31939d" class="code code-wrap" data-notion-code-syntax="python"><code class="language-python" style="white-space:pre-wrap;word-break:break-all">PC&gt;tracert 192.1.1.1
+
+traceroute to 192.1.1.1, 8 hops max
+(ICMP), press Ctrl+C to stop
+ 1  192.168.10.251   79 ms  78 ms  93 ms
+ 2    *  *  *
+ 3  100.12.23.2   94 ms  110 ms  109 ms
+ 4  192.1.1.1   125 ms  94 ms  125 ms
+</code></pre><p id="3b6c41a4-0511-80d9-9769-ff472e354fbe" class="" dir="auto">成功通过修改cost值实现NAT的主备</p></div></article><span class="sans" style="font-size:14px;padding-top:2em"></span><script>
+(function () {
+  "use strict";
+  var PAGE = document.querySelector(".page-body");
+  if (!PAGE) return;
+  var HEADINGS = [], i, h;
+  var ALL = PAGE.querySelectorAll("h1, h2, h3, h4, h5, h6");
+  for (i = 0; i < ALL.length; i++) {
+    h = ALL[i];
+    if (h.closest && h.closest("aside, blockquote, details, summary, figure, th, td")) continue;
+    if (!h.id) continue;
+    HEADINGS.push(h);
+  }
+  var PAGE_LINKS = [];
+  if (HEADINGS.length < 2) {
+    var pl = PAGE.querySelectorAll(".link-to-page a");
+    for (i = 0; i < pl.length; i++) {
+      var hr = pl[i].getAttribute("href");
+      if (hr) PAGE_LINKS.push(pl[i]);
+    }
+    if (PAGE_LINKS.length < 2) return;
+  }
+  var CSS = "" +
+  "html{scroll-behavior:smooth}" +
+  ".page-body h1,.page-body h2,.page-body h3,.page-body h4,.page-body h5,.page-body h6{scroll-margin-top:14px}" +
+  ".nt-fab{position:fixed;right:18px;bottom:18px;z-index:2147483001;display:flex;align-items:center;gap:7px;padding:0 20px;height:52px;border:none;border-radius:999px;cursor:pointer;color:#fff;background:rgba(37,37,37,.93);font:600 14px/1 -apple-system,'PingFang SC','Microsoft YaHei','Segoe UI',sans-serif;letter-spacing:.5px;box-shadow:0 6px 22px rgba(0,0,0,.18);transition:transform .15s ease,opacity .2s ease}" +
+  ".nt-fab:hover{transform:translateY(-2px)}" +
+  ".nt-fab svg{width:18px;height:18px;flex:none}" +
+  ".nt-fab.nt-fab-hide{opacity:0;pointer-events:none}" +
+  ".nt-panel{position:fixed;top:0;right:0;bottom:0;z-index:2147483000;display:flex;flex-direction:column;width:min(340px,88vw);background:rgba(255,255,255,.97);border-left:1px solid rgba(55,53,47,.08);box-shadow:-10px 0 30px rgba(0,0,0,.09);transform:translateX(102%);visibility:hidden;transition:transform .25s ease,visibility .25s ease;font-family:-apple-system,'PingFang SC','Microsoft YaHei','Segoe UI',sans-serif}" +
+  ".nt-panel.nt-open{transform:none;visibility:visible}" +
+  ".nt-head{display:flex;align-items:center;gap:8px;padding:16px 18px 12px;border-bottom:1px solid rgba(55,53,47,.06);flex:none}" +
+  ".nt-head .nt-title{font-weight:700;font-size:15px;color:#1f1e1c}" +
+  ".nt-head .nt-count{font-size:12px;color:rgba(55,53,47,.55);background:rgba(55,53,47,.06);padding:2px 8px;border-radius:99px;white-space:nowrap}" +
+  ".nt-close{margin-left:auto;width:30px;height:30px;border:none;border-radius:8px;cursor:pointer;font-size:15px;color:rgba(55,53,47,.7);background:transparent;line-height:1}" +
+  ".nt-close:hover{background:rgba(55,53,47,.08)}" +
+  ".nt-nav{overflow-y:auto;padding:10px 12px 16px;flex:1;-webkit-overflow-scrolling:touch}" +
+  ".nt-link{display:block;text-decoration:none;color:rgba(55,53,47,.8);font-size:13.5px;line-height:1.55;padding:6px 10px;border-radius:8px;border-left:2px solid transparent;transition:background .12s,color .12s;overflow-wrap:anywhere}" +
+  ".nt-link:hover{background:rgba(55,53,47,.06);color:#111}" +
+  ".nt-link.nt-active{background:rgba(35,131,226,.10);color:#0b66c3;border-left-color:#2383e2;font-weight:600}" +
+  ".nt-l1{font-weight:600;color:#161513;margin-top:5px}" +
+  ".nt-l2{padding-left:22px}.nt-l3{padding-left:34px}.nt-l4{padding-left:46px}.nt-l5{padding-left:58px}.nt-l6{padding-left:70px}" +
+  "@media print{.nt-fab,.nt-panel{display:none!important}}" +
+  "@media (max-width:480px){.nt-panel{width:88vw}}";
+  var ST = document.createElement("style");
+  ST.textContent = CSS;
+  document.head.appendChild(ST);
+  var ROOT = document.createElement("div");
+  ROOT.className = "nt-root";
+  var FAB = document.createElement("button");
+  FAB.type = "button";
+  FAB.className = "nt-fab";
+  FAB.setAttribute("aria-label", "打开本页目录");
+  FAB.innerHTML = "<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M4 6h16M4 12h16M4 18h10'/></svg>目录";
+  ROOT.appendChild(FAB);
+  var PANEL = document.createElement("aside");
+  PANEL.className = "nt-panel";
+  PANEL.setAttribute("aria-label", "本页目录");
+  var HEAD = document.createElement("div");
+  HEAD.className = "nt-head";
+  var T = document.createElement("span");
+  T.className = "nt-title";
+  T.textContent = "本页目录";
+  var CNT = document.createElement("span");
+  CNT.className = "nt-count";
+  CNT.textContent = (HEADINGS.length >= 2 ? HEADINGS.length + " 节" : PAGE_LINKS.length + " 页");
+  var CLOSE = document.createElement("button");
+  CLOSE.type = "button";
+  CLOSE.className = "nt-close";
+  CLOSE.setAttribute("aria-label", "关闭目录");
+  CLOSE.textContent = "✕";
+  HEAD.appendChild(T);
+  HEAD.appendChild(CNT);
+  HEAD.appendChild(CLOSE);
+  PANEL.appendChild(HEAD);
+  var NAV = document.createElement("nav");
+  NAV.className = "nt-nav";
+  function makeLabel(node) {
+    var label = (node.textContent || "").replace(/\s+/g, " ").trim();
+    var clean = label.replace(/^[\p{Extended_Pictographic}\p{Emoji_Modifier}‍️\s]+/u, "").trim();
+    return clean || label;
+  }
+  function addItem(href, text, cls, idx) {
+    var a = document.createElement("a");
+    a.href = href;
+    a.className = "nt-link " + (cls || "nt-l1");
+    a.setAttribute("data-i", idx);
+    a.title = text;
+    a.textContent = text.length > 42 ? text.slice(0, 42) + "…" : text;
+    NAV.appendChild(a);
+    return a;
+  }
+  var LINKS = [];
+  if (HEADINGS.length >= 2) {
+    var minLv = 99, k, lv;
+    for (k = 0; k < HEADINGS.length; k++) {
+      lv = parseInt(HEADINGS[k].tagName.charAt(1), 10);
+      if (lv < minLv) minLv = lv;
+    }
+    for (k = 0; k < HEADINGS.length; k++) {
+      lv = parseInt(HEADINGS[k].tagName.charAt(1), 10) - minLv;
+      if (lv > 5) lv = 5;
+      LINKS.push(addItem("#" + HEADINGS[k].id, makeLabel(HEADINGS[k]), "nt-l" + (lv + 1), k));
+    }
+  } else {
+    var j;
+    for (j = 0; j < PAGE_LINKS.length; j++) {
+      LINKS.push(addItem(PAGE_LINKS[j].getAttribute("href"), makeLabel(PAGE_LINKS[j]), "nt-l1", j));
+    }
+  }
+  PANEL.appendChild(NAV);
+  ROOT.appendChild(PANEL);
+  document.body.appendChild(ROOT);
+  var isHeadingNav = HEADINGS.length >= 2;
+  function setActive(idx) {
+    for (var n = 0; n < LINKS.length; n++) LINKS[n].classList.remove("nt-active");
+    if (LINKS[idx]) LINKS[idx].classList.add("nt-active");
+  }
+  var ticking = false;
+  function onScroll() {
+    if (ticking || !isHeadingNav) return;
+    ticking = true;
+    requestAnimationFrame(function () {
+      var mark = window.scrollY + 90;
+      var idx = 0;
+      for (var n = 0; n < HEADINGS.length; n++) {
+        var top = HEADINGS[n].getBoundingClientRect().top + window.scrollY;
+        if (top <= mark) idx = n; else break;
+      }
+      setActive(idx);
+      ticking = false;
+    });
+  }
+  window.addEventListener("scroll", onScroll, { passive: true });
+  if (isHeadingNav) setActive(0);
+  function openPanel() {
+    PANEL.classList.add("nt-open");
+    FAB.classList.add("nt-fab-hide");
+  }
+  function closePanel() {
+    PANEL.classList.remove("nt-open");
+    FAB.classList.remove("nt-fab-hide");
+  }
+  FAB.addEventListener("click", openPanel);
+  CLOSE.addEventListener("click", closePanel);
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape") closePanel();
+  });
+  NAV.addEventListener("click", function (e) {
+    var a = e.target && e.target.closest ? e.target.closest("a.nt-link") : null;
+    if (!a) return;
+    if (window.innerWidth < 860) closePanel();
+  });
+})();
+</script><script>
+(function () {
+  if (document.getElementById("nt-back")) return;
+  var link = "../../%E7%BD%91%E5%B7%A5%E5%9F%BA%E7%A1%80%E4%B8%8E%E5%AE%9E%E9%AA%8C%20.html";
+  var style = document.createElement("style");
+  style.textContent = ".nt-back{position:fixed;top:16px;left:16px;z-index:2147483002;display:inline-flex;align-items:center;gap:7px;padding:8px 15px 8px 12px;border-radius:999px;text-decoration:none;color:#37352f;background:rgba(255,255,255,.93);border:1px solid rgba(55,53,47,.14);box-shadow:0 5px 16px rgba(0,0,0,.12);font:600 13px/1 -apple-system,'PingFang SC','Microsoft YaHei','Segoe UI',sans-serif;transition:background .15s,transform .15s,box-shadow .15s;backdrop-filter:blur(6px)}.nt-back:hover{background:#fff;transform:translateY(-1px);box-shadow:0 7px 20px rgba(0,0,0,.16)}.nt-back svg{width:14px;height:14px;flex:none}.nt-back .nt-back-label{white-space:nowrap}@media print{.nt-back{display:none!important}}@media (max-width:900px){.nt-back{padding:0;width:38px;height:38px;border-radius:50%;justify-content:center;top:10px;left:10px}.nt-back .nt-back-label{display:none}}";
+  document.head.appendChild(style);
+  var a = document.createElement("a");
+  a.id = "nt-back";
+  a.className = "nt-back";
+  a.href = link;
+  a.setAttribute("aria-label", "返回网工基础与实验");
+  a.innerHTML = "<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'><path d='M19 12H5'/><path d='M11 18l-6-6 6-6'/></svg><span class='nt-back-label'>网工基础与实验</span>";
+  document.body.appendChild(a);
+})();
+</script></body></html>

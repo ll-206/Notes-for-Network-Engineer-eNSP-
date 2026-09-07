@@ -1,0 +1,1306 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>vlan隔离技术</title><style>
+/* cspell:disable-file */
+/* webkit printing magic: print all background colors */
+html {
+	-webkit-print-color-adjust: exact;
+}
+* {
+	box-sizing: border-box;
+	-webkit-print-color-adjust: exact;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
+@media only screen {
+	body {
+		margin: 2em auto;
+		max-width: 900px;
+		color: rgb(55, 53, 47);
+	}
+}
+
+body {
+	line-height: 1.5;
+	white-space: pre-wrap;
+}
+
+a,
+a.visited {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.pdf-relative-link-path {
+	font-size: 80%;
+	color: #444;
+}
+
+h1,
+h2,
+h3 {
+	letter-spacing: -0.01em;
+	line-height: 1.2;
+	font-weight: 600;
+	margin-bottom: 0;
+}
+
+/* Override strong tags inside headings to maintain consistent weight */
+h1 strong,
+h2 strong,
+h3 strong {
+	font-weight: 600;
+}
+
+.page-title {
+	font-size: 2.5rem;
+	font-weight: 700;
+	margin-top: 0;
+	margin-bottom: 0.75em;
+}
+
+h1 {
+	font-size: 1.875rem;
+	margin-top: 1.875rem;
+}
+
+h2 {
+	font-size: 1.5rem;
+	margin-top: 1.5rem;
+}
+
+h3 {
+	font-size: 1.25rem;
+	margin-top: 1.25rem;
+}
+
+.source {
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	padding: 1.5em;
+	word-break: break-all;
+}
+
+.callout {
+	border-radius: 10px;
+	padding: 1rem;
+}
+
+/* For default-background callouts, render the border outline. */
+.callout.block-color-default_background {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+figure {
+	margin: 1.25em 0;
+	page-break-inside: avoid;
+}
+
+/*
+ * Toggles and callouts hold arbitrary content, so they can easily be taller
+ * than a page. They must stay breakable: avoiding breaks inside them makes
+ * Chromium push the whole block onto the next page, which leaves the previous
+ * page mostly empty before every long toggle.
+ */
+details,
+aside {
+	margin: 1.25em 0;
+}
+
+/* Keep a toggle's title on the same page as the start of its content. */
+summary {
+	page-break-after: avoid;
+	break-after: avoid;
+}
+
+/*
+ * Toggle headings render as <h1/h2/h3 style="display:inline-block"> inside
+ * <summary>. Without this reset, the heading's margin-top pushes it below the
+ * ::marker (▼), so the triangle and the title appear on separate lines.
+ */
+summary h1,
+summary h2,
+summary h3,
+summary h4 {
+	margin-top: 0;
+}
+
+figcaption {
+	opacity: 0.5;
+	font-size: 85%;
+	margin-top: 0.5em;
+}
+
+mark {
+	background-color: transparent;
+}
+
+.indented {
+	padding-left: 1.5em;
+}
+
+hr {
+	background: transparent;
+	display: block;
+	width: 100%;
+	height: 1px;
+	visibility: visible;
+	border: none;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+img {
+	max-width: 100%;
+}
+
+@media only print {
+	img {
+		max-height: 100vh;
+		object-fit: contain;
+	}
+
+	table.collection-content {
+		width: 100%;
+		table-layout: fixed;
+	}
+
+	table.collection-content th,
+	table.collection-content td {
+		overflow-wrap: anywhere;
+	}
+
+	table.collection-content td > .user,
+	table.collection-content td > time {
+		white-space: pre-wrap;
+	}
+}
+
+@page {
+	margin: 1in;
+}
+
+.collection-content-wrapper {
+	overflow-x: auto;
+}
+
+@media only print {
+	.collection-content-wrapper {
+		overflow-x: visible;
+	}
+}
+
+.collection-content {
+	font-size: 0.875rem;
+}
+
+.collection-content td {
+	white-space: pre-wrap;
+	word-break: break-word;
+}
+
+.column-list {
+	display: flex;
+	gap: 46px;
+}
+
+.column {
+	min-width: 0;
+	overflow: hidden;
+}
+
+.column > *:first-child {
+	margin-top: 0;
+}
+
+.table_of_contents-item {
+	display: block;
+	font-size: 0.875rem;
+	line-height: 1.3;
+	padding-inline: 0.125rem;
+	padding-block: 0.375rem;
+}
+
+.table_of_contents-indent-1 {
+	margin-left: 1.5rem;
+}
+
+.table_of_contents-indent-2 {
+	margin-left: 3rem;
+}
+
+.table_of_contents-indent-3 {
+	margin-left: 4.5rem;
+}
+
+.table_of_contents-link {
+	text-decoration: none;
+	opacity: 0.7;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.18);
+}
+
+table,
+th,
+td {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+table {
+	border-collapse: collapse;
+	border-left: none;
+	border-right: none;
+}
+
+th,
+td {
+	font-weight: normal;
+	padding: 0.25em 0.5em;
+	line-height: 1.5;
+	min-height: 1.5em;
+	text-align: left;
+}
+
+th {
+	color: rgba(55, 53, 47, 0.6);
+}
+
+ol,
+ul {
+	margin: 0;
+	margin-block-start: 0.6em;
+	margin-block-end: 0.6em;
+}
+
+li > ol:first-child,
+li > ul:first-child {
+	margin-block-start: 0.6em;
+}
+
+ul > li {
+	list-style: disc;
+}
+
+ul.to-do-list {
+	padding-inline-start: 0;
+}
+
+ul.to-do-list > li {
+	list-style: none;
+}
+
+.to-do-children-checked {
+	text-decoration: line-through;
+	opacity: 0.375;
+}
+
+ul.toggle > li {
+	list-style: none;
+}
+
+ul {
+	padding-inline-start: 1.7em;
+}
+
+ul > li {
+	padding-left: 0.1em;
+}
+
+ol {
+	padding-inline-start: 1.6em;
+}
+
+ol.numbered-list.numbered-list-digits-2 {
+	padding-inline-start: 2em;
+}
+
+ol.numbered-list.numbered-list-digits-3plus {
+	padding-inline-start: 2.4em;
+}
+
+ol > li {
+	padding-left: 0.2em;
+}
+
+.mono ol {
+	padding-inline-start: 2em;
+}
+
+.mono ol > li {
+	text-indent: -0.4em;
+}
+
+.toggle {
+	padding-inline-start: 0em;
+	list-style-type: none;
+}
+
+/* Indent toggle children */
+.toggle > li > details {
+	padding-left: 1.7em;
+}
+
+.toggle > li > details > summary {
+	margin-left: -1.1em;
+}
+
+.selected-value {
+	display: inline-block;
+	padding: 0 0.5em;
+	background: rgba(206, 205, 202, 0.5);
+	border-radius: 3px;
+	margin-right: 0.5em;
+	margin-top: 0.3em;
+	margin-bottom: 0.3em;
+	white-space: nowrap;
+}
+
+.collection-title {
+	display: inline-block;
+	margin-right: 1em;
+}
+
+.page-description {
+	margin-bottom: 2em;
+}
+
+.simple-table {
+	margin-top: 1em;
+	font-size: 0.875rem;
+	empty-cells: show;
+}
+.simple-table td {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table th {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table-header-color {
+	background: rgb(247, 246, 243);
+	color: black;
+}
+.simple-table-header {
+	font-weight: 500;
+}
+
+time {
+	opacity: 0.5;
+}
+
+.icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	max-width: 1.2em;
+	max-height: 1.2em;
+	text-decoration: none;
+	vertical-align: text-bottom;
+	margin-right: 0.5em;
+}
+
+/*
+ * Render emoji icons using a ::before pseudo-element to keep the glyph
+ * out of the DOM textContent traversal. This avoids double-rendering icons
+ * in callouts and page titles.
+ * NOTE(slim/html-export-pseudo-icons): I can't tagref this because it will
+ * flag as a duplicate tag after codegen.
+ */
+.icon[data-emoji]::before {
+	content: attr(data-emoji);
+}
+
+img.icon {
+	border-radius: 3px;
+}
+
+.callout img.notion-static-icon {
+	width: 1em;
+	height: 1em;
+}
+
+.callout p {
+	margin: 0;
+}
+
+.callout h1,
+.callout h2,
+.callout h3 {
+	margin: 0 0 0.6rem;
+}
+
+.user-icon {
+	width: 1.5em;
+	height: 1.5em;
+	border-radius: 100%;
+	margin-right: 0.5rem;
+}
+
+.user-icon-inner {
+	font-size: 0.8em;
+}
+
+.text-icon {
+	border: 1px solid #000;
+	text-align: center;
+}
+
+.page-cover-image {
+	display: block;
+	object-fit: cover;
+	width: 100%;
+	max-height: 30vh;
+}
+
+.page-header-icon {
+	font-size: 3rem;
+	margin-bottom: 1rem;
+}
+
+.page-header-icon-with-cover {
+	margin-top: -0.72em;
+	margin-left: 0.07em;
+}
+
+.page-header-icon img {
+	border-radius: 3px;
+}
+
+.link-to-page {
+	margin: 1em 0;
+	padding: 0;
+	border: none;
+	font-weight: 500;
+}
+
+p > .user {
+	opacity: 0.5;
+}
+
+td > .user,
+td > time {
+	white-space: nowrap;
+}
+
+input[type="checkbox"] {
+	margin-right: 0.4em;
+	vertical-align: middle;
+}
+
+p {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+.image {
+	border: none;
+	margin: 1.5em 0;
+	padding: 0;
+	border-radius: 0;
+	text-align: center;
+}
+
+.code,
+code {
+	background: rgba(135, 131, 120, 0.15);
+	border-radius: 3px;
+	padding: 0.2em 0.4em;
+	border-radius: 3px;
+	font-size: 85%;
+	tab-size: 2;
+}
+
+code {
+	color: #eb5757;
+}
+
+.code {
+	padding: 1.5em 1em;
+}
+
+.code-wrap {
+	white-space: pre-wrap;
+	word-break: break-all;
+}
+
+.code > code {
+	background: none;
+	padding: 0;
+	font-size: 100%;
+	color: inherit;
+}
+
+blockquote {
+	font-size: 1em;
+	margin: 1em 0;
+	padding-left: 1em;
+	border-left: 3px solid rgb(55, 53, 47);
+}
+
+blockquote.quote-large {
+	font-size: 1.25em;
+}
+
+.bookmark {
+	text-decoration: none;
+	max-height: 8em;
+	padding: 0;
+	display: flex;
+	width: 100%;
+	align-items: stretch;
+}
+
+.bookmark-title {
+	font-size: 0.85em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	height: 1.75em;
+	white-space: nowrap;
+}
+
+.bookmark-text {
+	display: flex;
+	flex-direction: column;
+}
+
+.bookmark-info {
+	flex: 4 1 180px;
+	padding: 12px 14px 14px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.bookmark-image {
+	width: 33%;
+	flex: 1 1 180px;
+	display: block;
+	position: relative;
+	object-fit: cover;
+	border-radius: 1px;
+}
+
+.bookmark-description {
+	color: rgba(55, 53, 47, 0.6);
+	font-size: 0.75em;
+	overflow: hidden;
+	max-height: 4.5em;
+	word-break: break-word;
+}
+
+.bookmark-href {
+	font-size: 0.75em;
+	margin-top: 0.25em;
+}
+
+.tab {
+	margin: 1.25em 0;
+	padding-inline: 1rem;
+	border: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+.sans { font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"; }
+.code { font-family: "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace; }
+.serif { font-family: Lyon-Text, Georgia, ui-serif, serif; }
+.mono { font-family: iawriter-mono, Nitti, Menlo, Courier, monospace; }
+.pdf .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK JP'; }
+.pdf:lang(zh-CN) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC'; }
+.pdf:lang(zh-TW) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK TC'; }
+.pdf:lang(ko-KR) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK KR'; }
+.pdf .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.pdf .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK JP'; }
+.pdf:lang(zh-CN) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK SC'; }
+.pdf:lang(zh-TW) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK TC'; }
+.pdf:lang(ko-KR) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK KR'; }
+.pdf .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.highlight-default {
+	color: rgba(44, 44, 43, 1);
+}
+.highlight-gray {
+	color: rgba(125, 122, 117, 1);
+	fill: rgba(125, 122, 117, 1);
+}
+.highlight-brown {
+	color: rgba(159, 118, 90, 1);
+	fill: rgba(159, 118, 90, 1);
+}
+.highlight-orange {
+	color: rgba(210, 123, 45, 1);
+	fill: rgba(210, 123, 45, 1);
+}
+.highlight-yellow {
+	color: rgba(203, 148, 52, 1);
+	fill: rgba(203, 148, 52, 1);
+}
+.highlight-teal {
+	color: rgba(80, 148, 110, 1);
+	fill: rgba(80, 148, 110, 1);
+}
+.highlight-blue {
+	color: rgba(56, 125, 201, 1);
+	fill: rgba(56, 125, 201, 1);
+}
+.highlight-purple {
+	color: rgba(154, 107, 180, 1);
+	fill: rgba(154, 107, 180, 1);
+}
+.highlight-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.highlight-red {
+	color: rgba(207, 81, 72, 1);
+	fill: rgba(207, 81, 72, 1);
+}
+.highlight-default_background {
+	color: rgba(44, 44, 43, 1);
+}
+.highlight-gray_background {
+	background: rgba(42, 28, 0, 0.07);
+}
+.highlight-brown_background {
+	background: rgba(139, 46, 0, 0.086);
+}
+.highlight-orange_background {
+	background: rgba(224, 101, 1, 0.129);
+}
+.highlight-yellow_background {
+	background: rgba(211, 168, 0, 0.137);
+}
+.highlight-teal_background {
+	background: rgba(0, 100, 45, 0.09);
+}
+.highlight-blue_background {
+	background: rgba(0, 124, 215, 0.094);
+}
+.highlight-purple_background {
+	background: rgba(102, 0, 178, 0.078);
+}
+.highlight-pink_background {
+	background: rgba(197, 0, 93, 0.086);
+}
+.highlight-red_background {
+	background: rgba(223, 22, 0, 0.094);
+}
+.block-color-default {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray {
+	color: rgba(125, 122, 117, 1);
+	fill: rgba(125, 122, 117, 1);
+}
+.block-color-brown {
+	color: rgba(159, 118, 90, 1);
+	fill: rgba(159, 118, 90, 1);
+}
+.block-color-orange {
+	color: rgba(210, 123, 45, 1);
+	fill: rgba(210, 123, 45, 1);
+}
+.block-color-yellow {
+	color: rgba(203, 148, 52, 1);
+	fill: rgba(203, 148, 52, 1);
+}
+.block-color-teal {
+	color: rgba(80, 148, 110, 1);
+	fill: rgba(80, 148, 110, 1);
+}
+.block-color-blue {
+	color: rgba(56, 125, 201, 1);
+	fill: rgba(56, 125, 201, 1);
+}
+.block-color-purple {
+	color: rgba(154, 107, 180, 1);
+	fill: rgba(154, 107, 180, 1);
+}
+.block-color-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.block-color-red {
+	color: rgba(207, 81, 72, 1);
+	fill: rgba(207, 81, 72, 1);
+}
+.block-color-default_background {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray_background {
+	background: rgba(240, 239, 237, 1);
+}
+.block-color-brown_background {
+	background: rgba(245, 237, 233, 1);
+}
+.block-color-orange_background {
+	background: rgba(251, 235, 222, 1);
+}
+.block-color-yellow_background {
+	background: rgba(249, 243, 220, 1);
+}
+.block-color-teal_background {
+	background: rgba(232, 241, 236, 1);
+}
+.block-color-blue_background {
+	background: rgba(229, 242, 252, 1);
+}
+.block-color-purple_background {
+	background: rgba(243, 235, 249, 1);
+}
+.block-color-pink_background {
+	background: rgba(250, 233, 241, 1);
+}
+.block-color-red_background {
+	background: rgba(252, 233, 231, 1);
+}
+.select-value-color-default { background-color: rgba(42, 28, 0, 0.07); }
+.select-value-color-gray { background-color: rgba(28, 19, 1, 0.11); }
+.select-value-color-brown { background-color: rgba(127, 51, 0, 0.156); }
+.select-value-color-orange { background-color: rgba(196, 88, 0, 0.203); }
+.select-value-color-yellow { background-color: rgba(209, 156, 0, 0.282); }
+.select-value-color-green { background-color: rgba(0, 96, 38, 0.156); }
+.select-value-color-blue { background-color: rgba(0, 118, 217, 0.203); }
+.select-value-color-purple { background-color: rgba(92, 0, 163, 0.141); }
+.select-value-color-pink { background-color: rgba(183, 0, 78, 0.152); }
+.select-value-color-red { background-color: rgba(206, 24, 0, 0.164); }
+
+.checkbox {
+	display: inline-flex;
+	vertical-align: text-bottom;
+	width: 16;
+	height: 16;
+	background-size: 16px;
+	margin-left: 2px;
+	margin-right: 5px;
+}
+
+.checkbox-on {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20width%3D%2216%22%20height%3D%2216%22%20fill%3D%22%2358A9D7%22%2F%3E%0A%3Cpath%20d%3D%22M6.71429%2012.2852L14%204.9995L12.7143%203.71436L6.71429%209.71378L3.28571%206.2831L2%207.57092L6.71429%2012.2852Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+
+.checkbox-off {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20x%3D%220.75%22%20y%3D%220.75%22%20width%3D%2214.5%22%20height%3D%2214.5%22%20fill%3D%22white%22%20stroke%3D%22%2336352F%22%20stroke-width%3D%221.5%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+	
+</style><style>@import url('https://cdn.jsdelivr.net/npm/katex@0.16.25/dist/katex-swap.min.css')</style></head><body><article id="3bec41a4-0511-80f3-a517-d129b7a5531d" class="page sans"><header><h1 class="page-title" dir="auto">vlan隔离技术</h1><p class="page-description" dir="auto"></p></header><div class="page-body"><h1 id="af194dae-375d-4c15-aab1-beff6df92cb1" class="" dir="auto">二层端口隔离</h1><h2 id="2805a7bf-d93e-4ac0-b320-bbb07244ecb6" class="" dir="auto">1. 概念</h2><p id="71002d66-f370-4a1a-8532-5a0f891c0e26" class="" dir="auto">端口隔离（Port Isolation）是一种<strong>二层安全技术</strong>，用于限制同一交换机上指定端口之间的二层通信。</p><p id="8b32d315-7637-41b8-b795-50858d972079" class="" dir="auto"><strong>主要作用：</strong></p><ul id="fa18a5f7-b1f9-4460-a66b-98573091b3ec" class="bulleted-list" dir="auto"><li style="list-style-type:disc">防止同一 VLAN 内的用户互相访问</li></ul><ul id="1affc7bd-3da0-4ae4-8726-53fb622051e2" class="bulleted-list" dir="auto"><li style="list-style-type:disc">提高接入网络的安全性</li></ul><ul id="4ad673f7-08a6-41a1-9aab-2f9f2a4f16c2" class="bulleted-list" dir="auto"><li style="list-style-type:disc">在正确规划隔离关系的前提下，保留用户访问网关、服务器和 Internet 的能力</li></ul><aside class="block-color-blue_background callout" data-notion-callout="" data-notion-callout-icon="💡" data-notion-callout-background="blue_background" style="white-space:pre-wrap;display:flex" id="65eb8bcf-736a-43d2-b935-8697eccb0092" dir="ltr"><div style="font-size:1.5em"><span class="icon" data-emoji="💡"></span></div><div style="width:100%"><p id="4ef8a09a-d5dd-4140-ab1e-da54524eef9a" class="" dir="auto"><strong>简单理解：</strong>VLAN 主要隔离不同 VLAN 的广播域；端口隔离主要限制同一 VLAN 内指定端口之间的通信。</p></div></aside><hr id="cf8ca63a-577b-40e9-8288-16d4528935a7" dir="auto"/><h2 id="eebddae3-eafa-46d1-962a-5021ef9e74b6" class="" dir="auto">2. 为什么需要端口隔离</h2><p id="d7186e01-759e-47ea-80e5-51f4fb61ffdd" class="" dir="auto">在普通交换网络中，如果 PC1、PC2、PC3 都属于 VLAN 10，它们通常可以直接进行二层通信。</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="7ea97f71-dae4-47c6-84bc-b814f346b5e0" class="code code-wrap"><code style="white-space:pre-wrap;word-break:break-all">VLAN 10：192.168.10.0/24
+
+PC1 ↔ PC2
+PC1 ↔ PC3
+PC2 ↔ PC3</code></pre><p id="f1596cfa-18d7-4a5f-8138-474e20a1e377" class="" dir="auto">但在酒店 WiFi、宿舍网络、企业访客网络和公共无线网络中，通常需要实现：</p><pre id="cc91f0f5-92c7-436a-bba5-e748e2d3f0d6" class="code code-wrap"><code style="white-space:pre-wrap;word-break:break-all">用户 A × 用户 B
+用户 A × 用户 C
+用户 B × 用户 C
+
+用户 → 网关 → Internet   √</code></pre><p id="9abb9d8c-c666-4d31-bc7f-1f9589d550ba" class="" dir="auto">此时可以使用端口隔离，限制用户端口之间的二层转发。</p><hr id="fd859803-1075-405c-a8e3-aa8303da6091" dir="auto"/><h2 id="4919044a-58de-4248-806c-550a4ec2f2b8" class="" dir="auto">3. 工作原理</h2><h3 id="88483e79-22fc-4de6-b21c-79b93711c151" class="" dir="auto">3.1 未开启端口隔离</h3><p id="93040808-5ccc-433c-80dd-9b3d527649bb" class="" dir="auto">交换机根据 MAC 地址表进行二层转发。</p><pre id="77cf8e63-4eeb-4d1f-a812-aa6507fcd414" class="code code-wrap"><code style="white-space:pre-wrap;word-break:break-all">PC1
+ │
+GE0/0/1
+ │
+交换机
+ │
+GE0/0/2
+ │
+PC2</code></pre><p id="f2fdc49a-b4f2-47af-8654-58904bb9929b" class="" dir="auto">当 PC1 向 PC2 发送数据时：</p><ol type="1" id="c7b1d970-47a4-44fd-995d-662f6afad1b2" class="numbered-list" start="1" dir="auto"><li>交换机学习 PC1 的源 MAC 地址。</li></ol><ol type="1" id="f787362c-8258-46f7-913e-9a2b8da707f8" class="numbered-list" start="2" dir="auto"><li>交换机查询目标 MAC 地址对应的出接口。</li></ol><ol type="1" id="41965b87-a85e-4192-832b-67d3e59d1004" class="numbered-list" start="3" dir="auto"><li>交换机从 PC2 所在端口转发数据帧。</li></ol><p id="8db8c938-4a36-4de3-9092-8cd36376cd4a" class="" dir="auto"><strong>结果：</strong>PC1 可以直接访问 PC2。</p><h3 id="049a37a8-8419-40ae-8ece-e045efcc9da0" class="" dir="auto">3.2 开启端口隔离</h3><p id="17e41589-0b7c-4423-82d0-be93929065b3" class="" dir="auto">交换机将指定用户端口加入隔离范围。</p><pre id="5d9817b0-ab91-4134-a2cb-eb4740ae1a3b" class="code code-wrap"><code style="white-space:pre-wrap;word-break:break-all">PC1 ── GE0/0/1 ┐
+                ├── 交换机（隔离）
+PC2 ── GE0/0/2 ┘</code></pre><p id="707adbbd-ce35-43ed-95af-08666678804a" class="" dir="auto">当 PC1 访问 PC2 时：</p><ol type="1" id="716b72fe-6674-498c-85df-1011cf197e03" class="numbered-list" start="1" dir="auto"><li>数据帧进入交换机。</li></ol><ol type="1" id="3f893748-ce10-4d7c-a93e-a361b9154d3e" class="numbered-list" start="2" dir="auto"><li>交换机发现入接口和目标出接口之间存在隔离关系。</li></ol><ol type="1" id="aefc5506-6929-4a16-89bf-aec0bf2ce484" class="numbered-list" start="3" dir="auto"><li>交换机不再向目标用户端口转发该数据帧。</li></ol><p id="3e526407-68e7-41d6-9e45-6c9230dcfb76" class="" dir="auto"><strong>结果：</strong>PC1 与 PC2 无法直接进行二层通信。</p><hr id="3c5af0af-a0d2-4b00-8390-bc0d43a33bec" dir="auto"/><h2 id="623cc51d-d51b-4de0-87f2-50fdae2efdea" class="" dir="auto">4. 端口隔离的特点</h2><h3 id="7569a5b0-3ac7-4264-a04b-01f805c7bf35" class="" dir="auto">4.1 在同一 VLAN 内实现隔离</h3><p id="ee0f649f-eee1-404a-9177-63ac5d939c43" class="" dir="auto">例如：</p><pre id="41268c95-b5f2-4f90-8ded-5d02cf4157a1" class="code code-wrap"><code style="white-space:pre-wrap;word-break:break-all">VLAN 10
+
+PC1：192.168.10.1/24
+PC2：192.168.10.2/24</code></pre><p id="00aa8cc5-f20c-4365-a265-e9fcfe3ad1fa" class="" dir="auto">两台设备处于相同 VLAN 和相同网段，默认可以通信。将其连接端口设置为相互隔离后：</p><pre id="0fa617bf-8209-4b34-bd12-89b4c165742d" class="code code-wrap"><code style="white-space:pre-wrap;word-break:break-all">PC1 × PC2</code></pre><h3 id="7f41cb4d-cf53-43b0-afa1-0a932fa46960" class="" dir="auto">4.2 不改变 VLAN 和 IP 地址规划</h3><p id="e75b688a-910d-4810-a816-c2968f72f609" class="" dir="auto">端口隔离只限制指定端口之间的转发关系：</p><ul id="a8229716-adcf-47db-be42-5837fe916802" class="bulleted-list" dir="auto"><li style="list-style-type:disc">不需要为用户重新划分 VLAN</li></ul><ul id="1c5af17b-a97f-47bc-aa4e-81943f4029cc" class="bulleted-list" dir="auto"><li style="list-style-type:disc">不需要修改用户 IP 地址</li></ul><ul id="1087cee6-649f-462d-9b3a-be1c3a744958" class="bulleted-list" dir="auto"><li style="list-style-type:disc">用户仍然属于原来的广播域</li></ul><h3 id="b7baf8ac-3795-47b9-b00d-e0c378e2ffb9" class="" dir="auto">4.3 可以保留对网关和服务器的访问</h3><p id="24ebcee1-77f1-40ff-bf40-672fc0f73feb" class="" dir="auto">典型设计中，用户端口相互隔离，但连接网关、服务器或上联设备的端口不加入相同的受限隔离关系，因此可以实现：</p><pre id="4dc320d5-a1fe-4bd6-8978-f12f580af945" class="code code-wrap"><code style="white-space:pre-wrap;word-break:break-all">用户 A × 用户 B
+用户 A → 网关       √
+用户 A → 服务器     √
+用户 A → Internet   √</code></pre><aside class="block-color-yellow_background callout" data-notion-callout="" data-notion-callout-icon="⚠️" data-notion-callout-background="yellow_background" style="white-space:pre-wrap;display:flex" id="cd256511-dd2a-44dd-af59-9c4e2c030618" dir="ltr"><div style="font-size:1.5em"><span class="icon" data-emoji="⚠️"></span></div><div style="width:100%"><p id="06371cd8-9485-4d9c-98fb-b08f45ab37ec" class="" dir="auto">“端口隔离不影响网关和服务器访问”并不是无条件成立。能否访问取决于设备的隔离模式、隔离组和端口角色配置。如果网关或服务器端口也被错误地设置为与用户端口相互隔离，相关访问同样会失败。</p></div></aside><p id="7f43553a-334b-4d97-83e2-47945ff9b1ad" class="" dir="auto">用户访问网关时，主机会把以太网帧发送给网关的 MAC 地址；交换机仍负责二层转发，网关收到后再执行三层路由。</p><hr id="e15ab603-caf9-43ec-9a18-53aca9583cb1" dir="auto"/><h2 id="c9903429-42ae-42a9-825c-73213a837488" class="" dir="auto">5. 端口隔离与 VLAN 的区别</h2><table id="3a13384c-1269-4ab2-aced-c02a0e6cf128" class="simple-table" dir="ltr"><thead class="simple-table-header"><tr id="3dc8212f-69fa-4e3c-9a0b-aeb8e22ca766" dir="ltr"><th id=";~[{" class="simple-table-header-color simple-table-header">对比项</th><th id="n^XH" class="simple-table-header-color simple-table-header">VLAN</th><th id="co}F" class="simple-table-header-color simple-table-header">端口隔离</th></tr></thead><tbody><tr id="e4ddaf8e-e8e9-4969-9e90-6dfc2eaaff5b" dir="ltr"><td id=";~[{" class="">作用层次</td><td id="n^XH" class="">二层</td><td id="co}F" class="">二层</td></tr><tr id="2893a7bb-862f-4985-b8b2-7fc49a80d725" dir="ltr"><td id=";~[{" class="">主要目的</td><td id="n^XH" class="">划分广播域</td><td id="co}F" class="">限制用户端口之间的通信</td></tr><tr id="f2f6ac24-73cc-4158-add8-a2a7fb7e4b3b" dir="ltr"><td id=";~[{" class="">隔离对象</td><td id="n^XH" class="">不同 VLAN</td><td id="co}F" class="">通常是同一 VLAN 内的指定端口</td></tr><tr id="8df012bb-4912-4c6e-bc86-68550819b644" dir="ltr"><td id=";~[{" class="">是否改变网段</td><td id="n^XH" class="">通常需要不同网段</td><td id="co}F" class="">不需要改变网段</td></tr><tr id="86bc4a60-4cbc-44b3-b163-d82b1198fa0a" dir="ltr"><td id=";~[{" class="">对广播域的影响</td><td id="n^XH" class="">不同 VLAN 属于不同广播域</td><td id="co}F" class="">通常不重新划分广播域，但会限制相关端口的报文转发</td></tr><tr id="f5249234-93fe-48a5-bcf4-b02af8cc0a30" dir="ltr"><td id=";~[{" class="">典型应用</td><td id="n^XH" class="">部门和业务网络划分</td><td id="co}F" class="">访客、宿舍和公共接入用户隔离</td></tr></tbody></table><hr id="54e6b454-57b5-4929-a663-72e81de8d42b" dir="auto"/><h2 id="02151496-587e-4ee2-81ad-36f3b80917ea" class="" dir="auto">6. VLAN 与端口隔离结合使用</h2><p id="a320f491-fbd1-4185-b8b2-23d662b40b90" class="" dir="auto">企业访客 WLAN 示例：</p><pre id="95053f0f-7b4d-4c67-97e2-24d52f865f71" class="code code-wrap"><code style="white-space:pre-wrap;word-break:break-all">      AC
+       │
+   VLAN 100
+       │
+    交换机
+  ┌────┼────┐
+ AP1  AP2  AP3
+  │    │    │
+用户A 用户B 用户C</code></pre><p id="8fd0c608-7abc-43b8-9eb4-8529ae35ef2c" class="" dir="auto">所有访客用户使用相同的业务网络：</p><pre id="156b0753-e222-4a58-92e0-72fb383f1094" class="code code-wrap"><code style="white-space:pre-wrap;word-break:break-all">SSID：Guest
+VLAN：100
+地址：192.168.100.0/24</code></pre><p id="207d6412-489c-4fae-8e43-d967bb6e1e77" class="" dir="auto">没有用户隔离时：</p><pre id="53f78274-735d-441c-829f-20f4867c296e" class="code code-wrap"><code style="white-space:pre-wrap;word-break:break-all">用户 A ↔ 用户 B</code></pre><p id="e989a35b-d22f-4287-8167-66271fd86f04" class="" dir="auto">开启用户隔离后：</p><pre id="9b2bf3ca-4524-47a3-b165-1d791d7f1378" class="code code-wrap"><code style="white-space:pre-wrap;word-break:break-all">用户 A × 用户 B
+用户 A → 网关 → Internet   √</code></pre><hr id="62b2e69d-b8ef-40fa-ae33-fb8a379856a8" dir="auto"/><h2 id="590d0c9f-b48f-4bb5-8959-d5d5cf5c36f9" class="" dir="auto">7. WLAN 中的应用</h2><p id="70758cf7-ed2c-430c-8d1f-4da6bc4635cf" class="" dir="auto">无线网络中的以下功能采用了与端口隔离相似的思想：</p><ul id="fd4b57e8-c0ae-4240-9931-c4c48b9ad7bf" class="bulleted-list" dir="auto"><li style="list-style-type:disc">用户隔离（User Isolation）</li></ul><ul id="686b8bba-da20-46b9-a940-39faca0f6e91" class="bulleted-list" dir="auto"><li style="list-style-type:disc">STA 隔离（STA Isolation）</li></ul><ul id="c7c28e19-515a-4d79-acb0-7ddf416bb737" class="bulleted-list" dir="auto"><li style="list-style-type:disc">同一 SSID 内终端隔离</li></ul><h3 id="d72c0bee-9d45-4340-891b-bda6cf7b6b87" class="" dir="auto">7.1 企业访客 WiFi</h3><p id="022fce93-3d2f-4354-bb17-35b139385530" class="" dir="auto">要求：</p><ul id="98375f27-bd3c-4928-ba7a-50a9fa03141f" class="bulleted-list" dir="auto"><li style="list-style-type:disc">访客可以访问 Internet</li></ul><ul id="7b58e924-f000-438e-8d0a-8ffd709aa915" class="bulleted-list" dir="auto"><li style="list-style-type:disc">访客之间不能互相访问</li></ul><ul id="7d0dd167-bcfd-4aad-bbac-b9b571f68306" class="bulleted-list" dir="auto"><li style="list-style-type:disc">访客不能直接扫描或访问其他终端</li></ul><h3 id="27770e2e-3f04-485c-a813-58482cb5d7f1" class="" dir="auto">7.2 公共场所 WiFi</h3><p id="888c2f92-2ee8-4843-ad9d-54c43ea64006" class="" dir="auto">常见场景：</p><ul id="74a33b0b-d648-42ba-86ee-7932237bbcbf" class="bulleted-list" dir="auto"><li style="list-style-type:disc">商场</li></ul><ul id="72f7dcb8-f9b2-47b6-9bd0-abe211b18cd2" class="bulleted-list" dir="auto"><li style="list-style-type:disc">机场</li></ul><ul id="3a3d63e8-cc1f-45d0-b805-308e09dc2e40" class="bulleted-list" dir="auto"><li style="list-style-type:disc">酒店</li></ul><ul id="4b36e0f5-7d4e-4dba-a02d-a196b5de60d0" class="bulleted-list" dir="auto"><li style="list-style-type:disc">校园公共区域</li></ul><p id="2e902322-b11d-453f-b77a-4fde15c964b0" class="" dir="auto">主要用于降低以下风险：</p><ul id="01ad1271-0817-47e0-8cd8-11338cee1ff1" class="bulleted-list" dir="auto"><li style="list-style-type:disc">ARP 欺骗和 ARP 攻击</li></ul><ul id="c6afa145-3705-4fdd-8246-bd15011a0f4d" class="bulleted-list" dir="auto"><li style="list-style-type:disc">文件共享暴露</li></ul><ul id="69706794-bf2c-4f88-8c87-9b0a90c917f0" class="bulleted-list" dir="auto"><li style="list-style-type:disc">终端扫描</li></ul><ul id="7c18e51a-8bf2-471c-b1a1-9cd9ff05efc6" class="bulleted-list" dir="auto"><li style="list-style-type:disc">用户之间的横向访问</li></ul><aside class="block-color-gray_background callout" data-notion-callout="" data-notion-callout-icon="📌" data-notion-callout-background="gray_background" style="white-space:pre-wrap;display:flex" id="d7bc617a-b1cc-4701-9a5d-3a4675f2fd89" dir="ltr"><div style="font-size:1.5em"><span class="icon" data-emoji="📌"></span></div><div style="width:100%"><p id="447e2fc8-6b40-4d2d-925b-f8548be5f3f3" class="" dir="auto">交换机端口隔离主要面向有线物理端口；WLAN 中的 STA 隔离由 AP 或 AC 针对无线终端实施。二者目标相似，但具体实现位置和配置命令不同。</p></div></aside><hr id="85ed1d79-3c9a-449d-8d88-da2baa1b16cf" dir="auto"/><h2 id="5d3c752a-dc1c-4957-ba1f-7933de5ba91f" class="" dir="auto">8. 总结</h2><blockquote id="f5c37c75-4c96-48c1-931b-32df20ebd16b" class="" dir="auto">端口隔离是在不重新划分 VLAN 和 IP 网段的情况下，通过限制指定交换机端口之间的二层转发，实现同一 VLAN 内用户隔离的技术。</blockquote><p id="993bfbde-86e3-433d-8f99-b6a9f7e62cd3" class="" dir="auto"><strong>核心特点：</strong></p><ul id="c9585489-6292-4b0d-a0fe-41453730ff2d" class="bulleted-list" dir="auto"><li style="list-style-type:disc">属于二层安全技术</li></ul><ul id="91be0ec0-4f81-4824-ba43-baa9a94521be" class="bulleted-list" dir="auto"><li style="list-style-type:disc">主要限制同一 VLAN 内用户之间的直接通信</li></ul><ul id="c1fe3d2b-7cda-4100-83ff-71b5a5a2e60f" class="bulleted-list" dir="auto"><li style="list-style-type:disc">不需要改变原有 IP 地址规划</li></ul><ul id="11eb42e4-efca-4dd4-b7e9-b89cd0b72c72" class="bulleted-list" dir="auto"><li style="list-style-type:disc">不重新划分 VLAN</li></ul><ul id="d0b231c1-670d-4d35-b56b-b41e7f2f643d" class="bulleted-list" dir="auto"><li style="list-style-type:disc">正确配置时可保留对网关、服务器和外部网络的访问</li></ul><ul id="4934741c-1234-485c-91be-78c2f1a13637" class="bulleted-list" dir="auto"><li style="list-style-type:disc">常用于访客 WLAN、宿舍网络和公共接入网络</li></ul><h2 id="3bec41a4-0511-80fd-9e75-f124f6e57346" class="" dir="auto">二层端口隔离实操</h2><figure id="3bec41a4-0511-8021-ae45-d25db8cb5e14" class="image" data-notion-image="vlan%E9%9A%94%E7%A6%BB%E6%8A%80%E6%9C%AF/image.png" dir="ltr"><a href="vlan%E9%9A%94%E7%A6%BB%E6%8A%80%E6%9C%AF/image.png"><img style="width:704px" src="vlan%E9%9A%94%E7%A6%BB%E6%8A%80%E6%9C%AF/image.png"/></a></figure><p id="3bec41a4-0511-80da-bed3-d2d4858aa8de" class="" dir="auto">需求：要使PC1和PC2隔离</p><h3 id="3bec41a4-0511-8041-b71a-ee694e074d26" class="" dir="auto">配置命令</h3><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-kotlin.min.js" integrity="sha512-nLUQ1JXk2Kj5a8FlfriL+WmiGbAq3W/dQirx3IlVfkpU7byrzLD19pJnYsG8vPTDvsRMpQDVSezvzkKUNcqUSw==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><pre id="3bec41a4-0511-802c-a4ab-f01878e0bd9a" class="code code-wrap" data-notion-code-syntax="kotlin"><code class="language-kotlin" style="white-space:pre-wrap;word-break:break-all">vlan 10
+
+port-group group-member GigabitEthernet 0/0/1 to GigabitEthernet 0/0/3
+port link-type access
+port default vlan 10
+quit
+
+interface GigabitEthernet 0/0/1
+port-isolate enable group 1
+quit
+
+interface GigabitEthernet 0/0/2
+port-isolate enable group 1
+quit</code></pre><p id="3bec41a4-0511-8036-921f-fce4f1f913bc" class="" dir="auto">将需要相互隔离的主机对应的端口加入同一个隔离端口组即可。</p><p id="3bec41a4-0511-80f1-974b-f4f8f3da240d" class="" dir="auto">验证：</p><pre id="3bec41a4-0511-8000-9533-c1677c04da0b" class="code code-wrap" data-notion-code-syntax="kotlin"><code class="language-kotlin" style="white-space:pre-wrap;word-break:break-all">PC&gt;ping 192.168.10.2    //加入之前
+
+Ping 192.168.10.2: 32 data bytes, Press Ctrl_C to break
+From 192.168.10.2: bytes=32 seq=1 ttl=128 time=47 ms
+From 192.168.10.2: bytes=32 seq=2 ttl=128 time=47 ms
+From 192.168.10.2: bytes=32 seq=3 ttl=128 time=47 ms
+From 192.168.10.2: bytes=32 seq=4 ttl=128 time=47 ms
+From 192.168.10.2: bytes=32 seq=5 ttl=128 time=46 ms
+
+--- 192.168.10.2 ping statistics ---
+  5 packet(s) transmitted
+  5 packet(s) received
+  0.00% packet loss
+  round-trip min/avg/max = 46/46/47 ms
+
+PC&gt;ping 192.168.10.2
+
+Ping 192.168.10.2: 32 data bytes, Press Ctrl_C to break
+Request timeout!
+Request timeout!
+Request timeout!
+Request timeout!
+Request timeout!
+
+--- 192.168.10.2 ping statistics ---
+  5 packet(s) transmitted
+  0 packet(s) received
+  100.00% packet loss
+
+PC&gt;</code></pre><p id="3bec41a4-0511-80c4-beab-cbcc32a89fdb" class="" dir="auto">查询组：</p><pre id="3bec41a4-0511-807b-9964-f3bee161bea3" class="code code-wrap" data-notion-code-syntax="kotlin"><code class="language-kotlin" style="white-space:pre-wrap;word-break:break-all">[Huawei]display port-isolate group ?
+  INTEGER&lt;1-64&gt;  Port isolate group
+  all            Port isolate group
+
+[Huawei]display port-isolate group all 
+  The ports in isolate group 1:
+GigabitEthernet0/0/1     GigabitEthernet0/0/2     
+</code></pre><p id="3bec41a4-0511-800b-ae90-c7a9f62e42c9" class="" dir="auto">
+</p><h1 id="f73925ca-443c-4a8e-8dd7-08bfe7877a1b" class="" dir="auto">三层端口隔离</h1><h2 id="5689170f-5c7e-4c25-9fd7-360896526626" class="" dir="auto">1. 概念</h2><p id="119d3a82-7d29-49fd-ad9e-5a5212febcab" class="" dir="auto">三层端口隔离（Layer 3 Port Isolation）是一种<strong>三层网络安全隔离技术</strong>，用于限制不同三层接口之间的 IP 通信。</p><p id="b8d422ef-b31c-42c4-99fc-8eb020b8ab73" class="" dir="auto">它解决的问题：</p><blockquote id="1bedd5f9-a652-441f-a335-65b0b71e8cc7" class="" dir="auto">即使两个用户处于不同 VLAN、不同网段，通过三层路由也能互相访问的问题。</blockquote><p id="b116e863-f454-4ecb-b552-eb56cdf07840" class="" dir="auto">简单理解：</p><ul id="66d26283-400b-40a5-92d1-fdc2ccd94405" class="bulleted-list" dir="auto"><li style="list-style-type:disc"><strong>二层端口隔离</strong>：阻止同一个 VLAN 内用户互访。</li></ul><ul id="092ae1bc-13ab-4c56-8b62-4e7e8eb0e856" class="bulleted-list" dir="auto"><li style="list-style-type:disc"><strong>三层端口隔离</strong>：阻止不同 VLAN、不同网段之间通过三层转发互访。</li></ul><figure id="3bec41a4-0511-80e4-8cb5-eb8f6d7e4fc7" class="image" data-notion-image="vlan%E9%9A%94%E7%A6%BB%E6%8A%80%E6%9C%AF/image%201.png" dir="ltr"><a href="vlan%E9%9A%94%E7%A6%BB%E6%8A%80%E6%9C%AF/image%201.png"><img style="width:703.977294921875px" src="vlan%E9%9A%94%E7%A6%BB%E6%8A%80%E6%9C%AF/image%201.png"/></a></figure><p id="3bec41a4-0511-805f-a187-d1018addcb76" class="" dir="auto">配置命令</p><pre id="3bec41a4-0511-803e-9f16-e26b6ff49dd9" class="code code-wrap" data-notion-code-syntax="kotlin"><code class="language-kotlin" style="white-space:pre-wrap;word-break:break-all">sysname SW1
+
+vlan batch 10 20 30
+
+interface GigabitEthernet 0/0/1
+port link-type access
+port default vlan 10
+quit
+
+interface GigabitEthernet 0/0/2
+port link-type access
+port default vlan 20
+quit
+
+interface GigabitEthernet 0/0/3
+port link-type access
+port default vlan 30
+quit
+
+interface Vlanif 10
+ip address 192.168.10.254 24
+quit
+
+interface Vlanif 20
+ip address 192.168.20.254 24
+quit
+
+interface Vlanif 30
+ip address 192.168.30.254 24
+quit
+
+port-isolate mode all
+
+interface GigabitEthernet 0/0/1
+port-isolate enable group 1
+quit
+
+interface GigabitEthernet 0/0/2
+port-isolate enable group 1
+quit</code></pre><h1 id="3bec41a4-0511-8067-9fb7-c43cc14a43e1" class="" dir="auto"><strong>MUX-vlan</strong></h1><p id="3bec41a4-0511-8063-a274-f61571fede08" class="" dir="auto">MUX-VLAN（Multiplex VLAN，多路复用 VLAN）是一种<strong>二层 VLAN 隔离技术</strong>。<br/>在同一个 VLAN 广播域内，实现用户之间的隔离，同时允许用户访问公共资源。</p><p id="3bec41a4-0511-804a-a544-eacefaf0a372" class="" dir="auto">注意这个是二层VLAN技术，当IP网段不一样时是无法使用的。（vlan标签和网段并没有什么关联，只不过为了方便才让两者一致）</p><p id="3bec41a4-0511-808d-a126-f3d0c1603aa7" class="" dir="auto">
+</p><p id="3bec41a4-0511-80b0-8b97-c9dbcd86f68f" class="" dir="auto">所有设备都能互访的为<code>主VLAN</code> 其余为<code>从VLAN</code> </p><p id="3bec41a4-0511-806f-bde8-e950bb05a44e" class="" dir="auto">组间可以通信的是团体组，组间不能通信的是隔离组</p><pre id="3bec41a4-0511-8004-89e8-d608ea0e4cd9" class="code code-wrap" data-notion-code-syntax="kotlin"><code class="language-kotlin" style="white-space:pre-wrap;word-break:break-all">团体组内部可以互通，和主vlan可以互通，不能和隔离组互通
+隔离组内部不可以互通，和主vlan可以互通，不能和团体vlan互通</code></pre><figure id="3bec41a4-0511-8056-ba9b-f5815fecfc67" class="image" data-notion-image="vlan%E9%9A%94%E7%A6%BB%E6%8A%80%E6%9C%AF/image%202.png" dir="ltr"><a href="vlan%E9%9A%94%E7%A6%BB%E6%8A%80%E6%9C%AF/image%202.png"><img style="width:703.9886474609375px" src="vlan%E9%9A%94%E7%A6%BB%E6%8A%80%E6%9C%AF/image%202.png"/></a></figure><p id="3bec41a4-0511-8035-a7bb-d5beaed1ae4b" class="" dir="auto">配置命令：</p><p id="3bec41a4-0511-80e9-842d-f5161bfd7bdc" class="" dir="auto">SW1</p><pre id="3bec41a4-0511-80b9-8584-f8b87037b955" class="code code-wrap" data-notion-code-syntax="kotlin"><code class="language-kotlin" style="white-space:pre-wrap;word-break:break-all">[SW1]sysname SW1
+
+vlan batch 10 20 30
+
+port-group group-member GigabitEthernet 0/0/1 GigabitEthernet 0/0/2
+port link-type access
+port default vlan 10
+quit
+
+port-group group-member GigabitEthernet 0/0/3 GigabitEthernet 0/0/4
+port link-type access
+port default vlan 20
+quit
+
+interface GigabitEthernet 0/0/5
+port link-type access
+port default vlan 30
+quit
+
+vlan 30
+mux-vlan
+subordinate group 10  //
+subordinate separate 20
+quit
+
+port-group group-member GigabitEthernet 0/0/1 to GigabitEthernet 0/0/5
+port mux-vlan enable
+quit</code></pre><pre id="3bec41a4-0511-806c-b0ce-fd11ccb0e8e8" class="code code-wrap" data-notion-code-syntax="kotlin"><code class="language-kotlin" style="white-space:pre-wrap;word-break:break-all">团体组内部可以互迪,和主vlan可以互通,不能和隔离组互通
+隔离组内部不可以互通,和主vlan可以互通,不能和团体vlan互通
+团体组和隔离组之间都不能通信
+
+团体组可以创建多个;隔离组只能创建一个</code></pre><h1 id="3bfc41a4-0511-8089-9da0-d1dde0357f70" class="" dir="auto">流过滤</h1><figure id="3bfc41a4-0511-800e-af9d-ebd7ab1f5f4c" class="image" data-notion-image="vlan%E9%9A%94%E7%A6%BB%E6%8A%80%E6%9C%AF/image%203.png" dir="ltr"><a href="vlan%E9%9A%94%E7%A6%BB%E6%8A%80%E6%9C%AF/image%203.png"><img style="width:642.9886474609375px" src="vlan%E9%9A%94%E7%A6%BB%E6%8A%80%E6%9C%AF/image%203.png"/></a></figure><p id="3bfc41a4-0511-80f6-aaaa-cc1f78b1c5bf" class="" dir="auto">配置命令：</p><pre id="3bfc41a4-0511-8073-aadc-c1de62ad8c09" class="code code-wrap" data-notion-code-syntax="kotlin"><code class="language-kotlin" style="white-space:pre-wrap;word-break:break-all">sysname SW1
+
+vlan 10
+
+port-group group-member GigabitEthernet 0/0/1 to GigabitEthernet 0/0/3
+port link-type access
+port default vlan 10
+quit
+
+//两边都要配置
+acl 4000
+rule deny source-mac 5489-9838-4795 destination-mac 5489-989C-6793
+rule deny source-mac 5489-989C-6793 destination-mac 5489-9838-4795
+quit
+
+
+interface GigabitEthernet 0/0/1
+traffic-filter inbound acl 4000
+quit
+
+interface GigabitEthernet 0/0/2
+traffic-filter inbound acl 4000
+quit</code></pre><p id="3bfc41a4-0511-808b-8f0c-f3065489feb8" class="" dir="auto">或者说配置过滤ARP报文的方法，使设备不能获得对方的MAC地址</p><p id="3bfc41a4-0511-80af-8eb9-df59ca2ad997" class="" dir="auto"><code>rule deny source-mac 5489-9838-4795 destination-mac ffff-ffff-ffff</code></p><figure id="3bfc41a4-0511-8055-9e0e-dd7052825181" class="image" data-notion-image="vlan%E9%9A%94%E7%A6%BB%E6%8A%80%E6%9C%AF/image%204.png" dir="ltr"><a href="vlan%E9%9A%94%E7%A6%BB%E6%8A%80%E6%9C%AF/image%204.png"><img style="width:703.977294921875px" src="vlan%E9%9A%94%E7%A6%BB%E6%8A%80%E6%9C%AF/image%204.png"/></a></figure><p id="3bfc41a4-0511-8041-8e54-e9b6a2582aaa" class="" dir="auto">配置命令：<br/>SW2</p><pre id="3bfc41a4-0511-802d-adc5-e90d7608fad8" class="code code-wrap" data-notion-code-syntax="kotlin"><code class="language-kotlin" style="white-space:pre-wrap;word-break:break-all">system-view
+sysname sw2
+
+vlan batch 10 20 30
+
+interface GigabitEthernet 0/0/1
+ port link-type access
+ port default vlan 10
+ quit
+
+interface GigabitEthernet 0/0/2
+ port link-type access
+ port default vlan 20
+ quit
+
+interface GigabitEthernet 0/0/3
+ port link-type access
+ port default vlan 30
+ quit
+
+interface Vlanif 10
+ ip address 192.168.10.254 24
+ quit
+
+interface Vlanif 20
+ ip address 192.168.20.254 24
+ quit
+
+interface Vlanif 30
+ ip address 192.168.30.254 24
+ quit
+
+acl 3000
+ rule deny ip source 192.168.10.1 0 destination 192.168.20.1 0
+ rule deny ip source 192.168.20.1 0 destination 192.168.10.1 0
+ quit
+
+interface GigabitEthernet 0/0/1
+ traffic-filter inbound acl 3000
+ quit
+
+interface GigabitEthernet 0/0/2
+ traffic-filter inbound acl 3000
+ quit</code></pre><h1 id="3bfc41a4-0511-8034-83bd-ce46be339018" class="" dir="auto">MQC</h1><h3 id="3bfc41a4-0511-806d-8626-f03ef049dd22" class="" dir="auto">QoS（Quality of Service，服务质量）</h3><p id="3bfc41a4-0511-80ac-a124-ce765e256c65" class="" dir="auto">QoS是一种<strong>网络流量控制和管理技术</strong>，用于在网络资源有限或发生拥塞时，根据不同业务的重要程度，对数据流进行分类、优先级划分、带宽分配、延迟控制和丢包管理，从而保证关键业务（如语音、视频会议）的通信质量。</p><p id="3bfc41a4-0511-80cb-87ce-d8bcbbaa1e9e" class="" dir="auto">简单来说：</p><blockquote id="3bfc41a4-0511-8056-af2f-f91216d5e7b0" class="" dir="auto">QoS就是通过对不同类型的数据提供不同等级的服务，保证重要业务优先传输。</blockquote><h3 id="3bfc41a4-0511-8098-a034-dec4ce8955bd" class="" dir="auto">MQC（Modular QoS Command-Line Interface，模块化QoS命令行接口）</h3><p id="3bfc41a4-0511-800e-b5cd-d97518041703" class="" dir="auto">MQC是华为设备实现QoS功能的一种<strong>模块化配置方式</strong>，通过将QoS配置拆分为三个独立部分：<strong>流分类（Traffic Classifier）、流行为（Traffic Behavior）、流策略（Traffic Policy）</strong>，实现对不同业务流量的识别和控制。</p><p id="3bfc41a4-0511-80bb-bf91-ea7eeb93d3ad" class="" dir="auto">简单来说：</p><blockquote id="3bfc41a4-0511-8034-bd0a-f9f1efc61600" class="" dir="auto">MQC就是华为用来配置QoS的框架，通过“识别流量 → 定义处理动作 → 应用策略”的方式实现流量管理。</blockquote><figure id="3bfc41a4-0511-8062-983b-c75bdb434e22" class="image" data-notion-image="vlan%E9%9A%94%E7%A6%BB%E6%8A%80%E6%9C%AF/image%205.png" dir="ltr"><a href="vlan%E9%9A%94%E7%A6%BB%E6%8A%80%E6%9C%AF/image%205.png"><img style="width:703.9886474609375px" src="vlan%E9%9A%94%E7%A6%BB%E6%8A%80%E6%9C%AF/image%205.png"/></a></figure><p id="3bfc41a4-0511-804f-82dc-c421703f3935" class="" dir="auto">配置命令：</p><pre id="3bfc41a4-0511-80e2-8c3c-de64dbf79174" class="code code-wrap" data-notion-code-syntax="kotlin"><code class="language-kotlin" style="white-space:pre-wrap;word-break:break-all">vlan batch 10 20 30
+
+interface GigabitEthernet 0/0/1
+ port link-type access
+ port default vlan 10
+ quit
+
+interface GigabitEthernet 0/0/2
+ port link-type access
+ port default vlan 20
+ quit
+
+interface GigabitEthernet 0/0/3
+ port link-type access
+ port default vlan 30
+ quit
+
+interface Vlanif 10
+ ip address 192.168.10.254 24
+ quit
+
+interface Vlanif 20
+ ip address 192.168.20.254 24
+ quit
+
+interface Vlanif 30
+ ip address 192.168.30.254 24
+ quit
+
+
+acl 3000
+ rule permit ip source 192.168.10.1 0.0.0.0 destination 192.168.20.1 0.0.0.0
+ quit
+
+
+traffic classifier 4t5
+ if-match acl 3000
+ quit
+
+
+traffic behavior 4t5
+ deny
+ quit
+
+
+traffic policy 4t5
+ classifier 4t5 behavior 4t5
+ quit
+
+
+interface GigabitEthernet 0/0/1
+ traffic-policy 4t5 inbound
+ quit</code></pre><p id="3bfc41a4-0511-805c-a0ad-cf13ebea15a8" class="" dir="auto">ACL里面的 permit<strong>表示“允许这条流量进入后续的流量策略匹配”</strong>。<br/><br/>另外，最好写上反向的ACL，在对应的接口绑定</p><p id="3bfc41a4-0511-8042-adb6-c63299b9b81f" class="" dir="auto"><code>rule permit ip source 192.168.20.1 0 destination 192.168.10.1 0</code></p><h1 id="3bfc41a4-0511-805c-a8dc-e79a77563cd6" class="" dir="auto">端口安全（Port Security）</h1><p id="3bfc41a4-0511-801b-813b-c3c85cd37562" class="" dir="auto">端口安全是一种<strong>二层交换机安全技术</strong>，通过限制交换机接口上允许接入的 <strong>MAC 地址数量和类型</strong>，防止非法设备接入网络，提高网络访问控制能力。</p><p id="3bfc41a4-0511-80ca-89f7-ff3666dd8a66" class="" dir="auto">简单理解：</p><blockquote id="3bfc41a4-0511-80c3-81a6-e1354e8af8e2" class="" dir="auto">端口安全就是把交换机端口和指定的 MAC 地址绑定，只允许合法设备通过该端口通信。</blockquote><h3 id="3bfc41a4-0511-8096-ac52-f760d4230b65" class="" dir="auto">工作原理</h3><p id="3bfc41a4-0511-8090-a3a4-fc2e16099623" class="" dir="auto">普通交换机：</p><pre id="3bfc41a4-0511-80a6-8807-c756dfc491de" class="code code-wrap"><code style="white-space:pre-wrap;word-break:break-all">PC1 ---- G0/0/1 ---- SW</code></pre><p id="3bfc41a4-0511-808d-a19d-f38226ddd317" class="" dir="auto">交换机会学习 PC1 的 MAC 地址：</p><pre id="3bfc41a4-0511-8096-96e8-ece1cc7d2d80" class="code code-wrap"><code style="white-space:pre-wrap;word-break:break-all">MAC地址表：
+MAC1 → G0/0/1</code></pre><p id="3bfc41a4-0511-80c5-9b3e-f25086410819" class="" dir="auto">如果攻击者拔掉 PC1，换上一台非法电脑：</p><pre id="3bfc41a4-0511-805c-92d3-defc280414ba" class="code code-wrap"><code style="white-space:pre-wrap;word-break:break-all">非法PC ---- G0/0/1 ---- SW</code></pre><p id="3bfc41a4-0511-80ae-879d-db227f9455af" class="" dir="auto">交换机仍然会学习新的 MAC 地址，非法设备可以接入。</p><p id="3bfc41a4-0511-80a4-a747-f41ae69bda9f" class="" dir="auto">开启端口安全后：</p><pre id="3bfc41a4-0511-805f-9327-d34caed40f8a" class="code code-wrap"><code style="white-space:pre-wrap;word-break:break-all">G0/0/1 只允许 MAC1</code></pre><p id="3bfc41a4-0511-80fc-98ce-c96a6ae89041" class="" dir="auto">如果出现其他 MAC：</p><pre id="3bfc41a4-0511-8080-9575-c6c51d37c64c" class="code code-wrap"><code style="white-space:pre-wrap;word-break:break-all">MAC2 → G0/0/1</code></pre><p id="3bfc41a4-0511-8047-8278-d59213134ff1" class="" dir="auto">交换机会根据配置采取动作：</p><ul id="3bfc41a4-0511-8048-bfd0-db7dd5106dd8" class="bulleted-list" dir="auto"><li style="list-style-type:disc">丢弃报文</li></ul><ul id="3bfc41a4-0511-80bf-924e-dd1f3abc4095" class="bulleted-list" dir="auto"><li style="list-style-type:disc">报警</li></ul><ul id="3bfc41a4-0511-80c5-97fd-ef674455c05c" class="bulleted-list" dir="auto"><li style="list-style-type:disc">关闭端口</li></ul><h2 id="3bfc41a4-0511-80e8-84af-e217ac965a88" class="" dir="auto">功能介绍</h2><h3 id="3bfc41a4-0511-80f1-9cab-f46d2e2e4543" class="" dir="auto"><code>enable</code> —— 开启端口安全</h3><p id="3bfc41a4-0511-8019-8951-f55d5986c0a3" class="" dir="auto"><code>port-security enable</code> 开启当前接口的端口安全功能。</p><p id="3bfc41a4-0511-806c-bdeb-e921c40cffcd" class="" dir="auto">开启后，该接口才会开始：</p><ul id="3bfc41a4-0511-8063-9d89-ddcfc2545303" class="bulleted-list" dir="auto"><li style="list-style-type:disc">学习安全 MAC 地址</li></ul><ul id="3bfc41a4-0511-8043-a2fa-ccdd0f2216e8" class="bulleted-list" dir="auto"><li style="list-style-type:disc">限制 MAC 地址数量</li></ul><ul id="3bfc41a4-0511-8036-8263-fd1a5c11a6f3" class="bulleted-list" dir="auto"><li style="list-style-type:disc">检查非法 MAC 地址</li></ul><h3 id="3bfc41a4-0511-80bb-96da-d0eca94f564a" class="" dir="auto"><code>max-mac-num</code> —— 限制最大 MAC 地址数量</h3><pre id="3bfc41a4-0511-80a1-9b9c-d8ca6b7e2df9" class="code code-wrap" data-notion-code-syntax="kotlin"><code class="language-kotlin" style="white-space:pre-wrap;word-break:break-all">port-security max-mac-num 数量port-security max-mac-num 数量</code></pre><p id="3bfc41a4-0511-8043-8c68-f33f7bdb16d9" class="" dir="auto">限制一个接口最多可以学习多少个 MAC 地址</p><p id="3bfc41a4-0511-80da-97ff-cea83266e3f2" class="" dir="auto">原本改交换机限制了一个MAC地址，如果后面接入了一个新的终端，就会触发违规，新的终端无法通过该端口进行通信。</p><h3 id="3bfc41a4-0511-8012-8b9c-caa5719dc30a" class="" dir="auto"><code>aging-time</code> —— MAC 地址老化时间</h3><pre id="3bfc41a4-0511-80e4-865a-d91fcbca6022" class="code code-wrap" data-notion-code-syntax="kotlin"><code class="language-kotlin" style="white-space:pre-wrap;word-break:break-all">[SW2-GigabitEthernet0/0/1]port-security aging-time ?
+INTEGER&lt;1-1440&gt;  Aging time (in minute)</code></pre><p id="3bfc41a4-0511-8048-9f66-c1d05be06012" class="" dir="auto">设置安全 MAC 地址多久没有通信后删除。</p><h3 id="3bfc41a4-0511-80ba-8c1b-f8653dc083a4" class="" dir="auto"><code>port-security mac-address sticky</code> —— Sticky MAC绑定</h3><p id="3bfc41a4-0511-801c-ba64-e5dc0e0027f3" class="" dir="auto">开启 <strong>Sticky MAC（粘性MAC）学习功能</strong>，将接口动态学习到的 MAC 地址转换为安全 MAC 地址，实现 MAC 地址自动绑定。</p><h2 id="3bfc41a4-0511-80d2-8908-c462f5eadd38" class="" dir="auto">实验：端口安全实操</h2><figure id="3bfc41a4-0511-8095-8582-d524b8c15847" class="image" data-notion-image="vlan%E9%9A%94%E7%A6%BB%E6%8A%80%E6%9C%AF/%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE_2026-08-17_182541.png" dir="ltr"><a href="vlan%E9%9A%94%E7%A6%BB%E6%8A%80%E6%9C%AF/%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE_2026-08-17_182541.png"><img style="width:703.9886474609375px" src="vlan%E9%9A%94%E7%A6%BB%E6%8A%80%E6%9C%AF/%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE_2026-08-17_182541.png"/></a></figure><p id="3bfc41a4-0511-80a1-89ce-d7858bc1687c" class="" dir="auto">配置命令：<br/>SW2</p><pre id="3bfc41a4-0511-80a6-915e-f7b5de9bc5a5" class="code code-wrap" data-notion-code-syntax="kotlin"><code class="language-kotlin" style="white-space:pre-wrap;word-break:break-all">sysname SW2
+
+vlan 10
+
+# 配置 G0/0/1 - G0/0/4 为 Access 接口并加入 VLAN 10
+port-group group-member GigabitEthernet 0/0/1 to GigabitEthernet 0/0/4
+port link-type access
+port default vlan 10
+quit
+
+# 配置上联接口
+interface GigabitEthernet 0/0/5
+port link-type trunk
+port trunk allow-pass vlan all
+quit
+
+# 开启端口安全
+port-group group-member GigabitEthernet 0/0/1 to GigabitEthernet 0/0/4
+port-security enable
+quit
+
+# 配置 G0/0/1 端口安全
+interface GigabitEthernet 0/0/1
+port-security enable
+port-security max-mac-num 1
+quit</code></pre><p id="3bfc41a4-0511-803b-a929-fedf7cd91bb8" class="" dir="auto"><code>port-security mac-address sticky</code></p><p id="3bfc41a4-0511-8054-88c8-ea47a1b40005" class="" dir="auto">开启Sticky MAC学习功能，让端口之后学习到的动态MAC地址自动转换为Sticky安全MAC地址。</p><p id="3bfc41a4-0511-808b-b770-dfdbfac355b4" class="" dir="auto">交换机重启之后还会记得。</p><p id="3bfc41a4-0511-8085-acfb-ced8e73ebd01" class="" dir="auto">验证：</p><p id="3bfc41a4-0511-80df-b0f2-ca2137945667" class="" dir="auto">把PC1的MAC地址修改，然后再ping一次到服务器会发现无法发送。</p><p id="3bfc41a4-0511-8031-a94d-d0b02c36bf12" class="" dir="auto">把交换机重启reboot，用命令<code>display mac-address security</code> 查询就能看到sticky地址</p><p id="3bfc41a4-0511-80c9-93fa-c0145e9b69fa" class="" dir="auto">SW1</p><pre id="3bfc41a4-0511-8004-a2e0-e3890eecce73" class="code code-wrap" data-notion-code-syntax="kotlin"><code class="language-kotlin" style="white-space:pre-wrap;word-break:break-all">sysname SW1
+
+vlan 10
+
+# 上联接口
+interface GigabitEthernet 0/0/1
+port link-type trunk
+port trunk allow-pass vlan all
+quit
+
+# 用户接口
+interface GigabitEthernet 0/0/2
+port link-type access
+port default vlan 10
+quit
+
+# 开启端口安全
+interface GigabitEthernet 0/0/1
+port-security enable
+port-security max-mac-num 3
+quit</code></pre><p id="3bfc41a4-0511-807a-a2b5-d9c07faddfa9" class="" dir="auto">这里允许的最大的mac数量是3个，但是这里有四个设备，其中一个必定会到不了服务器。</p><h1 id="3bfc41a4-0511-80c9-8edc-e79b7a06ed21" class="" dir="auto">telnet远程登录</h1><figure id="3bfc41a4-0511-808d-9328-ed815e26001b" class="image" data-notion-image="vlan%E9%9A%94%E7%A6%BB%E6%8A%80%E6%9C%AF/image%206.png" dir="ltr"><a href="vlan%E9%9A%94%E7%A6%BB%E6%8A%80%E6%9C%AF/image%206.png"><img style="width:652.95458984375px" src="vlan%E9%9A%94%E7%A6%BB%E6%8A%80%E6%9C%AF/image%206.png"/></a></figure><p id="3bfc41a4-0511-80b9-9a96-c885a7a474be" class="" dir="auto">配置命令：<br/>AR1</p><pre id="3bfc41a4-0511-8010-904a-f117556db302" class="code code-wrap" data-notion-code-syntax="kotlin"><code class="language-kotlin" style="white-space:pre-wrap;word-break:break-all">sysname AR1
+
+interface GigabitEthernet 0/0/0
+ ip address 192.168.12.1 24
+ quit</code></pre><p id="3bfc41a4-0511-8004-8435-e89fd53fc01d" class="" dir="auto">AR2</p><pre id="3bfc41a4-0511-80cd-95ed-f7b26f5d646f" class="code code-wrap" data-notion-code-syntax="kotlin"><code class="language-kotlin" style="white-space:pre-wrap;word-break:break-all">sysname AR2
+
+interface GigabitEthernet 0/0/0
+ ip address 192.168.12.2 24
+ quit
+
+telnet server enable
+
+aaa
+ local-user HCIP password cipher HCIE
+ local-user HCIP privilege level 15
+ local-user HCIP service-type telnet
+ quit
+
+user-interface vty 0 4
+ authentication-mode aaa
+ protocol inbound telnet
+ quit</code></pre><table id="3bfc41a4-0511-8040-836a-f6b6ade13a76" class="simple-table" dir="ltr"><thead class="simple-table-header"><tr id="3bfc41a4-0511-8044-bc11-d23e98b6a963" dir="ltr"><th id="o&lt;Ra" class="simple-table-header-color simple-table-header">对比</th><th id="^gSn" class="simple-table-header-color simple-table-header">password认证</th><th id="fzJK" class="simple-table-header-color simple-table-header">AAA认证</th></tr></thead><tbody><tr id="3bfc41a4-0511-80bd-851e-e04b22d025cd" dir="ltr"><td id="o&lt;Ra" class="">用户名</td><td id="^gSn" class="">❌没有</td><td id="fzJK" class="">✅有</td></tr><tr id="3bfc41a4-0511-809e-b03e-c2e0f96f4b48" dir="ltr"><td id="o&lt;Ra" class="">密码数量</td><td id="^gSn" class="">一个</td><td id="fzJK" class="">多个</td></tr><tr id="3bfc41a4-0511-8020-b1c2-f76bd586281b" dir="ltr"><td id="o&lt;Ra" class="">用户区分</td><td id="^gSn" class="">❌不能</td><td id="fzJK" class="">✅可以</td></tr><tr id="3bfc41a4-0511-8040-a4ca-e2870c7785ea" dir="ltr"><td id="o&lt;Ra" class="">权限控制</td><td id="^gSn" class="">简单</td><td id="fzJK" class="">精细</td></tr><tr id="3bfc41a4-0511-804e-94d5-d800c40c7caa" dir="ltr"><td id="o&lt;Ra" class="">用户管理</td><td id="^gSn" class="">差</td><td id="fzJK" class="">强</td></tr><tr id="3bfc41a4-0511-8084-bc11-f86b6bb40b96" dir="ltr"><td id="o&lt;Ra" class="">适用场景</td><td id="^gSn" class="">小网络</td><td id="fzJK" class="">企业网络</td></tr></tbody></table><p id="3bfc41a4-0511-80e7-b604-c2589d6d5904" class="" dir="auto">
+</p></div></article><span class="sans" style="font-size:14px;padding-top:2em"></span><script>
+(function () {
+  "use strict";
+  var PAGE = document.querySelector(".page-body");
+  if (!PAGE) return;
+  var HEADINGS = [], i, h;
+  var ALL = PAGE.querySelectorAll("h1, h2, h3, h4, h5, h6");
+  for (i = 0; i < ALL.length; i++) {
+    h = ALL[i];
+    if (h.closest && h.closest("aside, blockquote, details, summary, figure, th, td")) continue;
+    if (!h.id) continue;
+    HEADINGS.push(h);
+  }
+  var PAGE_LINKS = [];
+  if (HEADINGS.length < 2) {
+    var pl = PAGE.querySelectorAll(".link-to-page a");
+    for (i = 0; i < pl.length; i++) {
+      var hr = pl[i].getAttribute("href");
+      if (hr) PAGE_LINKS.push(pl[i]);
+    }
+    if (PAGE_LINKS.length < 2) return;
+  }
+  var CSS = "" +
+  "html{scroll-behavior:smooth}" +
+  ".page-body h1,.page-body h2,.page-body h3,.page-body h4,.page-body h5,.page-body h6{scroll-margin-top:14px}" +
+  ".nt-fab{position:fixed;right:18px;bottom:18px;z-index:2147483001;display:flex;align-items:center;gap:7px;padding:0 20px;height:52px;border:none;border-radius:999px;cursor:pointer;color:#fff;background:rgba(37,37,37,.93);font:600 14px/1 -apple-system,'PingFang SC','Microsoft YaHei','Segoe UI',sans-serif;letter-spacing:.5px;box-shadow:0 6px 22px rgba(0,0,0,.18);transition:transform .15s ease,opacity .2s ease}" +
+  ".nt-fab:hover{transform:translateY(-2px)}" +
+  ".nt-fab svg{width:18px;height:18px;flex:none}" +
+  ".nt-fab.nt-fab-hide{opacity:0;pointer-events:none}" +
+  ".nt-panel{position:fixed;top:0;right:0;bottom:0;z-index:2147483000;display:flex;flex-direction:column;width:min(340px,88vw);background:rgba(255,255,255,.97);border-left:1px solid rgba(55,53,47,.08);box-shadow:-10px 0 30px rgba(0,0,0,.09);transform:translateX(102%);visibility:hidden;transition:transform .25s ease,visibility .25s ease;font-family:-apple-system,'PingFang SC','Microsoft YaHei','Segoe UI',sans-serif}" +
+  ".nt-panel.nt-open{transform:none;visibility:visible}" +
+  ".nt-head{display:flex;align-items:center;gap:8px;padding:16px 18px 12px;border-bottom:1px solid rgba(55,53,47,.06);flex:none}" +
+  ".nt-head .nt-title{font-weight:700;font-size:15px;color:#1f1e1c}" +
+  ".nt-head .nt-count{font-size:12px;color:rgba(55,53,47,.55);background:rgba(55,53,47,.06);padding:2px 8px;border-radius:99px;white-space:nowrap}" +
+  ".nt-close{margin-left:auto;width:30px;height:30px;border:none;border-radius:8px;cursor:pointer;font-size:15px;color:rgba(55,53,47,.7);background:transparent;line-height:1}" +
+  ".nt-close:hover{background:rgba(55,53,47,.08)}" +
+  ".nt-nav{overflow-y:auto;padding:10px 12px 16px;flex:1;-webkit-overflow-scrolling:touch}" +
+  ".nt-link{display:block;text-decoration:none;color:rgba(55,53,47,.8);font-size:13.5px;line-height:1.55;padding:6px 10px;border-radius:8px;border-left:2px solid transparent;transition:background .12s,color .12s;overflow-wrap:anywhere}" +
+  ".nt-link:hover{background:rgba(55,53,47,.06);color:#111}" +
+  ".nt-link.nt-active{background:rgba(35,131,226,.10);color:#0b66c3;border-left-color:#2383e2;font-weight:600}" +
+  ".nt-l1{font-weight:600;color:#161513;margin-top:5px}" +
+  ".nt-l2{padding-left:22px}.nt-l3{padding-left:34px}.nt-l4{padding-left:46px}.nt-l5{padding-left:58px}.nt-l6{padding-left:70px}" +
+  "@media print{.nt-fab,.nt-panel{display:none!important}}" +
+  "@media (max-width:480px){.nt-panel{width:88vw}}";
+  var ST = document.createElement("style");
+  ST.textContent = CSS;
+  document.head.appendChild(ST);
+  var ROOT = document.createElement("div");
+  ROOT.className = "nt-root";
+  var FAB = document.createElement("button");
+  FAB.type = "button";
+  FAB.className = "nt-fab";
+  FAB.setAttribute("aria-label", "打开本页目录");
+  FAB.innerHTML = "<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M4 6h16M4 12h16M4 18h10'/></svg>目录";
+  ROOT.appendChild(FAB);
+  var PANEL = document.createElement("aside");
+  PANEL.className = "nt-panel";
+  PANEL.setAttribute("aria-label", "本页目录");
+  var HEAD = document.createElement("div");
+  HEAD.className = "nt-head";
+  var T = document.createElement("span");
+  T.className = "nt-title";
+  T.textContent = "本页目录";
+  var CNT = document.createElement("span");
+  CNT.className = "nt-count";
+  CNT.textContent = (HEADINGS.length >= 2 ? HEADINGS.length + " 节" : PAGE_LINKS.length + " 页");
+  var CLOSE = document.createElement("button");
+  CLOSE.type = "button";
+  CLOSE.className = "nt-close";
+  CLOSE.setAttribute("aria-label", "关闭目录");
+  CLOSE.textContent = "✕";
+  HEAD.appendChild(T);
+  HEAD.appendChild(CNT);
+  HEAD.appendChild(CLOSE);
+  PANEL.appendChild(HEAD);
+  var NAV = document.createElement("nav");
+  NAV.className = "nt-nav";
+  function makeLabel(node) {
+    var label = (node.textContent || "").replace(/\s+/g, " ").trim();
+    var clean = label.replace(/^[\p{Extended_Pictographic}\p{Emoji_Modifier}‍️\s]+/u, "").trim();
+    return clean || label;
+  }
+  function addItem(href, text, cls, idx) {
+    var a = document.createElement("a");
+    a.href = href;
+    a.className = "nt-link " + (cls || "nt-l1");
+    a.setAttribute("data-i", idx);
+    a.title = text;
+    a.textContent = text.length > 42 ? text.slice(0, 42) + "…" : text;
+    NAV.appendChild(a);
+    return a;
+  }
+  var LINKS = [];
+  if (HEADINGS.length >= 2) {
+    var minLv = 99, k, lv;
+    for (k = 0; k < HEADINGS.length; k++) {
+      lv = parseInt(HEADINGS[k].tagName.charAt(1), 10);
+      if (lv < minLv) minLv = lv;
+    }
+    for (k = 0; k < HEADINGS.length; k++) {
+      lv = parseInt(HEADINGS[k].tagName.charAt(1), 10) - minLv;
+      if (lv > 5) lv = 5;
+      LINKS.push(addItem("#" + HEADINGS[k].id, makeLabel(HEADINGS[k]), "nt-l" + (lv + 1), k));
+    }
+  } else {
+    var j;
+    for (j = 0; j < PAGE_LINKS.length; j++) {
+      LINKS.push(addItem(PAGE_LINKS[j].getAttribute("href"), makeLabel(PAGE_LINKS[j]), "nt-l1", j));
+    }
+  }
+  PANEL.appendChild(NAV);
+  ROOT.appendChild(PANEL);
+  document.body.appendChild(ROOT);
+  var isHeadingNav = HEADINGS.length >= 2;
+  function setActive(idx) {
+    for (var n = 0; n < LINKS.length; n++) LINKS[n].classList.remove("nt-active");
+    if (LINKS[idx]) LINKS[idx].classList.add("nt-active");
+  }
+  var ticking = false;
+  function onScroll() {
+    if (ticking || !isHeadingNav) return;
+    ticking = true;
+    requestAnimationFrame(function () {
+      var mark = window.scrollY + 90;
+      var idx = 0;
+      for (var n = 0; n < HEADINGS.length; n++) {
+        var top = HEADINGS[n].getBoundingClientRect().top + window.scrollY;
+        if (top <= mark) idx = n; else break;
+      }
+      setActive(idx);
+      ticking = false;
+    });
+  }
+  window.addEventListener("scroll", onScroll, { passive: true });
+  if (isHeadingNav) setActive(0);
+  function openPanel() {
+    PANEL.classList.add("nt-open");
+    FAB.classList.add("nt-fab-hide");
+  }
+  function closePanel() {
+    PANEL.classList.remove("nt-open");
+    FAB.classList.remove("nt-fab-hide");
+  }
+  FAB.addEventListener("click", openPanel);
+  CLOSE.addEventListener("click", closePanel);
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape") closePanel();
+  });
+  NAV.addEventListener("click", function (e) {
+    var a = e.target && e.target.closest ? e.target.closest("a.nt-link") : null;
+    if (!a) return;
+    if (window.innerWidth < 860) closePanel();
+  });
+})();
+</script><script>
+(function () {
+  if (document.getElementById("nt-back")) return;
+  var link = "../%E7%BD%91%E5%B7%A5%E5%9F%BA%E7%A1%80%E4%B8%8E%E5%AE%9E%E9%AA%8C%20.html";
+  var style = document.createElement("style");
+  style.textContent = ".nt-back{position:fixed;top:16px;left:16px;z-index:2147483002;display:inline-flex;align-items:center;gap:7px;padding:8px 15px 8px 12px;border-radius:999px;text-decoration:none;color:#37352f;background:rgba(255,255,255,.93);border:1px solid rgba(55,53,47,.14);box-shadow:0 5px 16px rgba(0,0,0,.12);font:600 13px/1 -apple-system,'PingFang SC','Microsoft YaHei','Segoe UI',sans-serif;transition:background .15s,transform .15s,box-shadow .15s;backdrop-filter:blur(6px)}.nt-back:hover{background:#fff;transform:translateY(-1px);box-shadow:0 7px 20px rgba(0,0,0,.16)}.nt-back svg{width:14px;height:14px;flex:none}.nt-back .nt-back-label{white-space:nowrap}@media print{.nt-back{display:none!important}}@media (max-width:900px){.nt-back{padding:0;width:38px;height:38px;border-radius:50%;justify-content:center;top:10px;left:10px}.nt-back .nt-back-label{display:none}}";
+  document.head.appendChild(style);
+  var a = document.createElement("a");
+  a.id = "nt-back";
+  a.className = "nt-back";
+  a.href = link;
+  a.setAttribute("aria-label", "返回网工基础与实验");
+  a.innerHTML = "<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'><path d='M19 12H5'/><path d='M11 18l-6-6 6-6'/></svg><span class='nt-back-label'>网工基础与实验</span>";
+  document.body.appendChild(a);
+})();
+</script></body></html>
